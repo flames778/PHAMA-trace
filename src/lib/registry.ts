@@ -42,6 +42,87 @@ export interface Registry {
   recordMovement(movement: StockMovement): Promise<void>;
 }
 
+/**
+ * Degraded-mode signal (ME-2).
+ *
+ * When the live backend is configured but unreachable, every registry call
+ * falls back to the bundled data instead of failing the whole app. The first
+ * fallback flips this module-level flag so the UI can say so honestly:
+ * a "Supabase" badge next to a "showing bundled demo data" banner.
+ */
+let degraded = false;
+const degradeListeners = new Set<() => void>();
+
+export function isDegraded(): boolean {
+  return degraded;
+}
+
+export function onDegradedChange(fn: () => void): () => void {
+  degradeListeners.add(fn);
+  return () => {
+    degradeListeners.delete(fn);
+  };
+}
+
+function markDegraded() {
+  if (degraded) return;
+  degraded = true;
+  degradeListeners.forEach((fn) => {
+    try {
+      fn();
+    } catch {
+      /* a UI listener must never break a registry call */
+    }
+  });
+}
+
+async function attempt<T>(
+  primary: () => Promise<T>,
+  fallback: () => Promise<T>,
+  onFallback: () => void,
+): Promise<T> {
+  try {
+    return await primary();
+  } catch {
+    onFallback();
+    return fallback();
+  }
+}
+
+/** Wrap a live backend so any failing call degrades to the fallback backend. */
+export function withFallback(
+  primary: Registry,
+  fallback: Registry,
+  onDegrade?: () => void,
+): Registry {
+  const fellBack = () => {
+    markDegraded();
+    onDegrade?.();
+  };
+  const run = <T>(call: (r: Registry) => Promise<T>): Promise<T> =>
+    attempt(
+      () => call(primary),
+      () => call(fallback),
+      fellBack,
+    );
+  return {
+    mode: primary.mode,
+    products: () => run((r) => r.products()),
+    locations: () => run((r) => r.locations()),
+    batches: () => run((r) => r.batches()),
+    batchByCode: (code) => run((r) => r.batchByCode(code)),
+    batchById: (id) => run((r) => r.batchById(id)),
+    productById: (id) => run((r) => r.productById(id)),
+    locationById: (id) => run((r) => r.locationById(id)),
+    custodyFor: (batchId) => run((r) => r.custodyFor(batchId)),
+    positions: () => run((r) => r.positions()),
+    movements: () => run((r) => r.movements()),
+    scans: () => run((r) => r.scans()),
+    saveScan: (scan) => run((r) => r.saveScan(scan)),
+    recordMovement: (movement) => run((r) => r.recordMovement(movement)),
+  };
+}
+
 // --------------------------------------------------------------------- local
 
 const LS_SCANS = "pharmatrace:scans:v1";
@@ -69,7 +150,7 @@ function writeLocal(key: string, value: unknown): void {
 const custodyBundle = buildCustodyChain();
 const series = generateSeries();
 
-function localRegistry(): Registry {
+export function localRegistry(): Registry {
   return {
     mode: "local",
     async products() {
@@ -310,4 +391,6 @@ function supabaseRegistry(): Registry {
   };
 }
 
-export const registry: Registry = usingSupabase ? supabaseRegistry() : localRegistry();
+export const registry: Registry = usingSupabase
+  ? withFallback(supabaseRegistry(), localRegistry())
+  : localRegistry();

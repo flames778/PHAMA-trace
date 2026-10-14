@@ -10,6 +10,7 @@
     "typecheck": "tsc -b --pretty",
     "selfcheck": "tsx scripts/selfcheck.mts",
     "cabinet-check": "tsx scripts/cabinet-check.mts",
+    "source-check": "tsx scripts/source-check.mts",
     "verify:pipeline": "tsx scripts/verify-pipeline.mts",
     "packs": "node scripts/make-packs.mjs",
     "seed": "node scripts/seed-demo.mjs"

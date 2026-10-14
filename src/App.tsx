@@ -206,6 +206,19 @@ export default function App() {
               products={state.products}
               positions={state.positions}
             />
+            <div className="rounded-xl border border-line bg-ink-soft/60 px-4 py-3">
+              <h3 className="text-[12px] font-semibold text-slate-200">About this data</h3>
+              <p className="mt-1 text-[12px] leading-relaxed text-slate-400">
+                {state.degraded
+                  ? "The live backend failed, so these rows are the local fallback copy. Nothing here leaves this browser."
+                  : state.mode === "supabase"
+                    ? "Live rows from the connected Supabase project, seeded with the demo registry."
+                    : "Bundled mock registry. Every brand, manufacturer and serial below is fictional and exists only so this demo runs end to end."}{" "}
+                A production deployment would read these same shapes from the NAFDAC
+                Greenbook (registered products), GS1 identifiers (code identity) and the
+                NAFDAC traceability system (custody events) — see report.md for the mapping.
+              </p>
+            </div>
           </div>
         );
 
@@ -254,7 +267,18 @@ export default function App() {
           </button>
         ))}
       </nav>
-      <main className="pt-6">{content}</main>
+      <main className="pt-6">
+        {state.degraded && (
+          <div className="mb-4 rounded-xl border border-amber-400/25 bg-amber-400/5 px-4 py-3">
+            <p className="text-[12.5px] text-amber-100/90">
+              <span className="font-semibold">Live registry unreachable.</span> Showing the
+              bundled demo registry so the demo can continue — scans and stock entries are
+              kept locally until the connection is back.
+            </p>
+          </div>
+        )}
+        {content}
+      </main>
     </Shell>
   );
 }

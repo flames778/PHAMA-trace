@@ -8,8 +8,15 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  * so the stage demo still works with no network and no account. Put the two
  * variables in a `.env.local` at the project root to switch it on.
  */
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+/**
+ * `import.meta.env` only exists inside Vite. Under plain node (seed scripts,
+ * headless checks) it is undefined, so read defensively and treat "no
+ * config" as "run the bundled mock" in both worlds.
+ */
+const env =
+  (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
+const url = env.VITE_SUPABASE_URL;
+const anonKey = env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase: SupabaseClient | null =
   url && anonKey ? createClient(url, anonKey, { auth: { persistSession: false } }) : null;

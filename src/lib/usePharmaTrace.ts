@@ -8,7 +8,7 @@ import type {
   StockMovement,
   StockPosition,
 } from "../types";
-import { registry } from "./registry";
+import { registry, isDegraded, onDegradedChange } from "./registry";
 import { verify, normaliseCode, type VerifyInput } from "./verify";
 import { analysePack, loadImageData } from "./vision";
 import { detectBarcodeInImage, type BarcodeHit } from "./barcode";
@@ -38,6 +38,8 @@ export interface PharmaTraceState {
   ready: boolean;
   error: string | null;
   mode: "local" | "supabase";
+  /** True once any registry call has fallen back to bundled data. */
+  degraded: boolean;
   products: Product[];
   locations: Location[];
   batches: Batch[];
@@ -83,6 +85,9 @@ export function usePharmaTrace(): PharmaTraceState {
   const [busy, setBusy] = useState(false);
   const [scanLocationId, setScanLocationId] = useState(DEFAULT_LOCATION);
   const [custody, setCustody] = useState<CustodyEvent[]>([]);
+  const [degraded, setDegraded] = useState(isDegraded);
+
+  useEffect(() => onDegradedChange(() => setDegraded(true)), []);
 
   const custodyFor = useCallback(async (batchId: string) => {
     const events = await registry.custodyFor(batchId);
@@ -241,6 +246,7 @@ export function usePharmaTrace(): PharmaTraceState {
     ready,
     error,
     mode: registry.mode,
+    degraded,
     products,
     locations,
     batches,
