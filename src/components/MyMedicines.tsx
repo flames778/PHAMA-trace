@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Product, ScanResult } from "../types";
+import type { ProductStockSummary } from "../lib/forecast";
 import {
   normalizeEntry,
   sanitizeSchedule,
@@ -65,9 +66,11 @@ const TIME_INPUT = "[color-scheme:dark] rounded-md border border-line bg-ink px-
 export interface MyMedicinesProps {
   scans: ScanResult[];
   products: Product[];
+  stockByProduct: Map<string, ProductStockSummary>;
+  onViewStock?: () => void;
 }
 
-export function MyMedicines({ scans, products }: MyMedicinesProps) {
+export function MyMedicines({ scans, products, stockByProduct, onViewStock }: MyMedicinesProps) {
   const [entries, setEntries] = useState<CabinetEntry[]>(loadEntries);
   const [members, setMembers] = useState<HouseholdMember[]>(loadMembers);
   const [newName, setNewName] = useState("");
@@ -129,6 +132,19 @@ export function MyMedicines({ scans, products }: MyMedicinesProps) {
   const now = new Date();
   const groups = groupByMember(entries, members);
 
+  // ME-3: personal stockout alerts — one line per tracked product that reads
+  // warning or critical anywhere it is stocked.
+  const alerts = (() => {
+    const seen = new Map<string, { brand: string; summary: ProductStockSummary }>();
+    for (const e of entries) {
+      const summary = stockByProduct.get(e.productId);
+      if (!summary || (summary.worst !== "critical" && summary.worst !== "warning")) continue;
+      if (!seen.has(e.productId)) seen.set(e.productId, { brand: e.brandName, summary });
+    }
+    return [...seen.values()];
+  })();
+  const anyCritical = alerts.some((a) => a.summary.worst === "critical");
+
   if (entries.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-10 text-center">
@@ -144,6 +160,37 @@ export function MyMedicines({ scans, products }: MyMedicinesProps) {
 
   return (
     <div className="space-y-4">
+      {alerts.length > 0 && (
+        <div
+          className={`rounded-xl border px-4 py-3 ${
+            anyCritical
+              ? "border-rose-400/40 bg-rose-400/10"
+              : "border-amber-400/25 bg-amber-400/5"
+          }`}
+        >
+          <p className={`text-[12.5px] ${anyCritical ? "text-rose-100/90" : "text-amber-100/90"}`}>
+            <span className="font-semibold">Running low:</span>{" "}
+            {alerts
+              .map(
+                (a) =>
+                  `${a.brand} is ${a.summary.worst} in ${a.summary.atRisk.length} place${a.summary.atRisk.length !== 1 ? "s" : ""}`,
+              )
+              .join(" · ")}
+            . Refill before the shelf empties.
+          </p>
+          {onViewStock && (
+            <button
+              type="button"
+              onClick={onViewStock}
+              className={`mt-1.5 text-[12px] font-medium underline-offset-2 hover:underline ${
+                anyCritical ? "text-rose-300" : "text-amber-200"
+              }`}
+            >
+              Check stock &amp; forecast →
+            </button>
+          )}
+        </div>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <p className="mr-auto text-[12px] text-slate-500">
           {entries.length} medicine{entries.length !== 1 ? "s" : ""} · {members.length} household
@@ -200,6 +247,7 @@ export function MyMedicines({ scans, products }: MyMedicinesProps) {
                 entry={entry}
                 members={members}
                 now={now}
+                stock={stockByProduct.get(entry.productId)}
                 onChange={(next) =>
                   updateEntries(entries.map((e) => (e === entry ? next : e)))
                 }
@@ -227,16 +275,19 @@ function EntryCard({
   entry,
   members,
   now,
+  stock,
   onChange,
   onRemove,
 }: {
   entry: CabinetEntry;
   members: HouseholdMember[];
   now: Date;
+  stock?: ProductStockSummary;
   onChange: (next: CabinetEntry) => void;
   onRemove: () => void;
 }) {
   const upcoming = entry.schedule ? nextDose(entry.schedule.times, now) : null;
+  const lowStock = stock && (stock.worst === "critical" || stock.worst === "warning") ? stock : null;
 
   const setTimes = (times: string[]) => {
     onChange({ ...entry, schedule: sanitizeSchedule({ timesPerDay: times.length, times }) });
@@ -260,6 +311,18 @@ function EntryCard({
             >
               {entry.verdict === "unverifiable" ? "unknown" : entry.verdict}
             </span>
+            {lowStock && (
+              <span
+                className={`rounded-md border px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider ${
+                  lowStock.worst === "critical"
+                    ? "border-rose-400/40 bg-rose-400/10 text-rose-300"
+                    : "border-amber-400/30 bg-amber-400/5 text-amber-200"
+                }`}
+                title={`${lowStock.atRisk.length} stocked shelf${lowStock.atRisk.length !== 1 ? "s" : ""} at ${lowStock.worst} band`}
+              >
+                Low stock · {lowStock.worst}
+              </span>
+            )}
           </div>
           <p className="mt-0.5 text-[11px] text-slate-500">{entry.genericName}</p>
           <p className="mt-1.5 text-[12px] leading-relaxed text-slate-300">

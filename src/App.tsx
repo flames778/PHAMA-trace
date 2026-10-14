@@ -12,6 +12,7 @@ import { MedicineGuide } from "./components/MedicineGuide";
 import { MyMedicines } from "./components/MyMedicines";
 import { TODAY } from "./data/batches";
 import { verifyChain } from "./lib/ledger";
+import { summarizeProductStock, type ProductStockSummary } from "./lib/forecast";
 import type { Batch, Product, ScanResult, StockPosition } from "./types";
 
 type Tab = "verify" | "stock" | "hotspots" | "registry" | "medicines" | "ai";
@@ -41,6 +42,19 @@ export default function App() {
   );
 
   const chainCheck = useMemo(() => verifyChain(state.custody), [state.custody]);
+
+  // ME-3: per-product stock rollup for the personal alerts on My medicines.
+  // Same forecasts the Stock tab shows, so the two views can never disagree.
+  const stockByProduct = useMemo(() => {
+    const map = new Map<string, ProductStockSummary>();
+    for (const p of state.products) {
+      map.set(
+        p.id,
+        summarizeProductStock(p.id, state.batches, state.movements, state.positions, TODAY),
+      );
+    }
+    return map;
+  }, [state.products, state.batches, state.movements, state.positions]);
 
   const riskByLocation = useMemo(() => {
     const map = new Map<string, "critical">();
@@ -233,7 +247,12 @@ export default function App() {
                 household — especially for elderly family members who may not remember.
               </p>
             </div>
-            <MyMedicines scans={state.scans} products={state.products} />
+            <MyMedicines
+              scans={state.scans}
+              products={state.products}
+              stockByProduct={stockByProduct}
+              onViewStock={() => setTab("stock")}
+            />
           </div>
         );
 

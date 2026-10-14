@@ -1,4 +1,4 @@
-import type { StockMovement, StockPosition } from "../types";
+import type { Batch, StockMovement, StockPosition } from "../types";
 import { HISTORY_WINDOW_DAYS } from "../data/demand";
 
 /**
@@ -228,6 +228,85 @@ export function forecastAll(inputs: ForecastInput[]): ForecastResult[] {
     .map(forecastStockout)
     .filter((r): r is ForecastResult => r !== null)
     .sort((a, b) => (a.daysToStockout ?? 99) - (b.daysToStockout ?? 99));
+}
+
+/**
+ * Per-product rollup (ME-3) — the "is MY medicine running low" answer.
+ *
+ * Forecasts every shelf carrying the product and keeps the worst band plus
+ * the warning/critical shelves. The My medicines tab renders this as a
+ * personal alert; the numbers are the same forecasts the Stock tab shows,
+ * so the two views can never disagree.
+ */
+export interface AtRiskShelf {
+  batchId: string;
+  locationId: string;
+  band: "critical" | "warning";
+  daysToStockout: number | null;
+  onHand: number;
+}
+
+export interface ProductStockSummary {
+  productId: string;
+  worst: ForecastResult["band"] | null;
+  shelves: number;
+  atRisk: AtRiskShelf[];
+}
+
+const BAND_RANK: Record<ForecastResult["band"], number> = {
+  critical: 0,
+  warning: 1,
+  watch: 2,
+  ok: 3,
+};
+
+export function summarizeProductStock(
+  productId: string,
+  batches: Batch[],
+  movements: StockMovement[],
+  positions: StockPosition[],
+  today: Date,
+): ProductStockSummary {
+  const batchIds = new Set(batches.filter((b) => b.productId === productId).map((b) => b.id));
+  const byPair = new Map<string, StockMovement[]>();
+  for (const m of movements) {
+    if (!batchIds.has(m.batchId)) continue;
+    const key = `${m.batchId}|${m.locationId}`;
+    const list = byPair.get(key) ?? [];
+    list.push(m);
+    byPair.set(key, list);
+  }
+  const results: ForecastResult[] = [];
+  for (const [key, moves] of byPair) {
+    const [batchId, locationId] = key.split("|");
+    const fc = forecastStockout({
+      batchId,
+      locationId,
+      productId,
+      movements: moves,
+      position: positions.find((p) => p.batchId === batchId && p.locationId === locationId),
+      today,
+    });
+    if (fc) results.push(fc);
+  }
+  results.sort((a, b) => BAND_RANK[a.band] - BAND_RANK[b.band]);
+  return {
+    productId,
+    worst: results.length > 0 ? results[0].band : null,
+    shelves: results.length,
+    atRisk: results
+      .filter(
+        (r): r is ForecastResult & { band: "critical" | "warning" } =>
+          r.band === "critical" || r.band === "warning",
+      )
+      .map((r) => ({
+        batchId: r.batchId,
+        locationId: r.locationId,
+        band: r.band,
+        daysToStockout: r.daysToStockout,
+        onHand: r.onHand,
+      })),
+  };
 }
 
 export const FORECAST_WINDOW_DAYS = HISTORY_WINDOW_DAYS;

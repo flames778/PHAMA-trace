@@ -3,8 +3,8 @@ import { letterbox, alignAndCorrelate, paletteSimilarity, toGray, edgeField } fr
 import { generateSeries } from "../src/data/demand.ts";
 import { buildCustodyChain } from "../src/data/custody.ts";
 import { verifyChain, appendEvent, GENESIS_HASH } from "../src/lib/ledger.ts";
-import { forecastStockout } from "../src/lib/forecast.ts";
-import { batchById, batchByCode, TODAY } from "../src/data/batches.ts";
+import { forecastStockout, summarizeProductStock } from "../src/lib/forecast.ts";
+import { batchById, batchByCode, TODAY, BATCHES } from "../src/data/batches.ts";
 import { locationById, PHARMACIES } from "../src/data/locations.ts";
 
 /**
@@ -166,6 +166,20 @@ if (fc) {
     console.log(`  Yaba Primary Care — ${fc2.onHand} on hand, ${fc2.daysToStockout} days, band=${fc2.band}`);
     check("unstarved shelf is not critical", fc2.band !== "critical", fc2.band);
   }
+
+  // ME-3: per-product rollup that powers the "is MY medicine running low"
+  // alerts on the My medicines tab.
+  const malaSummary = summarizeProductStock("prd-malafem", BATCHES, series.movements, series.positions, TODAY);
+  check("squeezed product reads critical somewhere", malaSummary.worst === "critical", malaSummary.worst ?? "none");
+  check(
+    "at-risk list names shelves",
+    malaSummary.atRisk.length > 0 && malaSummary.atRisk.every((r) => r.locationId && (r.band === "critical" || r.band === "warning")),
+    `${malaSummary.atRisk.length} shelf(s)`,
+  );
+  const pxSummary = summarizeProductStock("prd-paraxp", BATCHES, series.movements, series.positions, TODAY);
+  check("unsqueezed staple stays calm", pxSummary.worst === "ok", pxSummary.worst ?? "none");
+  const noSummary = summarizeProductStock("prd-nope", BATCHES, series.movements, series.positions, TODAY);
+  check("unknown product has no summary", noSummary.worst === null && noSummary.shelves === 0 && noSummary.atRisk.length === 0);
 }
 
 console.log("\nData integrity");
