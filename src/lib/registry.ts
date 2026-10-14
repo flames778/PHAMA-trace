@@ -35,7 +35,7 @@ import { supabase, usingSupabase } from "./supabase";
  */
 
 export interface Registry {
-  mode: "local" | "supabase";
+  mode: "local" | "server" | "supabase";
   products(): Promise<Product[]>;
   locations(): Promise<Location[]>;
   batches(): Promise<Batch[]>;
@@ -414,6 +414,48 @@ function supabaseRegistry(): Registry {
   };
 }
 
+// -------------------------------------------------------------------- server
+
+const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001/api";
+
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `API error ${res.status}`);
+  }
+  const body = (await res.json()) as { ok: boolean; data: T };
+  return body.data;
+}
+
+function serverRegistry(): Registry {
+  return {
+    mode: "server",
+    products: () => apiFetch<Product[]>("/products"),
+    locations: () => apiFetch<Location[]>("/locations"),
+    batches: () => apiFetch<Batch[]>("/batches"),
+    batchByCode: (code) => apiFetch<Batch | null>(`/batches/code/${encodeURIComponent(code)}`),
+    batchById: (id) => apiFetch<Batch | null>(`/batches/${encodeURIComponent(id)}`),
+    productById: (id) => apiFetch<Product | null>(`/products/${encodeURIComponent(id)}`),
+    locationById: (id) => apiFetch<Location | null>(`/locations/${encodeURIComponent(id)}`),
+    custodyFor: (batchId) => apiFetch<CustodyEvent[]>(`/custody/${encodeURIComponent(batchId)}`),
+    positions: () => apiFetch<StockPosition[]>("/positions"),
+    movements: () => apiFetch<StockMovement[]>("/movements"),
+    scans: () => apiFetch<ScanResult[]>("/scans"),
+    saveScan: async (scan) => {
+      await apiFetch<ScanResult>("/scans", { method: "POST", body: JSON.stringify(scan) });
+    },
+    recordMovement: async (movement) => {
+      await apiFetch<StockMovement>("/movements", { method: "POST", body: JSON.stringify(movement) });
+    },
+  };
+}
+
 export const registry: Registry = usingSupabase
   ? withFallback(supabaseRegistry(), localRegistry())
-  : localRegistry();
+  : import.meta.env.VITE_USE_SERVER === "true"
+    ? withFallback(serverRegistry(), localRegistry())
+    : localRegistry();

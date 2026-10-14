@@ -13,10 +13,14 @@
     "source-check": "tsx scripts/source-check.mts",
     "verify:pipeline": "tsx scripts/verify-pipeline.mts",
     "packs": "node scripts/make-packs.mjs",
-    "seed": "node scripts/seed-demo.mjs"
+    "seed": "tsx scripts/seed-supabase.mts",
+    "server": "tsx server/index.ts",
+    "dev:server": "tsx watch server/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
     "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -24,6 +28,8 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/leaflet": "^1.9.16",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
