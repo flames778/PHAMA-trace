@@ -66,27 +66,11 @@ From the deep research pass (breadth 4, depth 3), saved in report.md unless note
 
 ## 5. Progress tracker
 
-### Evans side (backend, updates on push, review, merge)
-
-| Item | Status | Notes |
-| --- | --- | --- |
-| Supabase schema | Pending | Tables mirror src/types.ts |
-| Seed data from mock src/data | Pending | Keep fictional brands |
-| registry.ts against Supabase | Pending | Must match frontend contract |
-| Custody ledger hashes | Pending | Unchanged rules from src/lib/ledger.ts |
-| Scan persistence | Pending | Insert + refresh endpoint |
-| Supabase env config | Pending | .env, README note |
-| typecheck / selfcheck / pipeline pass | Pending | Gates |
-
-### My side (full stack, updates on progress made)
-
-| Item | Status | Notes |
-| --- | --- | --- |
-| Medicine package verifier UI | Done | Verify tab, VerdictPanel |
-| My medicines feature | In progress | MedicineGuide + MyMedicines exist, polish next |
-| Plain language data for all products | Done | src/data/products.ts |
-| Hotspot map + scan feed | Done | Hotspots tab |
-| Registry mode staging | Pending | Flip between mock and real source cleanly |
+The tracker is a separate artifact: `docs/PROGRESS_TRACKER.md`. It holds both sides'
+task tables, the update protocol (Evans' rows flip after every reviewed major
+implementation, Ayonife's rows flip as work lands), the phase map, gate results, and the
+update log. This section used to duplicate those tables; it now points there so there is
+exactly one source of truth.
 
 ## 6. Path forward with my tasks and what we are doing now
 
