@@ -6,6 +6,16 @@ import type { Product } from "../types";
  * Brands and manufacturers below are fictional and exist only so the demo can
  * run end-to-end without anyone's real commercial data. Nothing here is
  * published by, endorsed by, or connected to NAFDAC or any manufacturer.
+ *
+ * FIELD MODEL (see report.md). In production these rows would come from:
+ *   - NAFDAC Greenbook: product name, active ingredients, NAFDAC Reg. No.,
+ *     applicant, form, route, strengths, status;
+ *   - WHO prequalification list (CSV): INN + strength + dosage form +
+ *     therapeutic area + applicant, a quality signal for essential medicines;
+ *   - openFDA / Drugs@FDA + RxNorm / DailyMed: normalised names, labels,
+ *     dosage forms and packaging references.
+ * Patient-facing copy (whatItsFor etc.) follows the DrugBank-style
+ * indication/dosing shape, rewritten in plain language.
  */
 export const PRODUCTS: Product[] = [
   {

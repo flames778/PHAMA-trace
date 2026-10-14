@@ -14,6 +14,10 @@
 --     via a trigger (see the bottom of this file), and move the registry
 --     writes behind a service-role key held by the regulator.
 --   * Nothing here is connected to NAFDAC or to any manufacturer's systems.
+--   * TABLE MODEL (see report.md): products/batches mirror the NAFDAC
+--     Greenbook row (name, actives, NRN, applicant, form, strengths, status);
+--     custody_events mirrors GS1 EPCIS business steps; scans carry the
+--     WHO-GSMS-shaped flag set the verify engine produces.
 -- ============================================================================
 
 create extension if not exists "pgcrypto";

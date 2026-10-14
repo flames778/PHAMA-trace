@@ -5,6 +5,10 @@ import type { Location } from "../types";
  * -------------------------
  * Coordinates are real city/LGA centroids so the hotspot map is geographically
  * plausible. The facility names are fictional.
+ *
+ * Each site stands in for a GS1 Global Location Number (GLN): manufacturer,
+ * distributor, pharmacy and regulator roles with a fixed identity, which is
+ * what custody events and the route-plausibility check anchor to.
  */
 export const LOCATIONS: Location[] = [
   { id: "loc-mfg-kano", name: "Kano BioPharm Ltd (plant)", kind: "manufacturer", lat: 12.0022, lng: 8.592, lga: "Nassarawa", state: "Kano" },

@@ -10,6 +10,12 @@ import { buildChain, type RawCustodyEvent } from "../lib/ledger";
  * The chain is derived from the same dispensing series the stock table uses,
  * so the ledger, the shelves and the map cannot drift out of agreement.
  * Each event is hash-chained to the previous one (see src/lib/ledger.ts).
+ *
+ * The event vocabulary loosely mirrors GS1 EPCIS business steps —
+ * released (commissioning), shipped (shipping), received (receiving),
+ * dispensed (dispensing), returned / recalled (void / hold) — so a production
+ * feed from the NAFDAC Traceability Information System, which speaks EPCIS,
+ * would map onto these rows almost one to one.
  */
 
 const ROUTING: Record<string, string> = {

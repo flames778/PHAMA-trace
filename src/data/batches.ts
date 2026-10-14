@@ -9,6 +9,11 @@ export const TODAY = new Date("2026-10-13T09:00:00Z");
  * Every batch below is invented. The codes are the shape Nigeria's own
  * track-and-trace guidance describes (country — product — year — serial) but
  * they are not real serials and are not registered anywhere.
+ *
+ * In GS1 terms the batch code is AI (10) lot + serial; in NAFDAC terms the
+ * lookup key is the NAFDAC Reg. No. (NRN) on NAPAMS. The recalled batch here
+ * mirrors the shape of a real NAFDAC Public Alert (product + batch +
+ * reason + mop-up instruction).
  */
 export const BATCHES: Batch[] = [
   {

@@ -11,6 +11,12 @@ import { PHARMACIES } from "./locations";
  * effect, and a strong wet-season peak for malaria and diarrhoeal disease.
  * Same seed, same series, every run — which matters when you are demoing
  * live and want the numbers to match your slides.
+ *
+ * The yardstick this mimics is the WHO / Health Action International method
+ * for measuring medicine availability in facilities; a production system
+ * would replace the generator with logged dispensing plus that survey
+ * method, and blend reference signals like openFDA drug/shortages and the
+ * EMA shortages catalogue (see report.md).
  */
 
 const WINDOW_DAYS = 120;

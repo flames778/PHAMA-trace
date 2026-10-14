@@ -23,6 +23,15 @@ import { supabase, usingSupabase } from "./supabase";
  *   supabase — the same tables in Postgres, via supabase/schema.sql.
  *
  * The verification logic never knows which one it is talking to.
+ *
+ * PRODUCTION READ PATH (see report.md for sources). A live deployment would
+ * fill these same shapes from: the NAFDAC Greenbook / NAPAMS (registered
+ * products and the NRN lookup), GS1 Verified by GS1 (is this scanned code a
+ * genuinely issued identifier), the WHO prequalification list + openFDA /
+ * RxNorm (rich product master data), NAFDAC Public Alerts (the confirmed-bad
+ * list), and EPCIS-compatible custody events from the NAFDAC Traceability
+ * Information System. Nothing here claims any of those connections — the
+ * interface is deliberately shaped so they can plug in later.
  */
 
 export interface Registry {

@@ -18,6 +18,14 @@ import { summarizeChain } from "./ledger";
  * Combines the registry check, the packaging analysis and the supply-chain
  * context into one of three answers plus the reasons that produced it.
  * Nothing here is proof: it is a ranked recommendation for a pharmacist.
+ *
+ * The flag taxonomy (near-miss serials, packaging mismatch, recalled batch,
+ * geographic anomaly, code reuse) mirrors the fields of a WHO GSMS Medical
+ * Product Alert — product, batch, visual discrepancies, distribution detail —
+ * so a suspicious scan already carries the shape a regulator report needs.
+ * Escalation targets are the official channels, not this app: NAFDAC's Med
+ * Safety app / sf.alert@nafdac.gov.ng nationally, rapidalert@who.int
+ * internationally (see report.md).
  */
 
 export interface VerifyInput {
