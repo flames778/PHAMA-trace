@@ -74,8 +74,8 @@ is mostly the seed script (`package.json` references it but the file does not ex
 | ME-1 | MyMedicines polish | Dose schedules + household profiles; entries survive reload | Done | `8e1400d`, 2026-10-15 |
 | ME-2 | Source toggle / fallback UX | Mode badge truthful; offline fallback verified by killing env vars | Done | `41a9a49`, 2026-10-15 |
 | ME-3 | Forecast × MyMedicines pairing | Personal stockout alerts surface on tracked medicines | Done | `d29db52`, 2026-10-15 |
-| ME-4 | Demo script hardening | Genuine-vs-counterfeit two-scan flow lights the hotspot map reliably | Pending | Phase 3 |
-| ME-5 | Registry content pass | Code comments cite the real sources (Greenbook fields, GS1, WHO list) per `report.md` | Pending | — |
+| ME-4 | Demo script hardening | Genuine-vs-counterfeit two-scan flow lights the hotspot map reliably | Done | `01db8c4`, 2026-10-15 |
+| ME-5 | Registry content pass | Code comments cite the real sources (Greenbook fields, GS1, WHO list) per `report.md` | Done | `7d764e2`, 2026-10-15 |
 
 ## 7. Doing now (week of 2026-10-14)
 
@@ -94,6 +94,8 @@ is mostly the seed script (`package.json` references it but the file does not ex
 | 2026-10-15 | Ayonife | **ME-1 done** (`8e1400d`): household cabinet. Members with add/remove, per-medicine dose schedules with next-dose display, entries grouped by person, legacy localStorage entries migrate automatically. TDD: `cabinet-check` (19 checks) written failing first, then `cabinet.ts`. Full suite green (typecheck, selfcheck, pipeline 31/31, cabinet 19/19) plus production build. |
 | 2026-10-15 | Ayonife | **ME-2 done** (`41a9a49`): resilient registry. Live-backend calls fall back per-call to bundled data with a module-level degraded flag; amber banner tells the truth; Registry tab explains all three states (live / local / degraded). Bonus find: `supabase.ts` crashed under plain node (`import.meta.env` undefined) — guarded, which also unblocks Evans' future seed script. TDD: `source-check` (12 checks) written failing first. |
 | 2026-10-15 | Ayonife | **ME-3 done** (`d29db52`): personal stockout alerts. New `summarizeProductStock` rollup in `forecast.ts` (worst band + at-risk shelves per product, same forecasts the Stock tab shows); My medicines banner lists tracked products reading warning/critical with a jump link; each entry card carries a low-stock chip. TDD: 4 rollup checks added to the pipeline failing first (missing export), then implemented. Typecheck caught and fixed a real narrowing bug in the rollup. |
+| 2026-10-15 | Ayonife | **ME-4 done** (`01db8c4`): one-click stage demo. New "Play the 30-second demo" card on the Verify tab runs genuine-then-counterfeit scans with step status and lands on the hotspot map with the suspicious scan selected. Known quirk (by design, not changed): scanning one code 3+ times a day trips the reuse signal, so repeat stage runs can flip the genuine pack — first run is always clean. |
+| 2026-10-15 | Ayonife | **ME-5 done** (`7d764e2`): source-citation pass. Eight files (products, batches, locations, custody, demand, registry, verify, schema.sql) now document their production data mapping to Greenbook / GS1 / EPCIS / WHO-GSMS / WHO-HAI per report.md. Comments only, no behavior change. |
 
 ## 9. Known issues (resolved ones stay listed with their fix)
 
