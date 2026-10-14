@@ -31,6 +31,8 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("verify");
   const [outcome, setOutcome] = useState<ScanOutcome | null>(null);
   const [selectedScanId, setSelectedScanId] = useState<string | null>(null);
+  const [demoRunning, setDemoRunning] = useState(false);
+  const [demoStep, setDemoStep] = useState<string | null>(null);
 
   const handleScan = useCallback(
     async (req: ScanRequest) => {
@@ -42,6 +44,27 @@ export default function App() {
   );
 
   const chainCheck = useMemo(() => verifyChain(state.custody), [state.custody]);
+
+  // ME-4: the stage demo in one click — genuine pack, then counterfeit, then
+  // the hotspot map opens on the new alert. handleScan already selects each
+  // result, so the second (suspicious) scan is highlighted when we arrive.
+  const runDemoFlow = useCallback(async () => {
+    if (demoRunning || state.busy) return;
+    setDemoRunning(true);
+    try {
+      const flow = [DEMO_PACKS[0], DEMO_PACKS[1]];
+      for (const [i, pack] of flow.entries()) {
+        setDemoStep(`Scan ${i + 1} of ${flow.length}: ${pack.label}…`);
+        const blob = await (await fetch(pack.src)).blob();
+        await handleScan({ code: pack.code, photo: blob, codeSource: "demo" });
+      }
+      setDemoStep("Opening the hotspot map…");
+      setTab("hotspots");
+    } finally {
+      setDemoRunning(false);
+      setDemoStep(null);
+    }
+  }, [demoRunning, state.busy, handleScan]);
 
   // ME-3: per-product stock rollup for the personal alerts on My medicines.
   // Same forecasts the Stock tab shows, so the two views can never disagree.
@@ -90,6 +113,28 @@ export default function App() {
                 Read the batch code from the barcode, then compare the print against the
                 manufacturer&apos;s registered artwork. Both are needed — a code alone can be copied.
               </p>
+              <div className="mb-4 rounded-xl border border-teal-400/25 bg-teal-400/5 px-4 py-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold text-slate-100">Play the 30-second demo</p>
+                    <p className="text-[12px] leading-snug text-slate-500">
+                      Scans a genuine pack, then a counterfeit, then opens the hotspot map on the
+                      new alert.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={state.busy || demoRunning || !state.ready}
+                    onClick={() => void runDemoFlow()}
+                    className="shrink-0 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
+                  >
+                    {demoRunning ? "Running…" : "▶ Play demo"}
+                  </button>
+                </div>
+                {demoStep && (
+                  <p className="mt-2 text-[12px] text-teal-200">{demoStep}</p>
+                )}
+              </div>
               <Scanner busy={state.busy} locationName={state.scanLocation.name} onScan={handleScan} />
 
               <div className="mt-6">
