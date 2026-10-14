@@ -17,6 +17,7 @@ Verified 2026-10-14 on a clean install (`npm install` from `package-lock.json`):
 | `npm run verify:pipeline` | PASS — fixed by ME-0 (`aac02ec`, see log). Was failing on three real issues, all root-caused, none papered over (details in §9). |
 | `npm run cabinet-check` | PASS — new in ME-1 (`8e1400d`): 19 checks over dose schedules, members, migration. |
 | `npm run build` | PASS (production bundle builds). |
+| `npm run source-check` | PASS — new in ME-2 (`41a9a49`): 12 checks over local boot and degraded fallback. |
 
 ## 2. Frozen contract (both sides rely on this — do not change silently)
 
@@ -71,7 +72,7 @@ is mostly the seed script (`package.json` references it but the file does not ex
 | --- | --- | --- | --- | --- |
 | ME-0 | Fix stale `verify:pipeline` script | Script uses IDs present in current `src/data`; all gates green | Done | `aac02ec`, 2026-10-14 |
 | ME-1 | MyMedicines polish | Dose schedules + household profiles; entries survive reload | Done | `8e1400d`, 2026-10-15 |
-| ME-2 | Source toggle / fallback UX | Mode badge truthful; offline fallback verified by killing env vars | Pending | — |
+| ME-2 | Source toggle / fallback UX | Mode badge truthful; offline fallback verified by killing env vars | Done | `41a9a49`, 2026-10-15 |
 | ME-3 | Forecast × MyMedicines pairing | Personal stockout alerts surface on tracked medicines | Pending | Phase 2 |
 | ME-4 | Demo script hardening | Genuine-vs-counterfeit two-scan flow lights the hotspot map reliably | Pending | Phase 3 |
 | ME-5 | Registry content pass | Code comments cite the real sources (Greenbook fields, GS1, WHO list) per `report.md` | Pending | — |
@@ -91,6 +92,7 @@ is mostly the seed script (`package.json` references it but the file does not ex
 | 2026-10-14 | Ayonife | Pushed `d54d98f` (research report + project plan) to `flames778/PHAMA-trace` main. |
 | 2026-10-14 | Ayonife | **ME-0 done** (`aac02ec`): pipeline fully green. Fixed three root causes, no thresholds fudged — see §9. |
 | 2026-10-15 | Ayonife | **ME-1 done** (`8e1400d`): household cabinet. Members with add/remove, per-medicine dose schedules with next-dose display, entries grouped by person, legacy localStorage entries migrate automatically. TDD: `cabinet-check` (19 checks) written failing first, then `cabinet.ts`. Full suite green (typecheck, selfcheck, pipeline 31/31, cabinet 19/19) plus production build. |
+| 2026-10-15 | Ayonife | **ME-2 done** (`41a9a49`): resilient registry. Live-backend calls fall back per-call to bundled data with a module-level degraded flag; amber banner tells the truth; Registry tab explains all three states (live / local / degraded). Bonus find: `supabase.ts` crashed under plain node (`import.meta.env` undefined) — guarded, which also unblocks Evans' future seed script. TDD: `source-check` (12 checks) written failing first. |
 
 ## 9. Known issues (resolved ones stay listed with their fix)
 
