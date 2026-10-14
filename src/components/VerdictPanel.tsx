@@ -26,7 +26,7 @@ const STATUS_ICON: Record<VisionCheck["status"], string> = {
 };
 
 const STATUS_STYLE: Record<VisionCheck["status"], string> = {
-  pass: "[REDACTED]",
+  pass: "text-emerald-300",
   fail: "text-rose-300",
   warn: "text-amber-200",
   skip: "text-slate-500",

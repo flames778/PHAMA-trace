@@ -141,7 +141,7 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
               placeholder="sk-tp-… or sk-…"
               autoComplete="off"
               spellCheck={false}
-              className="w-full rounded-lg border border-line bg-ink px-3 py-2 font-mono text-[13px] text-slate-100 outline-none placeholder:text-slate-600 focus:border-teal-500/60"
+              className="w-full rounded-lg border border-line bg-ink px-3 py-2 font-mono text-[13px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
             />
           </label>
           <label className="block">
@@ -151,7 +151,7 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
               onChange={(e) => setBaseUrlInput(e.target.value)}
               placeholder={AGENT_ROUTER_DEFAULT_BASE_URL}
               spellCheck={false}
-              className="w-full rounded-lg border border-line bg-ink px-3 py-2 font-mono text-[12px] text-slate-100 outline-none placeholder:text-slate-600 focus:border-teal-500/60"
+              className="w-full rounded-lg border border-line bg-ink px-3 py-2 font-mono text-[12px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
             />
           </label>
           <label className="block">
@@ -161,7 +161,7 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
               onChange={(e) => setModelInput(e.target.value)}
               placeholder={AGENT_ROUTER_DEFAULT_MODEL}
               spellCheck={false}
-              className="w-full rounded-lg border border-line bg-ink px-3 py-2 font-mono text-[12px] text-slate-100 outline-none placeholder:text-slate-600 focus:border-teal-500/60"
+              className="w-full rounded-lg border border-line bg-ink px-3 py-2 font-mono text-[12px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
             />
           </label>
         </div>
@@ -198,7 +198,7 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
             {status}
           </p>
         )}
-        <p className="mt-2 text-[11px] text-slate-600">
+        <p className="mt-2 text-[11px] text-slate-500">
           Works with <span className="font-mono">agent-router.net/aggregate/openai/v1</span>,{" "}
           <span className="font-mono">/gateway/openai/v1</span>, or{" "}
           <span className="font-mono">agentrouter.org/v1</span> — just change the Base URL.
@@ -227,7 +227,7 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAsk()}
             placeholder="Ask about stock, recalls, next steps…"
-            className="flex-1 rounded-lg border border-line bg-ink-soft px-3 py-2 text-[13px] text-slate-100 outline-none placeholder:text-slate-600 focus:border-teal-500/60"
+            className="flex-1 rounded-lg border border-line bg-ink-soft px-3 py-2 text-[13px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
           />
           <button
             type="button"

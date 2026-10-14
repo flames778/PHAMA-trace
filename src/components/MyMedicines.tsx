@@ -149,7 +149,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
     return (
       <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-10 text-center">
         <p className="text-[13px] text-slate-400">No medicines tracked yet</p>
-        <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-slate-600">
+        <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-slate-500">
           Scan a medicine pack and it will be added here with a plain-language explanation of
           what it is for and how to take it. Add the people in your household, assign each
           medicine to someone, and set dose times so nobody misses one.
@@ -203,7 +203,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
             if (e.key === "Enter") addMember();
           }}
           placeholder="Add a person (e.g. Grandma)"
-          className="w-52 rounded-md border border-line bg-ink px-2.5 py-1.5 text-[12px] text-slate-200 outline-none placeholder:text-slate-600 focus:border-teal-500/60"
+          className="w-52 rounded-md border border-line bg-ink px-2.5 py-1.5 text-[12px] text-slate-200 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
         />
         <button
           type="button"
@@ -227,14 +227,14 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
             <h3 className="text-[12px] font-semibold text-slate-200">
               {group.member ? group.member.name : "Unassigned"}
             </h3>
-            <span className="text-[11px] text-slate-600">
+            <span className="text-[11px] text-slate-500">
               {group.entries.length} medicine{group.entries.length !== 1 ? "s" : ""}
             </span>
             {group.member && (
               <button
                 type="button"
                 onClick={() => removeMember(group.member!.id)}
-                className="text-[11px] text-slate-600 hover:text-rose-300"
+                className="text-[11px] text-slate-500 hover:text-rose-300"
               >
                 remove person
               </button>
@@ -364,6 +364,7 @@ function EntryCard({
                       <input
                         type="time"
                         value={t}
+                        aria-label={`Dose ${i + 1} time`}
                         onChange={(e) => {
                           const next = [...entry.schedule!.times];
                           next[i] = e.target.value;
@@ -374,7 +375,7 @@ function EntryCard({
                       <button
                         type="button"
                         onClick={() => setTimes(entry.schedule!.times.filter((_, j) => j !== i))}
-                        className="text-[11px] text-slate-600 hover:text-rose-300"
+                        className="text-[11px] text-slate-500 hover:text-rose-300"
                         aria-label={`Remove dose ${t}`}
                       >
                         ✕
@@ -393,7 +394,7 @@ function EntryCard({
                   <button
                     type="button"
                     onClick={() => onChange({ ...entry, schedule: null })}
-                    className="ml-auto text-[11px] text-slate-600 hover:text-rose-300"
+                    className="ml-auto text-[11px] text-slate-500 hover:text-rose-300"
                   >
                     remove schedule
                   </button>
@@ -418,13 +419,13 @@ function EntryCard({
         <button
           type="button"
           onClick={onRemove}
-          className="shrink-0 text-[11px] text-slate-600 hover:text-rose-300"
+          className="shrink-0 text-[11px] text-slate-500 hover:text-rose-300"
           aria-label={`Remove ${entry.brandName}`}
         >
           ✕
         </button>
       </div>
-      <p className="mt-2 text-[10.5px] text-slate-600">
+      <p className="mt-2 text-[10.5px] text-slate-500">
         Scanned {entry.scannedAt.replace("T", " ").slice(0, 16)}Z
       </p>
     </li>

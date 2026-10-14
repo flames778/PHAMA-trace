@@ -283,7 +283,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               onKeyDown={(e) => e.key === "Enter" && void runManual()}
               placeholder="NG-MF-26-0917"
               spellCheck={false}
-              className="flex-1 rounded-lg border border-line bg-ink-soft px-3 py-2 font-mono text-sm text-slate-100 outline-none placeholder:text-slate-600 focus:border-teal-500/60"
+              className="flex-1 rounded-lg border border-line bg-ink-soft px-3 py-2 font-mono text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
             />
             <button
               type="button"
@@ -325,7 +325,7 @@ async function probeBarcode(src: Blob | string): Promise<BarcodeHit | null> {
 
 function registryBadge(supported: boolean): ReactNode {
   return supported ? (
-    <span className="ml-1 text-slate-600"> · barcode reader available</span>
+    <span className="ml-1 text-slate-500"> · barcode reader available</span>
   ) : (
     <span className="ml-1 text-amber-500/70"> · no barcode reader in this browser</span>
   );

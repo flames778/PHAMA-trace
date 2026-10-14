@@ -107,7 +107,7 @@ export function MedicineGuide({ product }: MedicineGuideProps) {
         })}
       </div>
       <div className="border-t border-line px-4 py-2.5">
-        <p className="text-[10.5px] leading-relaxed text-slate-600">
+        <p className="text-[10.5px] leading-relaxed text-slate-500">
           This is general information for this type of medicine. It is not personal medical advice.
           Always follow the instructions on your pack or from your doctor or pharmacist.
         </p>

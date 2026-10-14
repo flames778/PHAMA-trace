@@ -158,7 +158,7 @@ export default function App() {
                       </option>
                     ))}
                 </select>
-                <p className="mt-1.5 text-[11px] text-slate-600">
+                <p className="mt-1.5 text-[11px] text-slate-500">
                   Changing this drives the route-plausibility check: a pack found hundreds of
                   kilometres off its recorded distribution path is flagged.
                 </p>
@@ -351,7 +351,7 @@ function EmptyVerdict() {
   return (
     <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-14 text-center">
       <p className="text-[13px] text-slate-400">No scan yet</p>
-      <p className="mx-auto mt-1 max-w-xs text-[12px] leading-relaxed text-slate-600">
+      <p className="mx-auto mt-1 max-w-xs text-[12px] leading-relaxed text-slate-500">
         Pick one of the demo packs to run the full pipeline — barcode decode, registry lookup,
         packaging comparison and custody verification.
       </p>
@@ -378,7 +378,7 @@ function Shell({ mode, children }: { mode: "local" | "supabase"; children: React
             PT
           </div>
           <div>
-            <div className="text-[15px] font-bold tracking-tight text-slate-50">PharmaTrace</div>
+            <h1 className="text-[15px] font-bold tracking-tight text-slate-50">PharmaTrace</h1>
             <div className="text-[11px] text-slate-500">Verify · track · predict · report</div>
           </div>
           <span
@@ -418,7 +418,7 @@ function ScanFeed({
         Scan feed ({scans.length})
       </h3>
       {scans.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-line px-4 py-8 text-center text-[12.5px] text-slate-600">
+        <p className="rounded-xl border border-dashed border-line px-4 py-8 text-center text-[12.5px] text-slate-500">
           No scans logged yet. Run one from the Verify tab and it will appear here and on the map.
         </p>
       ) : (
@@ -443,7 +443,7 @@ function ScanFeed({
                     {s.batchCode || "no code"} · {Math.round(s.confidence * 100)}%
                   </span>
                 </span>
-                <span className="shrink-0 font-mono text-[10.5px] text-slate-600">
+                <span className="shrink-0 font-mono text-[10.5px] text-slate-500">
                   {s.createdAt.replace("T", " ").slice(11, 16)}Z
                 </span>
               </button>

@@ -140,7 +140,7 @@ export function HotspotMap({
         <LegendItem colour="#fbbf24" label="Unverifiable" />
         <LegendItem colour="#c084fc" label="Manufacturer" />
         <LegendItem colour="#60a5fa" label="Distributor" />
-        <span className="ml-auto text-slate-600">Marker size scales with scans at that site</span>
+        <span className="ml-auto text-slate-500">Marker size scales with scans at that site</span>
       </div>
     </div>
   );

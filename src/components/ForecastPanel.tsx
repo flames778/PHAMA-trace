@@ -91,7 +91,7 @@ export function ForecastPanel({
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <div className="overflow-hidden rounded-xl border border-line">
-          <div className="max-h-[430px] overflow-y-auto">
+          <div className="max-h-[430px] overflow-auto">
             <table className="w-full border-collapse text-left text-[12px]">
               <thead className="sticky top-0 z-10 bg-ink-soft">
                 <tr className="text-[10.5px] uppercase tracking-[0.12em] text-slate-500">
@@ -125,7 +125,7 @@ export function ForecastPanel({
                       </td>
                       <td className="px-3 py-2.5">
                         <div className="text-slate-300">{product?.brandName ?? "—"}</div>
-                        <div className="font-mono text-[10.5px] text-slate-600">{batch?.batchCode}</div>
+                        <div className="font-mono text-[10.5px] text-slate-500">{batch?.batchCode}</div>
                       </td>
                       <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
                         {r.onHand.toLocaleString()}
