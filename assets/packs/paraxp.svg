@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="820" viewBox="0 0 600 820">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4338ca"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="820" fill="#f8fafc"/>
+  <rect width="600" height="172" fill="url(#band)"/>
+  <rect width="600" height="172" fill="url(#sheen)"/>
+
+  <text x="32" y="86" font-family="Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#ffffff" letter-spacing="0.5">ParaXP</text>
+  <text x="32" y="122" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#ffffff" opacity="0.92">500 mg</text>
+  <rect x="32" y="138" width="128" height="4" fill="#c4b5fd"/>
+
+  <text x="32" y="224" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#111827">Paracetamol tablets</text>
+  <text x="32" y="252" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#4b5563">1000 tablets bulk pack</text>
+  <text x="32" y="280" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4b5563">Manufactured by Nile Chemicals Ltd</text>
+
+  <rect x="32" y="304" width="536" height="1" fill="#d1d5db"/>
+
+  <text x="32" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" letter-spacing="1.2">BATCH</text>
+  <text x="32" y="364" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#111827" letter-spacing="0.6">NG-PX-26-1103</text>
+  <text x="320" y="340" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" letter-spacing="1.2">EXPIRY</text>
+  <text x="320" y="364" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#111827">2029-03-31</text>
+
+  <g transform="translate(32,422)">
+    <rect x="-8" y="-8" width="446" height="96" fill="#ffffff" stroke="#e5e7eb"/>
+    <svg viewBox="0 0 2383 352" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#000000" stroke-width="29" d="M15.50 352L15.50 0M286.50 352L286.50 0M329.50 352L329.50 0M529.50 352L529.50 0M757.50 352L757.50 0M914.50 352L914.50 0M999.50 352L999.50 0M1113.50 352L1113.50 0M1270.50 352L1270.50 0M1470.50 352L1470.50 0M1740.50 352L1740.50 0M1983.50 352L1983.50 0M2097.50 352L2097.50 0M2211.50 352L2211.50 0M2368.50 352L2368.50 0" />
+<path stroke="#000000" stroke-width="14" d="M51 352L51 0M94 352L94 0M165 352L165 0M365 352L365 0M422 352L422 0M479 352L479 0M878 352L878 0M949 352L949 0M1234 352L1234 0M1377 352L1377 0M1420 352L1420 0M1577 352L1577 0M1805 352L1805 0M1847 352L1847 0M1890 352L1890 0M1933 352L1933 0M2047 352L2047 0M2332 352L2332 0" />
+<path stroke="#000000" stroke-width="43" d="M208.50 352L208.50 0M578.50 352L578.50 0M650.50 352L650.50 0M707.50 352L707.50 0M807.50 352L807.50 0M1049.50 352L1049.50 0M1177.50 352L1177.50 0M1334.50 352L1334.50 0M1519.50 352L1519.50 0M1619.50 352L1619.50 0M2161.50 352L2161.50 0M2289.50 352L2289.50 0" />
+<path stroke="#000000" stroke-width="57" d="M1683.50 352L1683.50 0" />
+</svg>
+
+  </g>
+  <text x="32" y="540" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#374151" letter-spacing="2.2">NG-PX-26-1103</text>
+
+  
+  <g transform="translate(478,628)">
+    <circle r="54" fill="#ffffff" stroke="#312e81" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="46.00" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><circle cx="0" cy="0" r="40.25" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><circle cx="0" cy="0" r="34.50" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><circle cx="0" cy="0" r="28.75" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><circle cx="0" cy="0" r="23.00" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><circle cx="0" cy="0" r="17.25" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><circle cx="0" cy="0" r="11.50" fill="none" stroke="#312e81" stroke-width="1.1" opacity="0.55"/><line x1="16.10" y1="0.00" x2="46.00" y2="0.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="15.55" y1="4.17" x2="44.43" y2="11.91" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="13.94" y1="8.05" x2="39.84" y2="23.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="11.38" y1="11.38" x2="32.53" y2="32.53" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="8.05" y1="13.94" x2="23.00" y2="39.84" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="4.17" y1="15.55" x2="11.91" y2="44.43" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="0.00" y1="16.10" x2="0.00" y2="46.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-4.17" y1="15.55" x2="-11.91" y2="44.43" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-8.05" y1="13.94" x2="-23.00" y2="39.84" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-11.38" y1="11.38" x2="-32.53" y2="32.53" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-13.94" y1="8.05" x2="-39.84" y2="23.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-15.55" y1="4.17" x2="-44.43" y2="11.91" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-16.10" y1="0.00" x2="-46.00" y2="0.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-15.55" y1="-4.17" x2="-44.43" y2="-11.91" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-13.94" y1="-8.05" x2="-39.84" y2="-23.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-11.38" y1="-11.38" x2="-32.53" y2="-32.53" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-8.05" y1="-13.94" x2="-23.00" y2="-39.84" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-4.17" y1="-15.55" x2="-11.91" y2="-44.43" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="-0.00" y1="-16.10" x2="-0.00" y2="-46.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="4.17" y1="-15.55" x2="11.91" y2="-44.43" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="8.05" y1="-13.94" x2="23.00" y2="-39.84" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="11.38" y1="-11.38" x2="32.53" y2="-32.53" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="13.94" y1="-8.05" x2="39.84" y2="-23.00" stroke="#312e81" stroke-width="0.9" opacity="0.55"/><line x1="15.55" y1="-4.17" x2="44.43" y2="-11.91" stroke="#312e81" stroke-width="0.9" opacity="0.55"/>
+    <circle r="16" fill="#312e81" opacity="0.12"/>
+    <text x="0" y="-4" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#312e81">REG</text>
+    <text x="0" y="10" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#312e81">NG</text>
+  </g>
+
+  <rect x="32" y="774" width="536" height="1" fill="#d1d5db"/>
+  <text x="32" y="798" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#9ca3af">Demo artefact — fictional product, not a real pack.</text>
+</svg>

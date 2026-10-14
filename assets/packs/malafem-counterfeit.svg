@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="820" viewBox="0 0 600 820">
+  <defs>
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1d9bd1"/>
+      <stop offset="100%" stop-color="#0e6a96"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="820" fill="#f8fafc"/>
+  <rect width="600" height="158" fill="url(#band)"/>
+  <rect width="600" height="158" fill="url(#sheen)"/>
+
+  <text x="32" y="78" font-family="Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#ffffff" letter-spacing="0.5">Malafem</text>
+  <text x="32" y="114" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#ffffff" opacity="0.92">20 / 120 mg</text>
+  <rect x="32" y="130" width="128" height="4" fill="#eab308"/>
+
+  <text x="32" y="210" font-family="Helvetica, Arial, sans-serif" font-size="17" fill="#111827">Artemether + Lumefantrine dispersible tablets</text>
+  <text x="32" y="238" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#4b5563">6 tablets per strip</text>
+  <text x="32" y="266" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#4b5563">Manufactured by Kano BioPharm Ltd</text>
+
+  <rect x="32" y="290" width="536" height="1" fill="#d1d5db"/>
+
+  <text x="32" y="326" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" letter-spacing="1.2">BATCH</text>
+  <text x="32" y="350" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#111827" letter-spacing="0.6">NG-MF-26-0917X</text>
+  <text x="320" y="326" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b7280" letter-spacing="1.2">EXPIRY</text>
+  <text x="320" y="350" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#111827">2028-02-29</text>
+
+  <g transform="translate(32,408)">
+    <rect x="-8" y="-8" width="446" height="96" fill="#ffffff" stroke="#e5e7eb"/>
+    <svg viewBox="0 0 2382 352" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#000000" stroke-width="25" d="M13.50 352L13.50 0M252.50 352L252.50 0M290.50 352L290.50 0M466.50 352L466.50 0M643.50 352L643.50 0M756.50 352L756.50 0M882.50 352L882.50 0M983.50 352L983.50 0M1121.50 352L1121.50 0M1298.50 352L1298.50 0M1537.50 352L1537.50 0M1776.50 352L1776.50 0M2054.50 352L2054.50 0M2230.50 352L2230.50 0M2369.50 352L2369.50 0" />
+<path stroke="#000000" stroke-width="13" d="M44.50 352L44.50 0M82.50 352L82.50 0M145.50 352L145.50 0M321.50 352L321.50 0M372.50 352L372.50 0M422.50 352L422.50 0M561.50 352L561.50 0M699.50 352L699.50 0M813.50 352L813.50 0M838.50 352L838.50 0M1090.50 352L1090.50 0M1216.50 352L1216.50 0M1254.50 352L1254.50 0M1392.50 352L1392.50 0M1581.50 352L1581.50 0M1619.50 352L1619.50 0M1669.50 352L1669.50 0M1808.50 352L1808.50 0M2022.50 352L2022.50 0M2085.50 352L2085.50 0M2123.50 352L2123.50 0M2337.50 352L2337.50 0" />
+<path stroke="#000000" stroke-width="38" d="M183 352L183 0M510 352L510 0M598 352L598 0M926 352L926 0M1039 352L1039 0M1178 352L1178 0M1342 352L1342 0M1430 352L1430 0M1720 352L1720 0M1909 352L1909 0M1959 352L1959 0M2299 352L2299 0" />
+<path stroke="#000000" stroke-width="51" d="M1487.50 352L1487.50 0M1852.50 352L1852.50 0M2180.50 352L2180.50 0" />
+</svg>
+
+  </g>
+  <text x="32" y="526" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#374151" letter-spacing="2.2">NG-MF-26-0917X</text>
+
+  
+  <g transform="translate(478,628)">
+    <rect x="-42" y="-30" width="84" height="60" fill="#e5e7eb"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#6b7280">REG</text>
+  </g>
+
+  <rect x="32" y="774" width="536" height="1" fill="#d1d5db"/>
+  <text x="32" y="798" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#9ca3af">Demo artefact — fictional product, not a real pack.</text>
+</svg>

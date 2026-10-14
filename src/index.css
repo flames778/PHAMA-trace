@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b1120;
+  --color-ink-soft: #131c31;
+  --color-line: #1e293b;
+  --color-paper: #f1f5f9;
+  --font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Menlo", ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: #e2e8f0;
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Leaflet draws its own panes; keep them above our cards but below modals. */
+.leaflet-container {
+  background: #0d1526;
+  font: inherit;
+  z-index: 0;
+}
+
+.leaflet-control-attribution {
+  background: rgb(11 17 32 / 0.78) !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #cbd5e1 !important;
+}
+
+.leaflet-bar a {
+  background: #131c31 !important;
+  color: #e2e8f0 !important;
+  border-color: #1e293b !important;
+}
+
+.leaflet-bar a:hover {
+  background: #1e293b !important;
+}
+
+.pt-popup .leaflet-popup-content-wrapper {
+  background: #131c31;
+  color: #e2e8f0;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+.pt-popup .leaflet-popup-tip {
+  background: #131c31;
+  border: 1px solid #1e293b;
+}
+
+.pt-popup .leaflet-popup-content {
+  margin: 10px 14px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Thin scrollbars so the dense panels do not look like a 2010 admin console. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+
+@keyframes pt-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.55);
+  }
+}
+
+.pt-pulse {
+  animation: pt-pulse 1.9s ease-in-out infinite;
+}
+
+@keyframes pt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pt-rise {
+  animation: pt-rise 260ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-pulse,
+  .pt-rise {
+    animation: none;
+  }
+}

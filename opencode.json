@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "agent-router": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Agent Router",
+      "options": {
+        "baseURL": "https://agentrouter.org/v1",
+        "apiKey": "{env:AGENT_ROUTER_API_KEY}"
+      },
+      "models": {
+        "deepseek/deepseek-chat": {
+          "name": "Agent Router - DeepSeek V3 Chat"
+        },
+        "deepseek/deepseek-reasoner": {
+          "name": "Agent Router - DeepSeek R1 Reasoner"
+        },
+        "anthropic/claude-sonnet-4-5": {
+          "name": "Agent Router - Claude Sonnet 4.5"
+        },
+        "openai/gpt-5": {
+          "name": "Agent Router - GPT-5"
+        }
+      }
+    }
+  }
+}
