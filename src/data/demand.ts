@@ -96,13 +96,17 @@ function zoneOf(state: string): string {
 /**
  * Shelves deliberately starved in the last stretch of the series so the
  * forecast panel has something real to warn about. Keyed `${batchId}@${locationId}`.
+ *
+ * INVARIANT: every key must be a pair that `assignPairs()` below actually
+ * emits, otherwise the squeeze silently does nothing (this bit us once —
+ * five dead keys meant the forecast panel never warned about anything).
  */
 const SQUEEZE: Record<string, number> = {
-  "bat-mf-0917@loc-ph-dala": 0.92,
-  "bat-mf-0917@loc-ph-surulere": 0.96,
-  "bat-ac-0811@loc-ph-bodija": 0.94,
-  "bat-rh-0640@loc-ph-shehu": 0.88,
-  "bat-sf-0051@loc-ph-aba": 0.95,
+  "bat-mf-0917@loc-ph-nassarawa": 0.92,
+  "bat-mf-0917@loc-ph-ogbete": 0.96,
+  "bat-ac-0811@loc-ph-dala": 0.94,
+  "bat-rh-0640@loc-ph-bodija": 0.88,
+  "bat-sf-0051@loc-ph-ringroad": 0.95,
 };
 
 /** Delivery cadence in days per product. */
@@ -114,8 +118,11 @@ const DELIVERY_INTERVAL: Record<string, number> = {
   "prd-rehydra": 12,
 };
 
-/** Delivery size expressed in days of cover. */
-const DELIVERY_COVER_DAYS = 10;
+/** Delivery sizing. Cover the delivery interval at *peak-season* demand with
+ *  a day of margin: interval × (1 + seasonal amplitude) + 1. Anything less
+ *  drains every shelf to zero by October (measured once: 75 of 76 shelves
+ *  read critical) and every alert becomes noise. Starved (SQUEEZE) shelves
+ *  still drain because their deliveries are quartered for most of the window. */
 
 interface PairSpec {
   batchId: string;
@@ -185,7 +192,8 @@ export function generateSeries(on: Date = TODAY): GeneratedSeries {
 
     const rnd = mulberry32(hashString(`${pair.batchId}|${pair.locationId}`));
     const interval = DELIVERY_INTERVAL[batch.productId];
-    const deliverySize = Math.round(base * DELIVERY_COVER_DAYS * (0.9 + rnd() * 0.3));
+    const coverDays = Math.ceil(interval * (1 + SEASON_AMPLITUDE[batch.productId])) + 1;
+    const deliverySize = Math.round(base * coverDays * (0.9 + rnd() * 0.3));
     const squeeze = SQUEEZE[`${pair.batchId}@${pair.locationId}`] ?? 0;
 
     let onHand = openingStock(base);
