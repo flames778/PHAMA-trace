@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-primary":"#ffffff","inverse-surface":"#342f2e","background":"#fff8f6","tertiary-fixed-dim":"#afcdbc","primary-fixed-dim":"#ffb59f","on-primary-container":"#ffeae4","primary":"#943414","on-secondary-container":"#765e47","on-background":"#1e1b1a","surface-container-lowest":"#ffffff","on-tertiary":"#ffffff","surface-container-high":"#efe6e4","tertiary":"#3e594b","surface-dim":"#e1d8d6","surface-bright":"#fff8f6","on-tertiary-fixed-variant":"#324c3f","on-surface-variant":"#57423c","error":"#ba1a1a","on-tertiary-fixed":"#052015","secondary":"#725a43","on-primary-fixed-variant":"#822708","on-surface":"#1e1b1a","on-error":"#ffffff","tertiary-container":"#567263","on-error-container":"#93000a","on-secondary-fixed-variant":"#58422d","error-container":"#ffdad6","on-tertiary-container":"#d7f5e3","secondary-fixed":"#feddc0","surface-container-low":"#fbf2f0","surface-variant":"#e9e1df","outline-variant":"#dec0b8","inverse-on-surface":"#f8efed","surface-tint":"#a23e1e","primary-fixed":"#ffdbd1","primary-container":"#b44b2a","surface":"#fff8f6","on-secondary-fixed":"#291806","on-primary-fixed":"#3a0a00","tertiary-fixed":"#cbead7","outline":"#8a726b","surface-container":"#f5ecea","secondary-container":"#fbdabd","surface-container-highest":"#e9e1df","on-secondary":"#ffffff","inverse-primary":"#ffb59f","secondary-fixed-dim":"#e0c1a5"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-md":"1rem","gutter-sm":"1rem","space-sm":"0.5rem","space-xl":"2.5rem","space-xs":"0.25rem","margin":"2rem","margin-mobile":"1.25rem","space-lg":"1.5rem","gutter":"1.5rem","gutter-lg":"2rem"},"fontFamily":{"label-md":["Plus Jakarta Sans"],"headline-xl":["Newsreader"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"headline-sm":["Newsreader"],"headline-lg":["Newsreader"],"headline-md":["Newsreader"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Newsreader"],"body-lg":["Plus Jakarta Sans"],"headline-xl-mobile":["Newsreader"]},"fontSize":{"label-md":["14px",{"lineHeight":"20px","fontWeight":"500"}],"headline-xl":["44px",{"lineHeight":"52px","letterSpacing":"-0.02em","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"20px","fontWeight":"400"}],"body-md":["15px",{"lineHeight":"24px","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"500"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"headline-xl-mobile":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"400"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-surface-container-high py-1 px-margin"><div class="max-w-[1200px] mx-auto flex items-center justify-between text-on-surface-variant"><div class="flex items-center gap-space-sm font-label-sm text-label-sm"><span class="material-symbols-outlined text-tertiary text-[14px]">verified</span><span>Verified against NAFDAC Safety Registry (Demonstration Environment) • Community Verification Protocol</span></div><div class="hidden md:flex items-center gap-space-md font-label-sm text-label-sm"><span>Federal Ministry of Health &amp; Social Welfare</span><span class="text-outline-variant">•</span><span class="text-tertiary">System Operative: Sentinel v4.2</span></div></div></div><div class="h-20 max-w-[1200px] mx-auto px-margin flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-[0_1px_4px_rgba(0,0,0,0.08)]"><span class="material-symbols-outlined text-[24px]">local_pharmacy</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-primary font-semibold leading-none">PharmaTrace</span><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mt-0.5">COMMUNITY CARE &amp; MEDICINE VERIFICATION</span></div></div><nav class="hidden xl:flex items-center gap-1 ml-4" data-active-classes="bg-surface-container-highest text-on-surface font-semibold rounded-lg"><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="home" href="#">Home</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="verify-medicine" href="#">Verify Medicine</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="household-cabinet" href="#">Household Cabinet</a><a aria-current="page" class="px-3 py-2 transition-colors bg-surface-container-highest text-on-surface font-semibold rounded-lg" data-path="clinic-stock" href="#">Clinic Stock</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="safety-map" href="#">Safety Map</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="clinical-ai-guide" href="#">Clinical AI Guide</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden sm:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. Amina Eze</span><span class="font-label-sm text-label-sm text-secondary leading-tight">Lagos Community Clinic #4</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1 max-w-[1200px] mx-auto px-margin py-space-xl"><div class="flex flex-col w-full">
+<!-- Multi-Location Command Header -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-space-lg mb-space-lg">
+<div class="space-y-space-xs max-w-2xl">
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px] text-tertiary">domain_add</span>
+<span>Zonal Healthcare Network • 5 Connected Dispensaries</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface leading-tight font-normal">
+        Dispensary Stock &amp; Multi-Facility Radar
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        Cross-facility pharmaceutical surveillance, real-time depletion forecasting, and automated inter-site stock rebalancing across Lagos and Regional Depots.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<button class="px-space-md py-space-sm bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-md text-label-md flex items-center gap-space-xs shadow-sm transition-colors" onclick="document.getElementById('rebalance-console').scrollIntoView({behavior: 'smooth'})">
+<span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+<span>Inter-Facility Transfer</span>
+</button>
+<button class="px-space-md py-space-sm bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg font-label-md text-label-md flex items-center gap-space-xs transition-colors" onclick="window.print()">
+<span class="material-symbols-outlined text-[18px]">download_for_offline</span>
+<span class="hidden sm:inline">Audit Manifest</span>
+</button>
+</div>
+</section>
+<!-- Pharmaceutical Facility Quick Selector Cards -->
+<section class="mb-space-lg">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Active Healthcare Locations</span>
+<span class="font-body-sm text-body-sm text-tertiary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary inline-block"></span>
+        All 5 telemetry links synchronized (14:35 WAT)
+      </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-sm">
+<!-- Facility 1: Lagos Central (Selected) -->
+<div class="facility-card border-2 border-primary bg-surface-container-lowest p-space-sm rounded-xl cursor-pointer shadow-sm transition-all" onclick="selectFacility('lagos-central', this)">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-primary font-semibold">HQ Clinic</span>
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+</div>
+<div class="font-headline-sm text-[16px] text-on-surface leading-snug font-medium">Lagos Central #4</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">Broad St, Lagos Island</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>Dr. A. Eze</span>
+<span class="text-primary font-semibold">2 Shortages</span>
+</div>
+</div>
+<!-- Facility 2: Ikeja General -->
+<div class="facility-card border border-outline-variant/40 bg-surface-container-low hover:bg-surface-container p-space-sm rounded-xl cursor-pointer transition-all" onclick="selectFacility('ikeja-general', this)">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary">General Hospital</span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+<div class="font-headline-sm text-[16px] text-on-surface leading-snug font-medium">Ikeja General Pharm</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">Oba Akinjobi Way, Ikeja</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>Pharm. K. Balogun</span>
+<span class="text-tertiary font-semibold">Surplus (+80)</span>
+</div>
+</div>
+<!-- Facility 3: Surulere Center -->
+<div class="facility-card border border-outline-variant/40 bg-surface-container-low hover:bg-surface-container p-space-sm rounded-xl cursor-pointer transition-all" onclick="selectFacility('surulere-chc', this)">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary">Primary Care</span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+<div class="font-headline-sm text-[16px] text-on-surface leading-snug font-medium">Surulere Health Center</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">Randle Ave, Surulere</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>Pharm. T. Alabi</span>
+<span class="text-secondary font-medium">Balanced</span>
+</div>
+</div>
+<!-- Facility 4: Victoria Island -->
+<div class="facility-card border border-outline-variant/40 bg-surface-container-low hover:bg-surface-container p-space-sm rounded-xl cursor-pointer transition-all" onclick="selectFacility('vi-healthpost', this)">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary">Community Post</span>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+</div>
+<div class="font-headline-sm text-[16px] text-on-surface leading-snug font-medium">VI Health Post</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">Adeola Odeku, VI</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>Nurse Chiamaka O.</span>
+<span class="text-primary font-semibold">1 Critical</span>
+</div>
+</div>
+<!-- Facility 5: Onitsha Zonal Depot -->
+<div class="facility-card border border-outline-variant/40 bg-surface-container-low hover:bg-surface-container p-space-sm rounded-xl cursor-pointer transition-all" onclick="selectFacility('onitsha-depot', this)">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary">Regional Hub</span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+<div class="font-headline-sm text-[16px] text-on-surface leading-snug font-medium">Onitsha Zonal Depot</div>
+<div class="font-body-sm text-[12px] text-on-surface-variant line-clamp-1">Oguta Rd Depository</div>
+<div class="mt-2 pt-2 border-t border-outline-variant/30 flex items-center justify-between text-[11px] text-secondary font-label-sm">
+<span>Dr. E. Okafor</span>
+<span class="text-tertiary font-semibold">High Buffer</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Analytical Visualizations Command Bar -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-space-xl">
+<!-- Chart A: Stock Health Distribution Donut (5 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Network Stock Health</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">pie_chart</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-normal mb-space-sm">Stock Depletion Segments</h3>
+<!-- SVG Donut Chart with Legend -->
+<div class="flex items-center justify-center my-space-md">
+<div class="relative w-40 h-40">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<!-- Background Ring -->
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#e9e1df" stroke-width="3.8"></circle>
+<!-- Stable Buffer (64%) #3e594b -->
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#3e594b" stroke-dasharray="64 36" stroke-dashoffset="0" stroke-width="3.8"></circle>
+<!-- Refill Needed (16%) #725a43 -->
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#725a43" stroke-dasharray="16 84" stroke-dashoffset="-64" stroke-width="3.8"></circle>
+<!-- Overstocked / Surplus (12%) #afcdbc -->
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#afcdbc" stroke-dasharray="12 88" stroke-dashoffset="-80" stroke-width="3.8"></circle>
+<!-- Critical <48h (8%) #943414 -->
+<circle cx="18" cy="18" fill="none" r="15.915" stroke="#943414" stroke-dasharray="8 92" stroke-dashoffset="-92" stroke-width="3.8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-headline-md text-[22px] font-semibold text-on-surface leading-none">100%</span>
+<span class="font-label-sm text-[11px] text-secondary mt-0.5">44 Batches</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Donut Legend Grid -->
+<div class="grid grid-cols-2 gap-x-space-md gap-y-1.5 pt-space-xs text-[12px] font-label-sm border-t border-outline-variant/30">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary flex-shrink-0"></span>
+<span class="text-on-surface-variant">Critical &lt;48h (<strong>8%</strong>)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary flex-shrink-0"></span>
+<span class="text-on-surface-variant">Refill 3–7d (<strong>16%</strong>)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary flex-shrink-0"></span>
+<span class="text-on-surface-variant">Stable Buffer (<strong>64%</strong>)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim flex-shrink-0"></span>
+<span class="text-on-surface-variant">Surplus Stock (<strong>12%</strong>)</span>
+</div>
+</div>
+</div>
+<!-- Chart B: Multi-Location Balance Comparative Bar Visual (5 cols) -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Inter-Facility Sufficiency</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">bar_chart</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-normal mb-space-sm">Stock Balance by Facility</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">Compare reserve days against the 14-day community safety baseline to spot instant transfer corridors.</p>
+<!-- Multi-Bar Visuals -->
+<div class="space-y-space-sm">
+<!-- Bar 1: Lagos Central -->
+<div>
+<div class="flex justify-between text-label-sm text-[12px] mb-1">
+<span class="font-medium text-on-surface">Lagos Central #4 (Deficit Risk)</span>
+<span class="text-primary font-semibold">4.2 Days (Shortage)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden flex">
+<div class="bg-primary h-full w-[28%] rounded-full"></div>
+</div>
+</div>
+<!-- Bar 2: Ikeja General -->
+<div>
+<div class="flex justify-between text-label-sm text-[12px] mb-1">
+<span class="font-medium text-on-surface">Ikeja General Pharmacy (Surplus Hub)</span>
+<span class="text-tertiary font-semibold">28.5 Days (Excess Buffer)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden flex">
+<div class="bg-tertiary h-full w-[85%] rounded-full"></div>
+</div>
+</div>
+<!-- Bar 3: Surulere Health Center -->
+<div>
+<div class="flex justify-between text-label-sm text-[12px] mb-1">
+<span class="font-medium text-on-surface">Surulere Health Center</span>
+<span class="text-secondary font-medium">16.0 Days (Target Met)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden flex">
+<div class="bg-secondary h-full w-[55%] rounded-full"></div>
+</div>
+</div>
+<!-- Bar 4: Victoria Island -->
+<div>
+<div class="flex justify-between text-label-sm text-[12px] mb-1">
+<span class="font-medium text-on-surface">Victoria Island Health Post</span>
+<span class="text-primary font-semibold">5.8 Days (Near Threshold)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden flex">
+<div class="bg-primary h-full w-[35%] rounded-full"></div>
+</div>
+</div>
+<!-- Bar 5: Onitsha Regional Depot -->
+<div>
+<div class="flex justify-between text-label-sm text-[12px] mb-1">
+<span class="font-medium text-on-surface">Onitsha Regional Depot</span>
+<span class="text-tertiary font-semibold">45.0 Days (Wholesale Reserve)</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden flex">
+<div class="bg-tertiary h-full w-[95%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between text-[11px] text-secondary font-label-sm border-t border-outline-variant/30">
+<span class="flex items-center gap-1"><span class="w-2 h-0.5 bg-outline-variant inline-block"></span> Baseline: 14 Days</span>
+<span class="text-tertiary font-medium">Surplus to Deficit Transfer Available</span>
+</div>
+</div>
+<!-- Chart C: Therapeutic Category Visual & Rebalancing Quick Insight (3 cols) -->
+<div class="lg:col-span-3 bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Therapeutic Mix</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">category</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-normal mb-space-sm">Active Categories</h3>
+<div class="space-y-space-sm">
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md text-on-surface">Antimalarials</span>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-primary">Critical</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface">Antibacterials</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Refill Due</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-md text-label-md text-on-surface">Chronic Care</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">Stable</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-label-md text-label-md text-on-surface">Pediatric Syrups</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">Adequate</span>
+</div>
+</div>
+</div>
+<div class="mt-space-md p-space-sm rounded-lg bg-primary/10 border border-primary/20">
+<div class="flex items-center gap-1.5 text-primary font-semibold text-[13px] mb-0.5">
+<span class="material-symbols-outlined text-[16px]">sync_saved_locally</span>
+<span>Rebalance Alert</span>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface leading-tight">
+          Ikeja General holds <strong>+80 excess packs</strong> of Artemether. Transfer dispatch can resolve Lagos Central deficit in 45 mins.
+        </p>
+</div>
+</div>
+</section>
+<!-- Multi-Location Inventory Explorer Section -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-space-xl">
+<!-- Filter & Search Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md mb-space-md">
+<!-- Facility Switcher Pills -->
+<div class="flex flex-wrap items-center gap-1.5" id="facility-pills">
+<button class="pill-btn px-3 py-1.5 rounded-lg font-label-sm text-label-sm bg-surface-container-highest text-on-surface font-semibold transition-colors" onclick="filterByFacility('all', this)">
+          All Facilities (5)
+        </button>
+<button class="pill-btn px-3 py-1.5 rounded-lg font-label-sm text-label-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant transition-colors" onclick="filterByFacility('Lagos Central', this)">
+          Lagos Central #4
+        </button>
+<button class="pill-btn px-3 py-1.5 rounded-lg font-label-sm text-label-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant transition-colors" onclick="filterByFacility('Ikeja General', this)">
+          Ikeja General
+        </button>
+<button class="pill-btn px-3 py-1.5 rounded-lg font-label-sm text-label-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant transition-colors" onclick="filterByFacility('Surulere', this)">
+          Surulere Health Center
+        </button>
+<button class="pill-btn px-3 py-1.5 rounded-lg font-label-sm text-label-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant transition-colors" onclick="filterByFacility('Onitsha', this)">
+          Onitsha Depot
+        </button>
+</div>
+<!-- Search & Category Filters -->
+<div class="flex items-center gap-space-sm flex-1 max-w-md">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container transition-colors" id="stock-search" placeholder="Search medicine, batch, or ingredient..." type="text"/>
+</div>
+<select class="bg-surface-container-low text-on-surface rounded-lg px-2.5 py-2 font-label-sm text-label-sm focus:outline-none" id="category-filter">
+<option value="all">All Categories</option>
+<option value="Antimalarials">Antimalarials</option>
+<option value="Antibiotics">Antibiotics</option>
+<option value="Chronic Care">Chronic Care</option>
+<option value="Pediatrics">Pediatrics</option>
+</select>
+</div>
+</div>
+<!-- Cross-Facility Inventory Table -->
+<div class="overflow-x-auto -mx-space-lg px-space-lg">
+<table class="w-full text-left border-collapse" id="multi-inventory-table">
+<thead>
+<tr class="text-secondary font-label-sm text-label-sm border-b border-outline-variant/30 pb-3">
+<th class="py-space-sm pr-space-md font-medium tracking-wide">Medicine &amp; Strength</th>
+<th class="py-space-sm px-space-md font-medium tracking-wide">Stocked Location &amp; Shelf</th>
+<th class="py-space-sm px-space-md font-medium tracking-wide">Current Level &amp; Buffer</th>
+<th class="py-space-sm px-space-md font-medium tracking-wide">Depletion Runout</th>
+<th class="py-space-sm px-space-md font-medium tracking-wide">Inter-Facility Recommendation</th>
+<th class="py-space-sm pl-space-md text-right font-medium tracking-wide">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-md text-body-md">
+<!-- Item 1: Artemether at Lagos Central (Critical) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group facility-row" data-category="Antimalarials" data-facility="Lagos Central">
+<td class="py-4 pr-space-md">
+<div class="font-headline-sm text-headline-sm text-on-surface font-normal">Artemether Suspension 60ml</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Artemether 180mg / 60ml • Pediatric Oral</div>
+<div class="text-[11px] text-secondary font-mono mt-0.5">#ART-2024-09</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="font-label-md text-label-md text-on-surface font-medium">Lagos Central #4</div>
+<div class="font-body-sm text-body-sm text-secondary">Dispensary Shelf D-02</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center justify-between text-label-sm text-[13px] mb-1">
+<span class="text-primary font-bold">14 bottles</span>
+<span class="text-secondary text-[11px]">Min: 50</span>
+</div>
+<div class="w-32 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[28%] rounded-full"></div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-1.5 text-primary font-medium text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+<span>1.8 Days Left</span>
+</div>
+<div class="font-body-sm text-body-sm text-secondary">Depletion: Thursday AM</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="inline-flex items-center gap-1 text-[12px] font-label-sm text-primary bg-primary/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">move_up</span>
+<span>Surplus at Ikeja (+80) -&gt; Transfer</span>
+</div>
+</td>
+<td class="py-4 pl-space-md text-right">
+<button class="px-3 py-1.5 bg-primary-container text-on-primary hover:bg-primary rounded-lg font-label-sm text-label-sm transition-colors shadow-sm" onclick="prepTransfer('Artemether Suspension 60ml', 'Ikeja General Pharmacy', 'Lagos Central #4', 35)">
+                Initiate Transfer
+              </button>
+</td>
+</tr>
+<!-- Item 2: Amoxicillin at Surulere (Low Refill) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group facility-row" data-category="Antibiotics" data-facility="Surulere">
+<td class="py-4 pr-space-md">
+<div class="font-headline-sm text-headline-sm text-on-surface font-normal">Amoxicillin 500mg Caps</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Amoxicillin Trihydrate • 10x10 Blister</div>
+<div class="text-[11px] text-secondary font-mono mt-0.5">#AMX-882-K</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="font-label-md text-label-md text-on-surface font-medium">Surulere Health Center</div>
+<div class="font-body-sm text-body-sm text-secondary">Bay A-14 (Anti-Infective)</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center justify-between text-label-sm text-[13px] mb-1">
+<span class="text-primary font-bold">42 strips</span>
+<span class="text-secondary text-[11px]">Min: 90</span>
+</div>
+<div class="w-32 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[46%] rounded-full"></div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-1.5 text-primary font-medium text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+<span>2.5 Days Left</span>
+</div>
+<div class="font-body-sm text-body-sm text-secondary">Runout: Friday Noon</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="inline-flex items-center gap-1 text-[12px] font-label-sm text-secondary bg-surface-container px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+<span>PO #CMS-984 dispatched from Oshodi</span>
+</div>
+</td>
+<td class="py-4 pl-space-md text-right">
+<button class="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg font-label-sm text-label-sm transition-colors" onclick="prepTransfer('Amoxicillin 500mg Caps', 'Onitsha Regional Depot', 'Surulere Health Center', 50)">
+                Request Restock
+              </button>
+</td>
+</tr>
+<!-- Item 3: Lonart DS at Ikeja (Surplus Location) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group facility-row" data-category="Antimalarials" data-facility="Ikeja General">
+<td class="py-4 pr-space-md">
+<div class="font-headline-sm text-headline-sm text-on-surface font-normal">Lonart DS 80/480mg</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Artemether / Lumefantrine • Blister Pack</div>
+<div class="text-[11px] text-secondary font-mono mt-0.5">#LN-2024-884A</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="font-label-md text-label-md text-on-surface font-medium">Ikeja General Pharmacy</div>
+<div class="font-body-sm text-body-sm text-secondary">Central Storage Unit B-04</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center justify-between text-label-sm text-[13px] mb-1">
+<span class="text-tertiary font-bold">260 packs</span>
+<span class="text-secondary text-[11px]">Min: 80</span>
+</div>
+<div class="w-32 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[95%] rounded-full"></div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-1.5 text-tertiary font-medium text-label-md">
+<span class="w-2 h-2 rounded-full bg-tertiary inline-block"></span>
+<span>38 Days Stable</span>
+</div>
+<div class="font-body-sm text-body-sm text-secondary">Surplus buffer (+120 packs)</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="inline-flex items-center gap-1 text-[12px] font-label-sm text-tertiary bg-tertiary/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">outbox</span>
+<span>Donor candidate for VI Health Post</span>
+</div>
+</td>
+<td class="py-4 pl-space-md text-right">
+<button class="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg font-label-sm text-label-sm transition-colors" onclick="prepTransfer('Lonart DS 80/480mg', 'Ikeja General Pharmacy', 'Victoria Island Health Post', 40)">
+                Rebalance Out
+              </button>
+</td>
+</tr>
+<!-- Item 4: Glucophage at Lagos Central (Stable) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group facility-row" data-category="Chronic Care" data-facility="Lagos Central">
+<td class="py-4 pr-space-md">
+<div class="font-headline-sm text-headline-sm text-on-surface font-normal">Glucophage (Metformin) 500mg</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Metformin HCl • Chronic Care Dispensation</div>
+<div class="text-[11px] text-secondary font-mono mt-0.5">#MET-441-A</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="font-label-md text-label-md text-on-surface font-medium">Lagos Central #4</div>
+<div class="font-body-sm text-body-sm text-secondary">Shelf C-09 (Metabolic)</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center justify-between text-label-sm text-[13px] mb-1">
+<span class="text-on-surface font-medium">220 packs</span>
+<span class="text-secondary text-[11px]">Min: 100</span>
+</div>
+<div class="w-32 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[75%] rounded-full"></div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-1.5 text-tertiary font-medium text-label-md">
+<span class="w-2 h-2 rounded-full bg-tertiary inline-block"></span>
+<span>35 Days Stable</span>
+</div>
+<div class="font-body-sm text-body-sm text-secondary">Prescription demand standard</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="inline-flex items-center gap-1 text-[12px] font-label-sm text-secondary bg-surface-container px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+<span>Optimal local equilibrium</span>
+</div>
+</td>
+<td class="py-4 pl-space-md text-right">
+<button class="px-3 py-1.5 bg-surface-container-low hover:bg-surface-container text-on-surface rounded-lg font-label-sm text-label-sm transition-colors" onclick="prepDirectDispense('Glucophage (Metformin) 500mg')">
+                Dispense
+              </button>
+</td>
+</tr>
+<!-- Item 5: Paracetamol Syrup at Onitsha Depot -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group facility-row" data-category="Pediatrics" data-facility="Onitsha">
+<td class="py-4 pr-space-md">
+<div class="font-headline-sm text-headline-sm text-on-surface font-normal">Paracetamol Syrup 100ml</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">120mg / 5ml • Pediatric Liquid Suspension</div>
+<div class="text-[11px] text-secondary font-mono mt-0.5">#PCM-110-D</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="font-label-md text-label-md text-on-surface font-medium">Onitsha Zonal Depot</div>
+<div class="font-body-sm text-body-sm text-secondary">Warehouse Pallet 3-East</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center justify-between text-label-sm text-[13px] mb-1">
+<span class="text-tertiary font-bold">1,240 bottles</span>
+<span class="text-secondary text-[11px]">Bulk Depot</span>
+</div>
+<div class="w-32 bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[100%] rounded-full"></div>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="flex items-center gap-1.5 text-tertiary font-medium text-label-md">
+<span class="w-2 h-2 rounded-full bg-tertiary inline-block"></span>
+<span>90+ Days Buffer</span>
+</div>
+<div class="font-body-sm text-body-sm text-secondary">Bulk zonal distribution readiness</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="inline-flex items-center gap-1 text-[12px] font-label-sm text-tertiary bg-tertiary/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">flight_takeoff</span>
+<span>Ready for dispatch request</span>
+</div>
+</td>
+<td class="py-4 pl-space-md text-right">
+<button class="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg font-label-sm text-label-sm transition-colors" onclick="prepTransfer('Paracetamol Syrup 100ml', 'Onitsha Zonal Depot', 'Lagos Central #4', 120)">
+                Dispatch Transfer
+              </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Inter-Facility Rebalancing & Movement Console -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-space-xl" id="rebalance-console">
+<!-- Left: Inter-Facility Transfer Form (7 cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex items-center justify-between pb-space-sm mb-space-md border-b border-outline-variant/30">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface font-normal">Inter-Facility Rebalancing Console</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Reallocate clinical inventory directly between licensed sites without waiting for port or central depot queues.</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[24px]">sync_alt</span>
+</div>
+<form class="space-y-space-md" id="transfer-form" onsubmit="handleTransferSubmit(event)">
+<!-- Facility Transfer Corridors -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-1.5">Source (Donor Facility)</label>
+<select class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md py-2.5 px-3 rounded-lg focus:outline-none focus:bg-surface-container appearance-none pr-8" id="source-facility">
+<option value="Ikeja General Pharmacy">Ikeja General Pharmacy (Surplus Hub)</option>
+<option value="Onitsha Zonal Depot">Onitsha Zonal Depot (Bulk Reserve)</option>
+<option value="Surulere Health Center">Surulere Health Center</option>
+<option value="Lagos Central #4">Lagos Central #4</option>
+<option value="Victoria Island Health Post">Victoria Island Health Post</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-1.5">Destination (Recipient Facility)</label>
+<select class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md py-2.5 px-3 rounded-lg focus:outline-none focus:bg-surface-container appearance-none pr-8" id="dest-facility">
+<option value="Lagos Central #4">Lagos Central #4 (Critical Shortage &lt;48h)</option>
+<option value="Victoria Island Health Post">Victoria Island Health Post</option>
+<option value="Surulere Health Center">Surulere Health Center</option>
+<option value="Ikeja General Pharmacy">Ikeja General Pharmacy</option>
+</select>
+</div>
+</div>
+<!-- Medication Selection -->
+<div>
+<label class="block font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-1.5">Pharmaceutical Line &amp; Batch Code</label>
+<select class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md py-2.5 px-3 rounded-lg focus:outline-none focus:bg-surface-container appearance-none pr-8" id="transfer-med">
+<option value="Artemether Suspension 60ml (#ART-2024-09)">Artemether Suspension 60ml — #ART-2024-09 (Ikeja Excess Buffer: +80)</option>
+<option value="Lonart DS 80/480mg (#LN-2024-884A)">Lonart DS 80/480mg — #LN-2024-884A (260 on shelf at Ikeja)</option>
+<option value="Amoxicillin 500mg Caps (#AMX-882-K)">Amoxicillin 500mg Caps — #AMX-882-K (Depot reserve)</option>
+<option value="Paracetamol Syrup 100ml (#PCM-110-D)">Paracetamol Syrup 100ml — #PCM-110-D (Onitsha depot)</option>
+</select>
+</div>
+<!-- Quantity & Transport Type -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div>
+<label class="block font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-1.5">Units to Transfer</label>
+<div class="flex items-center">
+<button class="w-10 h-10 bg-surface-container rounded-l-lg text-on-surface hover:bg-surface-container-high flex items-center justify-center font-bold text-lg select-none" onclick="adjustTransferQty(-5)" type="button">-</button>
+<input class="w-full text-center py-2 bg-surface-container-low font-headline-sm text-headline-sm text-on-surface focus:outline-none" id="transfer-qty" max="500" min="1" type="number" value="35"/>
+<button class="w-10 h-10 bg-surface-container rounded-r-lg text-on-surface hover:bg-surface-container-high flex items-center justify-center font-bold text-lg select-none" onclick="adjustTransferQty(5)" type="button">+</button>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-1.5">Transit Dispatch Method</label>
+<select class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md py-2.5 px-3 rounded-lg focus:outline-none focus:bg-surface-container appearance-none pr-8" id="dispatch-method">
+<option value="Express Cold-Chain Bike Courier">Express Motor Courier (Est. 45 mins)</option>
+<option value="Scheduled Daily Circuit Van">Scheduled Zonal Circuit Van (16:00 WAT)</option>
+<option value="Emergency Medical Response">Emergency Medical Response Vehicle</option>
+</select>
+</div>
+</div>
+<!-- Authorizing Pharmacist PIN & Submit -->
+<div class="pt-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-1.5 text-body-sm text-secondary">
+<span class="material-symbols-outlined text-[16px] text-tertiary">verified_user</span>
+<span>NAFDAC Custody Transfer Token auto-generated</span>
+</div>
+<button class="px-space-lg py-space-sm bg-primary-container hover:bg-primary text-on-primary rounded-lg font-label-md text-label-md font-medium shadow-sm transition-colors flex items-center justify-center gap-space-xs" type="submit">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span>Authorize Dispatch</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Right: Active Rebalance Manifest & Live Logistics Pipeline (5 cols) -->
+<div class="lg:col-span-5 bg-surface-container-low p-space-lg rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-space-xs">
+<span class="material-symbols-outlined text-[16px]">route</span>
+<span>Live Inter-Site Manifests</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-normal mb-space-xs">
+          Active Dispatches
+        </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-space-md">
+          Real-time GPS and temperature logs for inter-facility transfers moving between zonal facilities.
+        </p>
+<!-- Manifest Cards -->
+<div class="space-y-space-sm">
+<div class="p-space-sm bg-surface-container-lowest rounded-lg border-l-4 border-primary flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">directions_bike</span>
+<div class="text-on-surface flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold">Manifest #TX-8819</span>
+<span class="text-[11px] font-label-sm text-primary font-bold bg-primary/10 px-1.5 py-0.5 rounded">ETA 25m</span>
+</div>
+<div class="font-body-sm text-[13px] text-on-surface mt-0.5">35x Artemether 60ml • Ikeja → Lagos Central</div>
+<div class="font-body-sm text-[11px] text-secondary mt-1 flex items-center gap-2">
+<span>Courier: J. Adeleke (Bike 04)</span>
+<span>Temp: 21.4°C</span>
+</div>
+</div>
+</div>
+<div class="p-space-sm bg-surface-container-lowest rounded-lg border-l-4 border-tertiary flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-tertiary text-[20px] mt-0.5">check_circle</span>
+<div class="text-on-surface flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold">Manifest #TX-8802</span>
+<span class="text-[11px] font-label-sm text-tertiary font-bold bg-tertiary/10 px-1.5 py-0.5 rounded">Delivered</span>
+</div>
+<div class="font-body-sm text-[13px] text-on-surface mt-0.5">50x Lonart DS • Onitsha → Surulere CHC</div>
+<div class="font-body-sm text-[11px] text-secondary mt-1">
+<span>Verified by Pharm. T. Alabi at 13:10 WAT</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md bg-surface-container rounded-lg p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">headset_mic</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Depot Dispatch Radio: Channel 12</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-mono">SYS-SYNC: OK</span>
+</div>
+</div>
+</section>
+<!-- Live Notification Toast -->
+<div class="fixed bottom-6 right-6 bg-inverse-surface text-inverse-on-surface px-space-md py-space-sm rounded-lg shadow-xl font-label-md text-label-md flex items-center gap-space-xs transition-opacity duration-300 opacity-0 pointer-events-none z-50" id="transfer-toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]">verified</span>
+<span id="transfer-toast-text">Inter-facility dispatch authorized.</span>
+</div>
+<!-- Embedded Inline Interactive Controller Scripts -->
+<script>
+    function showTransferToast(msg) {
+      const toast = document.getElementById('transfer-toast');
+      const text = document.getElementById('transfer-toast-text');
+      text.textContent = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3400);
+    }
+
+    function adjustTransferQty(delta) {
+      const input = document.getElementById('transfer-qty');
+      let val = parseInt(input.value) || 1;
+      val = Math.max(1, val + delta);
+      input.value = val;
+    }
+
+    function selectFacility(facId, cardEl) {
+      document.querySelectorAll('.facility-card').forEach(c => {
+        c.classList.remove('border-primary', 'bg-surface-container-lowest', 'shadow-sm');
+        c.classList.add('border-outline-variant/40', 'bg-surface-container-low');
+      });
+      cardEl.classList.remove('border-outline-variant/40', 'bg-surface-container-low');
+      cardEl.classList.add('border-primary', 'bg-surface-container-lowest', 'shadow-sm');
+      
+      let matchName = '';
+      if (facId === 'lagos-central') matchName = 'Lagos Central';
+      else if (facId === 'ikeja-general') matchName = 'Ikeja General';
+      else if (facId === 'surulere-chc') matchName = 'Surulere';
+      else if (facId === 'onitsha-depot') matchName = 'Onitsha';
+      else matchName = '';
+      
+      if (matchName) {
+        filterByFacility(matchName, null);
+      } else {
+        filterByFacility('all', null);
+      }
+    }
+
+    function filterByFacility(facilityName, btnEl) {
+      if (btnEl) {
+        document.querySelectorAll('#facility-pills .pill-btn').forEach(btn => {
+          btn.classList.remove('bg-surface-container-highest', 'text-on-surface', 'font-semibold');
+          btn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+        btnEl.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        btnEl.classList.add('bg-surface-container-highest', 'text-on-surface', 'font-semibold');
+      }
+
+      const rows = document.querySelectorAll('#multi-inventory-table tbody tr.facility-row');
+      rows.forEach(r => {
+        const rowFac = r.getAttribute('data-facility');
+        if (facilityName === 'all' || rowFac.includes(facilityName)) {
+          r.style.display = '';
+        } else {
+          r.style.display = 'none';
+        }
+      });
+    }
+
+    function prepTransfer(med, src, dest, qty) {
+      document.getElementById('source-facility').value = src;
+      document.getElementById('dest-facility').value = dest;
+      document.getElementById('transfer-qty').value = qty;
+      document.getElementById('rebalance-console').scrollIntoView({behavior: 'smooth'});
+      showTransferToast(`Transfer configured: ${qty} units of ${med} from ${src} to ${dest}`);
+    }
+
+    function prepDirectDispense(med) {
+      showTransferToast(`Dispense verified for ${med} at current workstation.`);
+    }
+
+    function handleTransferSubmit(e) {
+      e.preventDefault();
+      const med = document.getElementById('transfer-med').value.split('—')[0].trim();
+      const src = document.getElementById('source-facility').value;
+      const dest = document.getElementById('dest-facility').value;
+      const qty = document.getElementById('transfer-qty').value;
+      const method = document.getElementById('dispatch-method').value;
+
+      showTransferToast(`Dispatched: ${qty} units of ${med} (${src} ➔ ${dest}) via ${method}`);
+    }
+
+    // Search & Category Filtering
+    document.getElementById('stock-search').addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#multi-inventory-table tbody tr');
+      rows.forEach(r => {
+        const txt = r.innerText.toLowerCase();
+        r.style.display = txt.includes(q) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('category-filter').addEventListener('change', function(e) {
+      const cat = e.target.value;
+      const rows = document.querySelectorAll('#multi-inventory-table tbody tr.facility-row');
+      rows.forEach(r => {
+        const rowCat = r.getAttribute('data-category');
+        if (cat === 'all' || rowCat === cat) {
+          r.style.display = '';
+        } else {
+          r.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface-variant"><div class="max-w-[1200px] mx-auto px-margin py-space-xl"><div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-lg pb-space-xl"><div class="space-y-space-sm"><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded bg-primary-container text-on-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">shield</span></div><span class="font-headline-sm text-headline-sm text-on-surface font-semibold">PharmaTrace</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Federal Republic of Nigeria community healthcare initiative upholding verified drug lineage, dispensary traceability, and pharmaceutical integrity across public health corridors.</p><div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span>National Registry Connected</span></div></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Regulatory Portals</h4><ul class="space-y-space-sm font-body-sm text-body-sm"><li class="hover:text-primary transition-colors cursor-pointer">NAFDAC Green Book Registry</li><li class="hover:text-primary transition-colors cursor-pointer">Pharmacists Council of Nigeria (PCN)</li><li class="hover:text-primary transition-colors cursor-pointer">Community Dispensary Standards</li><li class="hover:text-primary transition-colors cursor-pointer">Batch Recall Gazette (Q3 2024)</li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Patient &amp; Community Care</h4><ul class="space-y-space-sm font-body-sm text-body-sm"><li class="hover:text-primary transition-colors cursor-pointer">Pediatric Formulation Safety</li><li class="hover:text-primary transition-colors cursor-pointer">Cold-Chain Verification Manual</li><li class="hover:text-primary transition-colors cursor-pointer">Adverse Drug Reaction Dispatch</li><li class="hover:text-primary transition-colors cursor-pointer">Community Pharmacy Directory</li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Counterfeit Incident Helpline</h4><p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Report suspicious packaging, altered lot numbers, or adverse health reactions immediately:</p><div class="p-space-sm rounded-lg bg-surface-container space-y-1 mb-space-sm"><div class="font-label-md text-label-md text-primary font-semibold">Toll-Free National: 0800-NAFDAC-VERIFY</div><div class="font-label-sm text-label-sm text-secondary">SMS Shortcode: 38353 (Toll-Free All Networks)</div></div><span class="font-label-sm text-label-sm text-tertiary">Operated in coordination with PCN Enforcement.</span></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm"><p>© 2024 PharmaTrace Nigeria. Maintained under the Federal Ministry of Health &amp; NDPR Framework.</p><div class="flex items-center gap-space-lg"><span class="hover:text-on-surface cursor-pointer">NDPR Compliance</span><span class="hover:text-on-surface cursor-pointer">Data Privacy Dossier</span><span class="hover:text-on-surface cursor-pointer">Accessibility Commitment</span><span class="hover:text-on-surface cursor-pointer">Terms of Dispensing</span></div></div></div></footer></body></html>

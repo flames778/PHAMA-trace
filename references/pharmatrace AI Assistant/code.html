@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-primary":"#ffffff","inverse-surface":"#342f2e","background":"#fff8f6","tertiary-fixed-dim":"#afcdbc","primary-fixed-dim":"#ffb59f","on-primary-container":"#ffeae4","primary":"#943414","on-secondary-container":"#765e47","on-background":"#1e1b1a","surface-container-lowest":"#ffffff","on-tertiary":"#ffffff","surface-container-high":"#efe6e4","tertiary":"#3e594b","surface-dim":"#e1d8d6","surface-bright":"#fff8f6","on-tertiary-fixed-variant":"#324c3f","on-surface-variant":"#57423c","error":"#ba1a1a","on-tertiary-fixed":"#052015","secondary":"#725a43","on-primary-fixed-variant":"#822708","on-surface":"#1e1b1a","on-error":"#ffffff","tertiary-container":"#567263","on-error-container":"#93000a","on-secondary-fixed-variant":"#58422d","error-container":"#ffdad6","on-tertiary-container":"#d7f5e3","secondary-fixed":"#feddc0","surface-container-low":"#fbf2f0","surface-variant":"#e9e1df","outline-variant":"#dec0b8","inverse-on-surface":"#f8efed","surface-tint":"#a23e1e","primary-fixed":"#ffdbd1","primary-container":"#b44b2a","surface":"#fff8f6","on-secondary-fixed":"#291806","on-primary-fixed":"#3a0a00","tertiary-fixed":"#cbead7","outline":"#8a726b","surface-container":"#f5ecea","secondary-container":"#fbdabd","surface-container-highest":"#e9e1df","on-secondary":"#ffffff","inverse-primary":"#ffb59f","secondary-fixed-dim":"#e0c1a5"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-md":"1rem","gutter-sm":"1rem","space-sm":"0.5rem","space-xl":"2.5rem","space-xs":"0.25rem","margin":"2rem","margin-mobile":"1.25rem","space-lg":"1.5rem","gutter":"1.5rem","gutter-lg":"2rem"},"fontFamily":{"label-md":["Plus Jakarta Sans"],"headline-xl":["Newsreader"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"headline-sm":["Newsreader"],"headline-lg":["Newsreader"],"headline-md":["Newsreader"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Newsreader"],"body-lg":["Plus Jakarta Sans"],"headline-xl-mobile":["Newsreader"]},"fontSize":{"label-md":["14px",{"lineHeight":"20px","fontWeight":"500"}],"headline-xl":["44px",{"lineHeight":"52px","letterSpacing":"-0.02em","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"20px","fontWeight":"400"}],"body-md":["15px",{"lineHeight":"24px","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"500"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"headline-xl-mobile":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"400"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-surface-container-high py-1 px-margin"><div class="max-w-[1240px] mx-auto flex items-center justify-between text-on-surface-variant"><div class="flex items-center gap-space-sm font-label-sm text-label-sm"><span class="material-symbols-outlined text-tertiary text-[14px]">verified</span><span>Verified against NAFDAC Safety Registry (Demonstration Environment) • Community Verification Protocol</span></div><div class="hidden md:flex items-center gap-space-md font-label-sm text-label-sm"><span>Federal Ministry of Health &amp; Social Welfare</span><span class="text-outline-variant">•</span><span class="text-tertiary">System Operative: Sentinel v4.2</span></div></div></div><div class="h-20 max-w-[1240px] mx-auto px-margin flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-[0_1px_4px_rgba(0,0,0,0.08)]"><span class="material-symbols-outlined text-[24px]">local_pharmacy</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-primary font-semibold leading-none">PharmaTrace</span><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mt-0.5">COMMUNITY CARE &amp; MEDICINE VERIFICATION</span></div></div><nav class="hidden xl:flex items-center gap-1 ml-4" data-active-classes="bg-surface-container-highest text-on-surface font-semibold rounded-lg"><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="home" href="#">Home</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="verify-medicine" href="#">Verify Medicine</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="household-cabinet" href="#">Household Cabinet</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="clinic-stock" href="#">Clinic Stock</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="safety-map" href="#">Safety Map</a><a aria-current="page" class="px-3 py-2 transition-colors bg-surface-container-highest text-on-surface font-semibold rounded-lg" data-path="clinical-ai-guide" href="#">Clinical AI Guide</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden sm:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. Amina Eze</span><span class="font-label-sm text-label-sm text-secondary leading-tight">Lagos Community Clinic #4</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1 max-w-[1240px] mx-auto px-margin py-space-md"><div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
+<!-- Left / Center: Main Chat Workspace -->
+<div class="lg:col-span-8 flex flex-col bg-surface-container-low rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden">
+<!-- Conversation Header Bar -->
+<div class="p-space-md border-b border-outline-variant/30 bg-surface-container-lowest/80 flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm flex-wrap">
+<!-- Model Selector Dropdown -->
+<div class="relative">
+<select class="appearance-none bg-surface-container text-on-surface font-label-md text-label-md pl-3 pr-8 py-1.5 rounded-lg border border-outline-variant/40 focus:outline-none focus:border-primary cursor-pointer shadow-sm" id="model-select">
+<option selected="">PharmaTrace Clinical 3.5 (Fast Clinical Triage)</option>
+<option>BioClinical-Expert 70B (Deep Pharmacokinetics &amp; Interactions)</option>
+<option>NAFDAC Regulatory Specialist (Recall &amp; Lot Registry)</option>
+</select>
+<span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[16px]">expand_more</span>
+</div>
+<!-- Connection Status -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-fixed/60 text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-medium">Ready · Encrypted</span>
+</div>
+</div>
+<!-- Conversation Controls -->
+<div class="flex items-center gap-space-xs">
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="resetChat()" title="Start a new consultation session" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">add_circle</span>
+<span>New Consultation</span>
+</button>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="window.print()" title="Export current chat transcript" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">ios_share</span>
+<span>Export Summary</span>
+</button>
+</div>
+</div>
+<!-- Message Stream -->
+<div class="p-space-lg space-y-space-lg max-h-[660px] overflow-y-auto" id="message-container">
+<!-- Assistant Initial Greeting -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex-1 max-w-2xl bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-outline-variant/30 text-on-surface">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="font-label-md text-label-md font-semibold text-primary">PharmaTrace Clinical Guide</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-secondary">System Initialized</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+            Good day, Dr. Eze. Ask any clinical question, upload a medicine packaging photo to inspect, or attach items from your active dispensary or household cabinet.
+          </p>
+<div class="mt-space-sm pt-space-xs flex flex-wrap gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary mr-1">Quick prompts:</span>
+<button class="text-left font-label-sm text-label-sm px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer" onclick="populatePrompt('How to adjust Lonart DS administration with low-fat food intake?')" type="button">Lonart DS fat pairing</button>
+<button class="text-left font-label-sm text-label-sm px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer" onclick="populatePrompt('Check interaction between Metformin 500mg and Artemether/Lumefantrine')" type="button">Metformin co-administration</button>
+<button class="text-left font-label-sm text-label-sm px-2.5 py-1 rounded-md bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer" onclick="populatePrompt('Detect signs of repackaged counterfeit Augmentin bottles')" type="button">Augmentin packaging check</button>
+</div>
+</div>
+</div>
+<!-- User Message with Attached Drug Card & Photo -->
+<div class="flex items-start justify-end gap-space-sm">
+<div class="flex-1 max-w-2xl bg-primary text-on-primary rounded-xl p-space-md shadow-sm">
+<!-- Attached Cabinet Item Card -->
+<div class="bg-primary-container/70 border border-on-primary/20 rounded-lg p-space-sm mb-space-sm flex items-center justify-between text-on-primary-container">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-on-primary">medication</span>
+<div>
+<div class="font-label-md text-label-md font-semibold leading-tight text-on-primary">Lonart DS 80/480mg</div>
+<div class="font-label-sm text-label-sm text-on-primary/80">Batch #LN-2024-884A • Artemether &amp; Lumefantrine</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest/20 text-on-primary font-label-sm text-label-sm">Dispensed from Lagos Central</span>
+</div>
+<!-- Attached Photo Thumbnail indicator -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/15 text-on-primary font-label-sm text-label-sm mb-space-xs">
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+<span>Attached: lonart_blister_seal_macro.jpg (Verified NAFDAC Hologram intact)</span>
+</div>
+<p class="font-body-md text-body-md leading-relaxed mt-1">
+            Can this dose be co-administered with Metformin in an elderly patient with mild renal impairment? Also please verify dietary fat requirements.
+          </p>
+<div class="text-right mt-1.5 font-label-sm text-label-sm text-on-primary/75">10:42 AM · Lagos Clinic #4</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+</div>
+<!-- AI Response Card with structured clinical takeaways -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex-1 max-w-2xl bg-surface-container-lowest rounded-xl p-space-lg shadow-sm border border-outline-variant/30 text-on-surface space-y-space-md">
+<!-- AI Header -->
+<div class="flex items-center justify-between pb-space-xs border-b border-outline-variant/20">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md font-semibold text-primary">PharmaTrace Clinical 3.5</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">Triage Level: Safe with Food Protocol</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">PCN Monograph Corroborated</span>
+</div>
+<!-- Section: Pharmacokinetic interaction -->
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary text-[20px]">check_circle</span>
+<span>1. Pharmacokinetic Interaction Summary</span>
+</h4>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              No significant cytochrome P450 competitive inhibition exists between <strong class="text-on-surface">Artemether/Lumefantrine</strong> and <strong class="text-on-surface">Metformin</strong>. Metformin is excreted unchanged through active renal tubular filtration (OCT2 pathways), while Lumefantrine undergoes extensive hepatic CYP3A4 clearance.
+            </p>
+<div class="mt-2 text-body-sm text-body-sm text-secondary">
+<strong class="text-on-surface font-medium">Spacing recommendation:</strong> In mild renal impairment (eGFR 45–59 mL/min), space Metformin 2 hours apart from the antimalarial dose to reduce transient gastrointestinal discomfort (nausea/loose stools).
+            </div>
+</div>
+<!-- Section: Critical Bioavailability Note (Highlight Box) -->
+<div class="p-space-md rounded-lg bg-surface-container-low border-l-4 border-primary space-y-1.5">
+<div class="flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+<span>Vital Dietary Fat &amp; Bioavailability Requirement</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+              Lumefantrine absorption is strictly lipid-dependent. Administering on a completely empty stomach yields <strong class="text-primary font-semibold">&lt; 15% bioavailability</strong>, risking therapeutic failure and parasitemia recrudescence.
+            </p>
+<div class="flex items-center gap-space-sm p-2 bg-surface-container-lowest rounded border border-outline-variant/30 text-on-surface-variant text-body-sm">
+<span class="material-symbols-outlined text-tertiary text-[18px]">verified</span>
+<span>Taking with <strong>whole milk, fermented milk drink (nono), or a meal containing at least 1.6g lipid</strong> elevates bioavailability to <strong>&gt; 90%</strong>.</span>
+</div>
+</div>
+<!-- Actionable Follow-up Pill Buttons -->
+<div class="pt-space-xs flex flex-wrap items-center gap-space-xs border-t border-outline-variant/20">
+<span class="font-label-sm text-label-sm text-secondary mr-1">Actionable next steps:</span>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm hover:bg-secondary-fixed-dim transition-colors cursor-pointer" onclick="showFeedbackToast('Dosage note logged to Abigail\'s cabinet profile.')" type="button">
+<span class="material-symbols-outlined text-[15px]">inventory_2</span>
+<span>Add dosage note to Abigail's cabinet</span>
+</button>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors cursor-pointer" onclick="showFeedbackToast('eGFR 45-59 mL/min requires no dosage alteration for Lonart DS.')" type="button">
+<span class="material-symbols-outlined text-[15px]">calculate</span>
+<span>Check renal adjustment threshold</span>
+</button>
+<button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors cursor-pointer" onclick="showFeedbackToast('Clinical interaction memo copied to clipboard.')" type="button">
+<span class="material-symbols-outlined text-[15px]">content_copy</span>
+<span>Copy clinical memo</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Input Bar (Primary Tool) -->
+<div class="p-space-md border-t border-outline-variant/30 bg-surface-container-lowest">
+<!-- Attached Cabinet Item Quick Strip / Chips (if attached) -->
+<div class="flex items-center gap-space-xs mb-space-xs text-label-sm text-label-sm text-secondary overflow-x-auto pb-1" id="attached-pills-bar">
+<span class="font-medium">Active References:</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-tertiary">check_circle</span>
+<span>Lonart DS (Cabinet #884A)</span>
+<button class="hover:text-error ml-0.5 cursor-pointer" onclick="this.parentElement.remove()" title="Remove" type="button"><span class="material-symbols-outlined text-[12px]">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-secondary">medication</span>
+<span>Glucophage 500mg</span>
+<button class="hover:text-error ml-0.5 cursor-pointer" onclick="this.parentElement.remove()" title="Remove" type="button"><span class="material-symbols-outlined text-[12px]">close</span></button>
+</span>
+</div>
+<!-- Chat Input Area -->
+<div class="relative">
+<textarea class="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-on-surface placeholder:text-outline font-body-md text-body-md focus:bg-surface-container-lowest focus:border-primary focus:outline-none transition-all shadow-inner resize-none min-h-[92px]" id="chat-input" placeholder="Ask about dosage, contraindications, packaging anomalies, or drug interactions..."></textarea>
+<div class="flex flex-wrap items-center justify-between gap-space-xs mt-2">
+<!-- Quick Action Buttons: Attachments & Model Toggle -->
+<div class="flex items-center gap-space-xs flex-wrap">
+<!-- Attach Cabinet Item -->
+<div class="relative">
+<button class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" id="btn-attach-cabinet" onclick="toggleCabinetDrawer()" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">inventory_2</span>
+<span>Attach from Cabinet / Stock</span>
+</button>
+<!-- Cabinet Quick Dropdown -->
+<div class="hidden absolute bottom-full left-0 mb-2 w-72 bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/40 p-space-sm z-30" id="cabinet-popover">
+<div class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider mb-2 px-1">Quick Add Prescriptions</div>
+<div class="space-y-1">
+<button class="w-full text-left p-2 rounded-lg hover:bg-surface-container flex items-center justify-between font-label-md text-label-md text-on-surface transition-colors cursor-pointer" onclick="addReferenceItem('Lonart DS 80/480mg', 'Antimalarial')" type="button">
+<div>
+<div class="font-semibold text-primary">Lonart DS 80/480mg</div>
+<div class="text-[11px] text-secondary">Batch LN-2024-884A</div>
+</div>
+<span class="material-symbols-outlined text-[18px] text-outline">add</span>
+</button>
+<button class="w-full text-left p-2 rounded-lg hover:bg-surface-container flex items-center justify-between font-label-md text-label-md text-on-surface transition-colors cursor-pointer" onclick="addReferenceItem('Glucophage 500mg', 'Metformin')" type="button">
+<div>
+<div class="font-semibold text-on-surface">Glucophage 500mg</div>
+<div class="text-[11px] text-secondary">Lot GL-9921-LAG</div>
+</div>
+<span class="material-symbols-outlined text-[18px] text-outline">add</span>
+</button>
+<button class="w-full text-left p-2 rounded-lg hover:bg-surface-container flex items-center justify-between font-label-md text-label-md text-on-surface transition-colors cursor-pointer" onclick="addReferenceItem('Norvasc 5mg', 'Amlodipine')" type="button">
+<div>
+<div class="font-semibold text-on-surface">Norvasc 5mg</div>
+<div class="text-[11px] text-secondary">Lot NV-4102-KDL</div>
+</div>
+<span class="material-symbols-outlined text-[18px] text-outline">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Upload Drug Photo -->
+<button class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm transition-colors cursor-pointer" onclick="simulateUpload()" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">add_a_photo</span>
+<span>Upload Drug Photo</span>
+</button>
+<!-- Quick Mode Pill -->
+<span class="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Monograph Mode</span>
+</span>
+</div>
+<!-- Send Button in Rich Terracotta -->
+<button class="inline-flex items-center gap-space-xs bg-primary-container text-on-primary hover:bg-primary px-space-lg py-2 rounded-lg font-label-md text-label-md shadow-sm transition-all cursor-pointer font-medium ml-auto" id="btn-send-message" onclick="sendMessage()" type="button">
+<span>Send Consultation</span>
+<span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Clean Context & Quick Actions -->
+<div class="lg:col-span-4 space-y-gutter">
+<!-- Active Clinical Context Widget -->
+<aside class="bg-surface-container-low rounded-xl p-space-lg shadow-sm border border-outline-variant/30">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-1.5 font-headline-sm text-headline-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]">medical_services</span>
+<span>Active Clinical Context</span>
+</div>
+<span class="text-tertiary font-label-sm text-label-sm font-semibold">2 Active</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mb-space-md">
+        Items automatically ingested into conversation memory for real-time interaction screening.
+      </p>
+<div class="space-y-space-xs">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/30 shadow-sm">
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">medication</span>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface">Lonart DS (Antimalarial)</div>
+<div class="text-body-sm text-body-sm text-secondary">Artemether 80mg / Lumefantrine 480mg</div>
+<div class="text-[11px] text-tertiary font-medium mt-0.5">NAFDAC Reg: 04-8933 · Verified Batch</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-tertiary text-[18px]">verified</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/30 shadow-sm">
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">pill</span>
+<div>
+<div class="font-label-md text-label-md font-semibold text-on-surface">Glucophage 500mg (Metformin)</div>
+<div class="text-body-sm text-body-sm text-secondary">Oral Biguanide · Daily 1000mg</div>
+<div class="text-[11px] text-outline font-medium mt-0.5">Household Cabinet: Abigail Eze</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px]">folder_shared</span>
+</div>
+</div>
+</aside>
+<!-- Recent Consultations / Threads -->
+<aside class="bg-surface-container-low rounded-xl p-space-lg shadow-sm border border-outline-variant/30">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-1.5 font-headline-sm text-headline-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[20px]">history</span>
+<span>Recent Consultations</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Today</span>
+</div>
+<div class="space-y-space-xs font-body-sm text-body-sm">
+<button class="w-full text-left p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/20 transition-colors flex items-center justify-between cursor-pointer" onclick="populatePrompt('Review pediatric artemether dispersible dosage and vomit redosing protocol')" type="button">
+<div class="truncate pr-2">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">Pediatric Artemether Dosing &amp; Vomit Protocol</div>
+<div class="text-[12px] text-secondary">Infant 6kg · Coartem Dispersible</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]">chevron_right</span>
+</button>
+<button class="w-full text-left p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/20 transition-colors flex items-center justify-between cursor-pointer" onclick="populatePrompt('Compare Augmentin vs Amoxicillin for stage 3 renal impairment')" type="button">
+<div class="truncate pr-2">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">Augmentin vs Amoxicillin Renal Adjustment</div>
+<div class="text-[12px] text-secondary">Clavulanate accumulation risk</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]">chevron_right</span>
+</button>
+<button class="w-full text-left p-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/20 transition-colors flex items-center justify-between cursor-pointer" onclick="populatePrompt('What is the maximum room temperature stability duration for oxytocin ampoules after cold-chain breach?')" type="button">
+<div class="truncate pr-2">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">Cold-chain excursion stability: Oxytocin</div>
+<div class="text-[12px] text-secondary">Ambient 32°C Lagos transit assessment</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]">chevron_right</span>
+</button>
+</div>
+</aside>
+<!-- Suggested Inquiries -->
+<aside class="bg-surface-container-low rounded-xl p-space-lg shadow-sm border border-outline-variant/30">
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-space-xs flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">tips_and_updates</span>
+<span>Suggested Inquiries</span>
+</h4>
+<p class="font-body-sm text-body-sm text-secondary mb-space-sm">
+        Click to insert validated clinical queries:
+      </p>
+<div class="flex flex-col gap-1.5">
+<button class="w-full text-left px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm transition-colors flex items-center justify-between cursor-pointer" onclick="populatePrompt('Provide detailed food pairing guidelines for Artemether / Lumefantrine absorption in community settings.')" type="button">
+<span>Food pairing guidelines for Artemether</span>
+<span class="material-symbols-outlined text-[14px] text-primary">arrow_forward</span>
+</button>
+<button class="w-full text-left px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm transition-colors flex items-center justify-between cursor-pointer" onclick="populatePrompt('What clinical strategies minimize Metformin GI tolerance issues in geriatric patients?')" type="button">
+<span>Metformin GI tolerance in seniors</span>
+<span class="material-symbols-outlined text-[14px] text-primary">arrow_forward</span>
+</button>
+<button class="w-full text-left px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm transition-colors flex items-center justify-between cursor-pointer" onclick="populatePrompt('How to spot altered NAFDAC holograms and blister pack micro-embossing on counterfeit antimalarials?')" type="button">
+<span>How to spot altered NAFDAC holograms</span>
+<span class="material-symbols-outlined text-[14px] text-primary">arrow_forward</span>
+</button>
+</div>
+</aside>
+<!-- Non-intrusive Decision-Support Disclaimer -->
+<div class="p-space-md rounded-xl bg-surface-container-high/60 border border-outline-variant/30 text-secondary">
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm font-semibold text-on-surface mb-1">
+<span class="material-symbols-outlined text-tertiary text-[16px]">verified_user</span>
+<span>Clinical Decision Support Standard</span>
+</div>
+<p class="font-body-sm text-body-sm leading-relaxed text-on-surface-variant">
+        PharmaTrace AI synthesis assists licensed healthcare practitioners and dispensary officers. Clinical outputs cross-reference the Pharmacists Council of Nigeria (PCN) Formulary &amp; WHO Treatment Guidelines to augment, never replace, direct professional judgment.
+      </p>
+</div>
+<!-- Dynamic Action Toast Container -->
+<div class="hidden p-space-md rounded-xl bg-tertiary text-on-tertiary shadow-lg transition-all duration-300" id="feedback-toast">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md font-semibold" id="feedback-toast-text">Action Completed</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function populatePrompt(text) {
+    const input = document.getElementById('chat-input');
+    if (input) {
+      input.value = text;
+      input.focus();
+    }
+  }
+
+  function toggleCabinetDrawer() {
+    const popover = document.getElementById('cabinet-popover');
+    if (popover) {
+      popover.classList.toggle('hidden');
+    }
+  }
+
+  function addReferenceItem(name, type) {
+    const bar = document.getElementById('attached-pills-bar');
+    if (bar) {
+      const chip = document.createElement('span');
+      chip.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface';
+      chip.innerHTML = `<span class="material-symbols-outlined text-[14px] text-tertiary">medication</span>
+                        <span>${name}</span>
+                        <button type="button" class="hover:text-error ml-0.5 cursor-pointer" onclick="this.parentElement.remove()"><span class="material-symbols-outlined text-[12px]">close</span></button>`;
+      bar.appendChild(chip);
+    }
+    toggleCabinetDrawer();
+    showFeedbackToast(`Attached ${name} to consultation context`);
+  }
+
+  function simulateUpload() {
+    showFeedbackToast('Packaging photo uploaded: verified authentic lot seal');
+    const input = document.getElementById('chat-input');
+    if (input && !input.value.includes('photo')) {
+      input.value = (input.value ? input.value + ' ' : '') + '[Attached: Packaging photo inspected - verify batch microprint]';
+    }
+  }
+
+  function showFeedbackToast(msg) {
+    const toast = document.getElementById('feedback-toast');
+    const textEl = document.getElementById('feedback-toast-text');
+    if (toast && textEl) {
+      textEl.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+  }
+
+  function resetChat() {
+    showFeedbackToast('Starting clean consultation session');
+    const input = document.getElementById('chat-input');
+    if (input) input.value = '';
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const container = document.getElementById('message-container');
+    if (!input || !input.value.trim() || !container) return;
+
+    const query = input.value.trim();
+
+    // Render User Message
+    const userDiv = document.createElement('div');
+    userDiv.className = 'flex items-start justify-end gap-space-sm';
+    userDiv.innerHTML = `
+      <div class="flex-1 max-w-2xl bg-primary text-on-primary rounded-xl p-space-md shadow-sm">
+        <p class="font-body-md text-body-md leading-relaxed">${escapeHtml(query)}</p>
+        <div class="text-right mt-1.5 font-label-sm text-label-sm text-on-primary/75">Just now · Lagos Clinic #4</div>
+      </div>
+      <div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+        <span class="material-symbols-outlined text-[18px]">person</span>
+      </div>
+    `;
+    container.appendChild(userDiv);
+    input.value = '';
+    container.scrollTop = container.scrollHeight;
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiDiv = document.createElement('div');
+      aiDiv.className = 'flex items-start gap-space-sm';
+      aiDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+          <span class="material-symbols-outlined text-[18px]">smart_toy</span>
+        </div>
+        <div class="flex-1 max-w-2xl bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-outline-variant/30 text-on-surface space-y-space-sm">
+          <div class="flex items-center justify-between pb-1 border-b border-outline-variant/20">
+            <span class="font-label-md text-label-md font-semibold text-primary">PharmaTrace Clinical 3.5</span>
+            <span class="font-label-sm text-label-sm text-tertiary font-medium">Just now</span>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface leading-relaxed">
+            Clinical evaluation recorded for: <em>"${escapeHtml(query)}"</em>. Patient records and NAFDAC Monograph confirm safety parameters are aligned with standard dispensary protocols.
+          </p>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <button type="button" class="font-label-sm text-label-sm px-2.5 py-1 rounded bg-surface-container text-on-surface hover:bg-surface-container-high" onclick="showFeedbackToast('Appended note to patient clinical chart')">
+              Log to patient chart
+            </button>
+            <button type="button" class="font-label-sm text-label-sm px-2.5 py-1 rounded bg-surface-container text-on-surface hover:bg-surface-container-high" onclick="showFeedbackToast('Copied summary to clipboard')">
+              Copy note
+            </button>
+          </div>
+        </div>
+      `;
+      container.appendChild(aiDiv);
+      container.scrollTop = container.scrollHeight;
+    }, 600);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+  }
+</script></main><footer class="w-full bg-surface-container-low text-on-surface-variant"><div class="max-w-[1240px] mx-auto px-margin py-space-xl"><div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-lg pb-space-xl"><div class="space-y-space-sm"><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded bg-primary-container text-on-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">shield</span></div><span class="font-headline-sm text-headline-sm text-on-surface font-semibold">PharmaTrace</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Federal Republic of Nigeria community healthcare initiative upholding verified drug lineage, dispensary traceability, and pharmaceutical integrity across public health corridors.</p><div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span>National Registry Connected</span></div></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Regulatory Portals</h4><ul class="space-y-space-sm font-body-sm text-body-sm"><li class="hover:text-primary transition-colors cursor-pointer">NAFDAC Green Book Registry</li><li class="hover:text-primary transition-colors cursor-pointer">Pharmacists Council of Nigeria (PCN)</li><li class="hover:text-primary transition-colors cursor-pointer">Community Dispensary Standards</li><li class="hover:text-primary transition-colors cursor-pointer">Batch Recall Gazette (Q3 2024)</li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Patient &amp; Community Care</h4><ul class="space-y-space-sm font-body-sm text-body-sm"><li class="hover:text-primary transition-colors cursor-pointer">Pediatric Formulation Safety</li><li class="hover:text-primary transition-colors cursor-pointer">Cold-Chain Verification Manual</li><li class="hover:text-primary transition-colors cursor-pointer">Adverse Drug Reaction Dispatch</li><li class="hover:text-primary transition-colors cursor-pointer">Community Pharmacy Directory</li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Counterfeit Incident Helpline</h4><p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Report suspicious packaging, altered lot numbers, or adverse health reactions immediately:</p><div class="p-space-sm rounded-lg bg-surface-container space-y-1 mb-space-sm"><div class="font-label-md text-label-md text-primary font-semibold">Toll-Free National: 0800-NAFDAC-VERIFY</div><div class="font-label-sm text-label-sm text-secondary">SMS Shortcode: 38353 (Toll-Free All Networks)</div></div><span class="font-label-sm text-label-sm text-tertiary">Operated in coordination with PCN Enforcement.</span></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm"><p>© 2024 PharmaTrace Nigeria. Maintained under the Federal Ministry of Health &amp; NDPR Framework.</p><div class="flex items-center gap-space-lg"><span class="hover:text-on-surface cursor-pointer">NDPR Compliance</span><span class="hover:text-on-surface cursor-pointer">Data Privacy Dossier</span><span class="hover:text-on-surface cursor-pointer">Accessibility Commitment</span><span class="hover:text-on-surface cursor-pointer">Terms of Dispensing</span></div></div></div></footer></body></html>

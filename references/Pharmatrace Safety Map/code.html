@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-primary":"#ffffff","inverse-surface":"#342f2e","background":"#fff8f6","tertiary-fixed-dim":"#afcdbc","primary-fixed-dim":"#ffb59f","on-primary-container":"#ffeae4","primary":"#943414","on-secondary-container":"#765e47","on-background":"#1e1b1a","surface-container-lowest":"#ffffff","on-tertiary":"#ffffff","surface-container-high":"#efe6e4","tertiary":"#3e594b","surface-dim":"#e1d8d6","surface-bright":"#fff8f6","on-tertiary-fixed-variant":"#324c3f","on-surface-variant":"#57423c","error":"#ba1a1a","on-tertiary-fixed":"#052015","secondary":"#725a43","on-primary-fixed-variant":"#822708","on-surface":"#1e1b1a","on-error":"#ffffff","tertiary-container":"#567263","on-error-container":"#93000a","on-secondary-fixed-variant":"#58422d","error-container":"#ffdad6","on-tertiary-container":"#d7f5e3","secondary-fixed":"#feddc0","surface-container-low":"#fbf2f0","surface-variant":"#e9e1df","outline-variant":"#dec0b8","inverse-on-surface":"#f8efed","surface-tint":"#a23e1e","primary-fixed":"#ffdbd1","primary-container":"#b44b2a","surface":"#fff8f6","on-secondary-fixed":"#291806","on-primary-fixed":"#3a0a00","tertiary-fixed":"#cbead7","outline":"#8a726b","surface-container":"#f5ecea","secondary-container":"#fbdabd","surface-container-highest":"#e9e1df","on-secondary":"#ffffff","inverse-primary":"#ffb59f","secondary-fixed-dim":"#e0c1a5"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-md":"1rem","gutter-sm":"1rem","space-sm":"0.5rem","space-xl":"2.5rem","space-xs":"0.25rem","margin":"2rem","margin-mobile":"1.25rem","space-lg":"1.5rem","gutter":"1.5rem","gutter-lg":"2rem"},"fontFamily":{"label-md":["Plus Jakarta Sans"],"headline-xl":["Newsreader"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"headline-sm":["Newsreader"],"headline-lg":["Newsreader"],"headline-md":["Newsreader"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Newsreader"],"body-lg":["Plus Jakarta Sans"],"headline-xl-mobile":["Newsreader"]},"fontSize":{"label-md":["14px",{"lineHeight":"20px","fontWeight":"500"}],"headline-xl":["44px",{"lineHeight":"52px","letterSpacing":"-0.02em","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"20px","fontWeight":"400"}],"body-md":["15px",{"lineHeight":"24px","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"500"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"500"}],"label-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.01em","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"headline-xl-mobile":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"400"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-surface-container-high py-1 px-margin"><div class="max-w-[1200px] mx-auto flex items-center justify-between text-on-surface-variant"><div class="flex items-center gap-space-sm font-label-sm text-label-sm"><span class="material-symbols-outlined text-tertiary text-[14px]">verified</span><span>Verified against NAFDAC Safety Registry (Demonstration Environment) • Community Verification Protocol</span></div><div class="hidden md:flex items-center gap-space-md font-label-sm text-label-sm"><span>Federal Ministry of Health &amp; Social Welfare</span><span class="text-outline-variant">•</span><span class="text-tertiary">System Operative: Sentinel v4.2</span></div></div></div><div class="h-20 max-w-[1200px] mx-auto px-margin flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-[0_1px_4px_rgba(0,0,0,0.08)]"><span class="material-symbols-outlined text-[24px]">local_pharmacy</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-primary font-semibold leading-none">PharmaTrace</span><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mt-0.5">COMMUNITY CARE &amp; MEDICINE VERIFICATION</span></div></div><nav class="hidden xl:flex items-center gap-1 ml-4" data-active-classes="bg-surface-container-highest text-on-surface font-semibold rounded-lg"><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="home" href="#">Home</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="verify-medicine" href="#">Verify Medicine</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="household-cabinet" href="#">Household Cabinet</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="clinic-stock" href="#">Clinic Stock</a><a aria-current="page" class="px-3 py-2 transition-colors bg-surface-container-highest text-on-surface font-semibold rounded-lg" data-path="safety-map" href="#">Safety Map</a><a class="px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" data-path="clinical-ai-guide" href="#">Clinical AI Guide</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden sm:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. Amina Eze</span><span class="font-label-sm text-label-sm text-secondary leading-tight">Lagos Community Clinic #4</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1 max-w-[1200px] mx-auto px-margin py-space-xl"><div class="flex flex-col w-full space-y-space-xl">
+<!-- Top Banner & Filters -->
+<section class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+<div class="max-w-2xl space-y-space-xs">
+<div class="inline-flex items-center gap-space-xs text-primary font-label-sm text-label-sm tracking-wider uppercase">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>Epidemiological Drug Quality Intelligence</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">
+        National Medicine Safety &amp; Falsification Map
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        Real-time surveillance of intercepted counterfeit batches, diverted packaging, and verified clinic reporting across sovereign corridors.
+      </p>
+</div>
+<!-- Controls -->
+<div class="flex flex-wrap items-center gap-space-sm bg-surface-container-low p-1.5 rounded-xl shadow-sm">
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest text-on-surface font-label-md text-label-md pl-space-md pr-8 py-2 rounded-lg cursor-pointer focus:outline-none" id="regionSelect">
+<option value="all">All Nigeria</option>
+<option selected="" value="lagos">Lagos State</option>
+<option value="kano">Kano State</option>
+<option value="anambra">Onitsha / Anambra</option>
+<option value="ph">Port Harcourt</option>
+</select>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant absolute right-2.5 top-2.5 pointer-events-none">expand_more</span>
+</div>
+<div class="flex bg-surface-container-high p-0.5 rounded-lg text-on-surface-variant font-label-md text-label-md">
+<button class="time-filter-btn px-3 py-1.5 rounded bg-surface-container-lowest text-primary font-semibold shadow-sm transition-all" data-period="30" type="button">Past 30 Days</button>
+<button class="time-filter-btn px-3 py-1.5 rounded hover:text-on-surface transition-all" data-period="7" type="button">Past 7 Days</button>
+</div>
+<button class="inline-flex items-center gap-space-xs bg-primary text-on-primary px-space-md py-2 rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+<span>Export Report</span>
+</button>
+</div>
+</section>
+<!-- Metric Strip -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Interceptions</span>
+<span class="material-symbols-outlined text-primary text-[20px]">shield_with_heart</span>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-lg text-headline-lg text-primary font-normal leading-none">19 Batches</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">Neutralized before dispensary distribution</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Verified Dispensaries</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]">domain_verification</span>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-lg text-headline-lg text-on-surface font-normal leading-none">1,420 Clinics</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">Active authentication sentinels reporting</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">High-Alert Corridor</span>
+<span class="material-symbols-outlined text-primary text-[20px]">crisis_alert</span>
+</div>
+<div class="mt-space-md">
+<div class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Lagos &amp; Onitsha Axis</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5">Heightened packaging diversion detected</p>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary uppercase tracking-wider">Lineage Integrity</span>
+<span class="font-label-sm text-label-sm text-tertiary font-semibold">97.8% Clear</span>
+</div>
+<div class="mt-space-md space-y-2">
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full rounded-full transition-all duration-500" style="width: 97.8%;"></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">42,910 units verified genuine this month</p>
+</div>
+</div>
+</section>
+<!-- Main Surveillance Workspace -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
+<!-- Left Column: Interactive Map Canvas -->
+<div class="lg:col-span-7 flex flex-col space-y-space-md">
+<div class="relative bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden p-space-md">
+<!-- Floating Header Controls on Map -->
+<div class="flex items-center justify-between mb-space-sm z-10 relative">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">map</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Territorial Sentinel Map</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-low px-2 py-1 rounded-lg">
+<button class="w-6 h-6 flex items-center justify-center rounded text-on-surface hover:bg-surface-container-high transition-colors" id="zoomIn" title="Zoom In">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-6 h-6 flex items-center justify-center rounded text-on-surface hover:bg-surface-container-high transition-colors" id="zoomOut" title="Zoom Out">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-6 h-6 flex items-center justify-center rounded text-on-surface hover:bg-surface-container-high transition-colors" id="resetMap" title="Reset View">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+</button>
+</div>
+</div>
+<!-- Styled Vector Map Container -->
+<div class="relative w-full h-[480px] bg-surface-container-low rounded-lg overflow-hidden flex items-center justify-center" id="mapViewport">
+<!-- Ambient Background Watermark of Nigeria Boundaries -->
+<svg class="w-full h-full object-cover transition-transform duration-500" id="mapSvg" viewbox="0 0 800 620" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="subtleGrid" patternunits="userSpaceOnUse" width="40">
+<path class="text-outline-variant/20" d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+</pattern>
+</defs>
+<rect fill="url(#subtleGrid)" height="620" width="800"></rect>
+<!-- Nigeria Simplified Vector Silhouette -->
+<path class="transition-colors hover:fill-surface-variant" d="M120 280 C130 200, 210 130, 310 120 C420 110, 520 80, 610 140 C680 180, 710 260, 690 340 C670 410, 600 440, 560 470 C510 510, 440 540, 390 530 C340 520, 270 540, 200 520 C140 500, 110 440, 105 380 Z" fill="#efe6e4" stroke="#dec0b8" stroke-width="1.5"></path>
+<!-- State Regional Sub-boundaries -->
+<path d="M 200 520 C 220 460, 260 410, 310 400" fill="none" stroke="#dec0b8" stroke-dasharray="3,3" stroke-width="1"></path>
+<path d="M 310 400 C 370 390, 430 420, 470 410" fill="none" stroke="#dec0b8" stroke-dasharray="3,3" stroke-width="1"></path>
+<path d="M 310 120 C 340 230, 380 310, 390 530" fill="none" stroke="#dec0b8" stroke-dasharray="3,3" stroke-width="1"></path>
+<!-- Major Supply Corridors -->
+<path d="M 175 485 Q 260 430, 380 435" fill="none" opacity="0.4" stroke="#725a43" stroke-dasharray="6,4" stroke-linecap="round" stroke-width="2"></path>
+<path d="M 380 435 Q 410 330, 480 200" fill="none" opacity="0.4" stroke="#725a43" stroke-dasharray="6,4" stroke-linecap="round" stroke-width="2"></path>
+<!-- Verified Dispensary Pins (Soft Botanical Green) -->
+<g class="clinic-nodes">
+<!-- Ibadan -->
+<circle class="hover:r-7 transition-all cursor-pointer" cx="210" cy="450" fill="#3e594b" r="5"></circle>
+<!-- Abuja FCT -->
+<circle class="hover:r-8 transition-all cursor-pointer" cx="380" cy="330" fill="#3e594b" r="6"></circle>
+<circle cx="385" cy="325" fill="#ffffff" opacity="0.8" r="3"></circle>
+<!-- Kano Central -->
+<circle class="hover:r-8 transition-all cursor-pointer" cx="480" cy="180" fill="#3e594b" r="6"></circle>
+<!-- Kaduna -->
+<circle class="hover:r-7 transition-all cursor-pointer" cx="420" cy="240" fill="#3e594b" r="5"></circle>
+<!-- Jos -->
+<circle class="hover:r-7 transition-all cursor-pointer" cx="490" cy="290" fill="#3e594b" r="5"></circle>
+<!-- Port Harcourt General -->
+<circle class="hover:r-8 transition-all cursor-pointer" cx="380" cy="510" fill="#3e594b" r="6"></circle>
+<!-- Enugu -->
+<circle class="hover:r-7 transition-all cursor-pointer" cx="420" cy="440" fill="#3e594b" r="5"></circle>
+<!-- Calabar -->
+<circle class="hover:r-7 transition-all cursor-pointer" cx="460" cy="490" fill="#3e594b" r="5"></circle>
+<!-- Ilorin -->
+<circle class="hover:r-7 transition-all cursor-pointer" cx="260" cy="380" fill="#3e594b" r="5"></circle>
+</g>
+<!-- Counterfeit Incident / Interception Pins (Terracotta Flare) -->
+<g class="alert-nodes">
+<!-- Onitsha Bridgehead Alert -->
+<circle class="animate-ping" cx="380" cy="445" fill="#943414" opacity="0.15" r="14"></circle>
+<circle cx="380" cy="445" fill="#943414" r="7"></circle>
+<circle cx="380" cy="445" fill="#ffffff" r="3"></circle>
+<!-- Aba Commercial Hub Alert -->
+<circle cx="400" cy="480" fill="#943414" r="6"></circle>
+<circle cx="400" cy="480" fill="#ffffff" r="2.5"></circle>
+<!-- Lagos Island Hotspot Alert -->
+<circle class="animate-ping" cx="175" cy="485" fill="#943414" opacity="0.2" r="18"></circle>
+<circle class="cursor-pointer" cx="175" cy="485" fill="#943414" r="9" stroke="#ffffff" stroke-width="2"></circle>
+<circle cx="175" cy="485" fill="#ffffff" r="3.5"></circle>
+</g>
+<!-- Geographic labels -->
+<text fill="#725a43" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" x="365" y="315">Abuja FCT</text>
+<text fill="#725a43" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" x="465" y="165">Kano</text>
+<text fill="#725a43" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" x="365" y="530">Port Harcourt</text>
+<text fill="#943414" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" x="388" y="440">Onitsha</text>
+<text fill="#943414" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" x="120" y="490">Lagos</text>
+</svg>
+<!-- Interactive Hover Card Anchored at Lagos Island Cluster -->
+<div class="absolute left-8 bottom-8 max-w-sm bg-surface-container-lowest p-space-md rounded-xl shadow-lg transition-all duration-300" id="lagosCard">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Interception Quarantine</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">14 May 2025</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mt-space-xs">
+              Lagos Island Dispensary Cluster
+            </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs leading-relaxed">
+<strong>Augmentin 625mg</strong> (Batch #AUG-9910-K2) intercepted with counterfeit foil blister imprint and unverified PCN distributor tag.
+            </p>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="inline-flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Seized • 640 Packs</span>
+</span>
+<button class="text-primary hover:underline font-semibold" onclick="alert('Dossier Dossier #AUG-9910: Under forensic analysis at NAFDAC Yaba Lab.')">
+                View Dossier →
+              </button>
+</div>
+</div>
+</div>
+<!-- Legend Ribbon -->
+<div class="mt-space-sm pt-space-xs flex flex-wrap items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-space-md flex-wrap">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-tertiary inline-block"></span>
+<span>Verified Dispensing Clinic</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+<span>Intercepted Counterfeit Event</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-4 h-0.5 bg-secondary inline-block"></span>
+<span>Monitored Supply Corridor</span>
+</div>
+</div>
+<span class="text-secondary">Coordinates sync: PCN National Hub</span>
+</div>
+</div>
+<!-- Quick Regional Insight -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<div class="space-y-0.5">
+<div class="font-label-md text-label-md text-on-surface font-semibold">Corridor Precaution: Lagos-Onitsha Commercial Transit</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Secondary packaging relabeling identified in open wholesale markets. Clinics are mandated to verify physical scratch codes and holographic seals prior to stocking pediatric suspensions and broad-spectrum antibiotics.
+          </p>
+</div>
+</div>
+</div>
+<!-- Right Column: Live Incident & Verification Log -->
+<div class="lg:col-span-5 flex flex-col space-y-space-md">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex items-center justify-between pb-space-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-medium">Real-Time Surveillance Stream</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Validated forensic reports from field clinics</p>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Live Feed</span>
+</span>
+</div>
+<!-- Incident Timeline Entries -->
+<div class="space-y-space-md mt-space-md">
+<!-- Item 1: Counterfeit Alert -->
+<div class="bg-surface-container-low p-space-md rounded-lg space-y-1.5 transition-colors hover:bg-surface-container">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="text-primary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">report</span>
+                Counterfeit Intercepted
+              </span>
+<span>Today, 09:42 WAT</span>
+</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">
+              Augmentin 625mg • Batch #AUG-9910-K2
+            </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">location_on</span>
+<span>Lagos Island Market Dispensary Hub</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-1 leading-relaxed">
+              Tampered foil blister seal and invalid registry check code. Intercepted and quarantined before patient dispensation.
+            </p>
+</div>
+<!-- Item 2: Cleared Genuine -->
+<div class="bg-surface-container-low p-space-md rounded-lg space-y-1.5 transition-colors hover:bg-surface-container">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="text-tertiary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">verified</span>
+                Genuine Lineage Verified
+              </span>
+<span>Yesterday, 16:15 WAT</span>
+</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">
+              Lonart DS Tablets • Batch #LN-2024-884A
+            </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">location_on</span>
+<span>Ikeja General Hospital Pharmacy</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-1 leading-relaxed">
+              Consignment batch of 120 packs verified against manufacturer GS1 digital ledger. Clear for dispensation.
+            </p>
+</div>
+<!-- Item 3: Damaged Packaging / Degraded -->
+<div class="bg-surface-container-low p-space-md rounded-lg space-y-1.5 transition-colors hover:bg-surface-container">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="text-secondary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">warning</span>
+                Physical Packaging Degraded
+              </span>
+<span>13 May 2025, 11:20 WAT</span>
+</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">
+              Coartem 20/120 • Batch #CT-2023-410
+            </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">location_on</span>
+<span>Surulere Primary Health Clinic</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-1 leading-relaxed">
+              Active ingredients genuine but secondary cartons degraded by regional humidity exposure. Withdrawn for safe disposal.
+            </p>
+</div>
+<!-- Item 4: Cleared Genuine -->
+<div class="bg-surface-container-low p-space-md rounded-lg space-y-1.5 transition-colors hover:bg-surface-container">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="text-tertiary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">verified</span>
+                Genuine Lineage Verified
+              </span>
+<span>12 May 2025, 14:05 WAT</span>
+</div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">
+              Glucophage 500mg • Batch #GL-4019-LOS
+            </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">location_on</span>
+<span>Victoria Island Health Center</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-1 leading-relaxed">
+              Routine dispensary inventory check completed. Authenticity match confirmed across all distribution markers.
+            </p>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-space-lg pt-space-md">
+<button class="w-full py-3 px-space-md bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-lg font-label-md text-label-md font-semibold flex items-center justify-center gap-space-xs transition-colors" onclick="openSuspiciousReportModal()" type="button">
+<span class="material-symbols-outlined text-primary text-[20px]">add_alert</span>
+<span>Report Suspicious Drug Pack</span>
+</button>
+<div class="text-center mt-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Anonymous reporting supported under Public Health Act 2021</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Contextual Modal (Simulated Action for Reporting) -->
+<div class="hidden fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4" id="reportModal">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-xl shadow-xl p-space-xl space-y-space-md relative">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Field Incident Form</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-1">Report Suspicious Packaging</h3>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg" onclick="closeSuspiciousReportModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<form class="space-y-space-md" id="reportForm" onsubmit="handleFormSubmit(event)">
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface">Medication Brand / Formulation</label>
+<input class="w-full px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Amoxil 500mg, Artesunate Injc." required="" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface">Batch / Lot Number</label>
+<input class="w-full px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. BTH-8820" required="" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface">Dispensary or Location</label>
+<input class="w-full px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Onitsha Main Market" required="" type="text"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface">Physical Defect Observed</label>
+<select class="w-full px-space-md py-2 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Blister foil misaligned or smudged</option>
+<option>Hologram missing or peelable</option>
+<option>Tampered outer security carton</option>
+<option>SMS shortcode returned invalid response</option>
+<option>Unusual discoloration / crumbling tablets</option>
+</select>
+</div>
+<div class="pt-space-xs flex items-center justify-end gap-space-sm">
+<button class="px-space-md py-2 text-on-surface font-label-md text-label-md hover:bg-surface-container-low rounded-lg transition-colors" onclick="closeSuspiciousReportModal()" type="button">
+            Cancel
+          </button>
+<button class="px-space-lg py-2 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm transition-colors" type="submit">
+            Submit Incident Dispatch
+          </button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    // Region and Time Filter Controls
+    const regionSelect = document.getElementById('regionSelect');
+    const timeFilterBtns = document.querySelectorAll('.time-filter-btn');
+    const mapSvg = document.getElementById('mapSvg');
+    const lagosCard = document.getElementById('lagosCard');
+
+    let currentScale = 1;
+
+    // Zoom Controls
+    document.getElementById('zoomIn').addEventListener('click', () => {
+      if (currentScale < 1.6) {
+        currentScale += 0.2;
+        mapSvg.style.transform = `scale(${currentScale})`;
+      }
+    });
+
+    document.getElementById('zoomOut').addEventListener('click', () => {
+      if (currentScale > 0.8) {
+        currentScale -= 0.2;
+        mapSvg.style.transform = `scale(${currentScale})`;
+      }
+    });
+
+    document.getElementById('resetMap').addEventListener('click', () => {
+      currentScale = 1;
+      mapSvg.style.transform = `scale(1)`;
+      lagosCard.classList.remove('opacity-0', 'pointer-events-none');
+    });
+
+    // Time Filter Toggle
+    timeFilterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        timeFilterBtns.forEach(b => {
+          b.classList.remove('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-sm');
+          b.classList.add('hover:text-on-surface');
+        });
+        btn.classList.add('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-sm');
+        btn.classList.remove('hover:text-on-surface');
+      });
+    });
+
+    // Region Select focus simulation
+    regionSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'lagos') {
+        lagosCard.classList.remove('opacity-0', 'pointer-events-none');
+        mapSvg.style.transform = `scale(1.2) translate(-20px, -20px)`;
+      } else {
+        lagosCard.classList.add('opacity-0', 'pointer-events-none');
+        mapSvg.style.transform = `scale(1) translate(0px, 0px)`;
+      }
+    });
+
+    // Modal Control
+    function openSuspiciousReportModal() {
+      document.getElementById('reportModal').classList.remove('hidden');
+    }
+
+    function closeSuspiciousReportModal() {
+      document.getElementById('reportModal').classList.add('hidden');
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      alert('Report lodged successfully. PCN Field Enforcement & NAFDAC surveillance dispatched for verification.');
+      closeSuspiciousReportModal();
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface-variant"><div class="max-w-[1200px] mx-auto px-margin py-space-xl"><div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-lg pb-space-xl"><div class="space-y-space-sm"><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded bg-primary-container text-on-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">shield</span></div><span class="font-headline-sm text-headline-sm text-on-surface font-semibold">PharmaTrace</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Federal Republic of Nigeria community healthcare initiative upholding verified drug lineage, dispensary traceability, and pharmaceutical integrity across public health corridors.</p><div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span>National Registry Connected</span></div></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Regulatory Portals</h4><ul class="space-y-space-sm font-body-sm text-body-sm"><li class="hover:text-primary transition-colors cursor-pointer">NAFDAC Green Book Registry</li><li class="hover:text-primary transition-colors cursor-pointer">Pharmacists Council of Nigeria (PCN)</li><li class="hover:text-primary transition-colors cursor-pointer">Community Dispensary Standards</li><li class="hover:text-primary transition-colors cursor-pointer">Batch Recall Gazette (Q3 2024)</li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Patient &amp; Community Care</h4><ul class="space-y-space-sm font-body-sm text-body-sm"><li class="hover:text-primary transition-colors cursor-pointer">Pediatric Formulation Safety</li><li class="hover:text-primary transition-colors cursor-pointer">Cold-Chain Verification Manual</li><li class="hover:text-primary transition-colors cursor-pointer">Adverse Drug Reaction Dispatch</li><li class="hover:text-primary transition-colors cursor-pointer">Community Pharmacy Directory</li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-md">Counterfeit Incident Helpline</h4><p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Report suspicious packaging, altered lot numbers, or adverse health reactions immediately:</p><div class="p-space-sm rounded-lg bg-surface-container space-y-1 mb-space-sm"><div class="font-label-md text-label-md text-primary font-semibold">Toll-Free National: 0800-NAFDAC-VERIFY</div><div class="font-label-sm text-label-sm text-secondary">SMS Shortcode: 38353 (Toll-Free All Networks)</div></div><span class="font-label-sm text-label-sm text-tertiary">Operated in coordination with PCN Enforcement.</span></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm"><p>© 2024 PharmaTrace Nigeria. Maintained under the Federal Ministry of Health &amp; NDPR Framework.</p><div class="flex items-center gap-space-lg"><span class="hover:text-on-surface cursor-pointer">NDPR Compliance</span><span class="hover:text-on-surface cursor-pointer">Data Privacy Dossier</span><span class="hover:text-on-surface cursor-pointer">Accessibility Commitment</span><span class="hover:text-on-surface cursor-pointer">Terms of Dispensing</span></div></div></div></footer></body></html>
