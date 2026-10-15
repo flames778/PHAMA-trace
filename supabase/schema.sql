@@ -73,6 +73,7 @@ create table if not exists batches (
 );
 
 create index if not exists batches_code_idx on batches (batch_code);
+create index if not exists batches_product_idx on batches (product_id);
 create index if not exists batches_status_idx on batches (status);
 
 -- ------------------------------------------------------------- custody_events
@@ -176,6 +177,7 @@ create table if not exists scans (
 
 create index if not exists scans_created_idx on scans (created_at desc);
 create index if not exists scans_code_idx on scans (batch_code);
+create index if not exists scans_product_idx on scans (product_id);
 create index if not exists scans_verdict_idx on scans (verdict);
 
 -- Live hotspot rollup used by the regulator dashboard.
