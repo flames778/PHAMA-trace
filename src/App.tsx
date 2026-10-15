@@ -331,22 +331,13 @@ export default function App() {
   })();
 
   return (
-    <Shell mode={state.mode}>
-      <nav className="flex flex-wrap gap-1 border-b border-line">
-        {TABS.map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setTab(id)}
-            className={`relative px-4 py-3 text-[13px] font-medium transition ${
-              tab === id ? "text-teal-300" : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            {label}
-            {tab === id && <span className="absolute inset-x-3 -bottom-px h-0.5 rounded bg-teal-400" />}
-          </button>
-        ))}
-      </nav>
+    <Shell
+      mode={state.mode}
+      siteName={state.scanLocation.name}
+      tabs={TABS}
+      activeTab={tab}
+      onNavigate={setTab}
+    >
       <main className="pt-6">
         {state.degraded && (
           <div className="mb-4 rounded-xl border border-amber-400/25 bg-amber-400/5 px-4 py-3">
@@ -385,32 +376,246 @@ function EmptyVerdict() {
   );
 }
 
-function Shell({ mode, children }: { mode: "local" | "server" | "supabase"; children: React.ReactNode }) {
+function SealMark() {
+  return (
+    <svg
+      width="38"
+      height="38"
+      viewBox="0 0 38 38"
+      role="img"
+      aria-label="PharmaTrace seal"
+      className="shrink-0"
+    >
+      <circle cx="19" cy="19" r="17.5" fill="none" stroke="#b44b2a" strokeWidth="1.6" />
+      <circle
+        cx="19"
+        cy="19"
+        r="14"
+        fill="none"
+        stroke="#b44b2a"
+        strokeWidth="0.8"
+        strokeDasharray="2.5 2"
+        opacity="0.7"
+      />
+      <circle cx="19" cy="19" r="10.5" fill="#b44b2a" opacity="0.12" />
+      <text
+        x="19"
+        y="23.5"
+        textAnchor="middle"
+        fontSize="11"
+        fontWeight="800"
+        fill="#943414"
+        className="font-display"
+      >
+        PT
+      </text>
+    </svg>
+  );
+}
+
+const MODE_BADGE: Record<
+  "local" | "server" | "supabase",
+  { classes: string; label: string }
+> = {
+  supabase: {
+    classes: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
+    label: "Supabase",
+  },
+  server: {
+    classes: "border-cyan-400/40 bg-cyan-400/10 text-cyan-300",
+    label: "Server",
+  },
+  local: {
+    classes: "border-slate-500/30 bg-slate-500/10 text-slate-400",
+    label: "Local mock registry",
+  },
+};
+
+function Shell({
+  mode,
+  siteName,
+  tabs,
+  activeTab,
+  onNavigate,
+  children,
+}: {
+  mode: "local" | "server" | "supabase";
+  siteName: string;
+  tabs: [Tab, string][];
+  activeTab: Tab;
+  onNavigate: (tab: Tab) => void;
+  children: React.ReactNode;
+}) {
+  const badge = MODE_BADGE[mode];
   return (
     <div className="min-h-full">
-      <header className="border-b border-line bg-ink-soft/50">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-teal-400 to-cyan-600 text-[13px] font-black text-teal-950">
-            PT
-          </div>
-          <div>
-            <h1 className="text-[15px] font-bold tracking-tight text-slate-50">PharmaTrace</h1>
-            <div className="text-[11px] text-slate-500">Verify · track · predict · report</div>
-          </div>
-          <span
-            className={`ml-auto rounded-full border px-2.5 py-1 text-[10.5px] font-medium ${
-              mode === "supabase"
-                ? "border-teal-400/40 bg-teal-400/10 text-teal-300"
-                : mode === "server"
-                  ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-300"
-                  : "border-slate-500/30 bg-slate-500/10 text-slate-400"
-            }`}
-          >
-            {mode === "supabase" ? "Supabase" : mode === "server" ? "Server" : "Local mock registry"}
+      <div className="border-b border-line bg-ink-soft">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-0.5 px-5 py-1.5 text-[11px] text-slate-500">
+          <span className="flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" aria-hidden="true" />
+            Demo environment — bundled registry, no regulator connection
           </span>
+          <span className="ml-auto hidden sm:inline">FMOH · PCN protocol</span>
+        </div>
+      </div>
+
+      <header className="border-b border-line bg-ink">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-5 pb-3 pt-4">
+          <SealMark />
+          <div className="min-w-0">
+            <h1 className="font-display text-[22px] font-bold leading-none tracking-tight text-slate-100">
+              PharmaTrace
+            </h1>
+            <p className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Verify · track · predict · report
+            </p>
+          </div>
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <span className="hidden items-center gap-1.5 rounded-full border border-line bg-ink-soft px-2.5 py-1 text-[11px] text-slate-400 md:flex">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <circle cx="12" cy="10" r="2.5" fill="currentColor" />
+              </svg>
+              {siteName}
+            </span>
+            <span
+              className={`rounded-full border px-2.5 py-1 text-[10.5px] font-medium ${badge.classes}`}
+            >
+              {badge.label}
+            </span>
+          </div>
+        </div>
+        <div className="mx-auto max-w-6xl px-5 pb-3">
+          <nav
+            aria-label="Primary"
+            className="flex gap-1 overflow-x-auto rounded-full border border-line bg-ink-soft p-1"
+          >
+            {tabs.map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => onNavigate(id)}
+                aria-current={activeTab === id ? "page" : undefined}
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-semibold transition ${
+                  activeTab === id
+                    ? "bg-teal-500 text-teal-950 shadow-sm"
+                    : "text-slate-500 hover:bg-white/40 hover:text-slate-200"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
         </div>
       </header>
+
       <div className="mx-auto max-w-6xl px-5 pb-16">{children}</div>
+
+      <footer className="border-t border-line bg-ink-soft/60">
+        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <SealMark />
+              <span className="font-display text-[16px] font-bold text-slate-100">PharmaTrace</span>
+            </div>
+            <p className="mt-3 text-[12px] leading-relaxed text-slate-500">
+              Scan a pack, know if it is real, and see where shortages are.
+              This demo runs on a fictional registry — nothing here is
+              connected to NAFDAC or any manufacturer.
+            </p>
+          </div>
+          <nav aria-label="Regulatory portals">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Regulatory portals
+            </h2>
+            <ul className="mt-3 space-y-2 text-[12.5px]">
+              <li>
+                <a
+                  className="text-teal-300 underline-offset-2 hover:underline"
+                  href="https://greenbook.nafdac.gov.ng"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  NAFDAC Greenbook Registry
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-teal-300 underline-offset-2 hover:underline"
+                  href="https://nafdac.gov.ng"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  NAFDAC
+                </a>
+              </li>
+              <li className="text-slate-500">Pharmacists Council of Nigeria (reference)</li>
+              <li className="text-slate-500">Federal Ministry of Health (reference)</li>
+            </ul>
+          </nav>
+          <nav aria-label="Product">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Product
+            </h2>
+            <ul className="mt-3 space-y-2 text-[12.5px]">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigate("verify")}
+                  className="text-teal-300 underline-offset-2 hover:underline"
+                >
+                  Check a pack
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigate("medicines")}
+                  className="text-teal-300 underline-offset-2 hover:underline"
+                >
+                  My medicines
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigate("stock")}
+                  className="text-teal-300 underline-offset-2 hover:underline"
+                >
+                  Stock &amp; forecast
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Suspect a fake?
+            </h2>
+            <div className="mt-3 rounded-xl border border-rose-400/30 bg-rose-400/10 px-3.5 py-3">
+              <p className="text-[12px] leading-relaxed text-rose-200">
+                Run it through the Hotspots tab, then escalate to the
+                regulator — this demo never replaces an official report.
+              </p>
+              <p className="mt-2 font-mono text-[11px] text-rose-200">
+                <a className="underline-offset-2 hover:underline" href="mailto:sf.alert@nafdac.gov.ng">
+                  sf.alert@nafdac.gov.ng
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-line">
+          <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-5 py-4 text-[11px] text-slate-500">
+            <span>© 2026 PharmaTrace demo</span>
+            <span>Mock registry — all products fictional</span>
+            <span className="ml-auto">Decision support, not medical advice</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

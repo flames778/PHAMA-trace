@@ -33,8 +33,12 @@ Supporting (from DESIGN.md, adopt verbatim): container tiers
 `#fbf2f0 → #f5ecea → #efe6e4`, lines `#e4dfd5/#d7d1c5`, umber `#8a7058`
 metadata, amber wash `#fbf3ea`, sage wash `#edf3ee`, error wash `#ffdad6`.
 Radius/implacement rhythm: 8 controls, 16 cards, 24 features, pill chips.
-Type: Newsreader (display only, ≥20px) + Plus Jakarta Sans (UI) + keep the
-existing mono stack for codes/hashes. Icons migrate from emoji to Material
+Type: Bricolage Grotesque (display voice only, ≥20px, optical sizing on) +
+Plus Jakarta Sans (UI) + keep the existing mono stack for codes/hashes.
+Decision 2026-10-15: Bricolage replaces Newsreader as the display face —
+same warmth, far more distinctive, and it retires the generic-serif risk.
+Loaded via Google Fonts CDN link tags (variable opsz 12..96 + wght
+200..800); Jakarta 400–700 alongside it. Icons migrate from emoji to Material
 Symbols Outlined (one icon language; emoji reads as toy next to Newsreader).
 
 Rule: red ink (`terra-deep`) may carry links and warnings; red FILL
@@ -68,13 +72,14 @@ only dark surface left — hence the rebuild, not a repaint.
 - **Brand band.** Seal mark: a drawn roundel evoking a regulator's guilloche
   seal — concentric geometry + "PT" monogram, terracotta line on paper.
   Explicitly NOT the NAFDAC logo or anything that could read as official.
-  Wordmark in Newsreader semibold; descriptor in tracked-out 11px caps.
+  Wordmark in Bricolage semibold; descriptor in tracked-out 11px caps.
   Right cluster: mode badge (live = sage wash, local mock = bone, server =
   sky-neutral, degraded = amber wash + banner below) and a clinic/user chip
   (avatar roundel + name + site, from the mockups' Dr.-jump — ours shows
   scan location + role).
 - **Tab nav.** Pill container on paper-dim; active tab = terracotta fill,
-  white Newsreader? No — Jakarta 600 white text; inactive = ink-soft text,
+  pills: active tab = terra fill with white Jakarta 600 text; inactive tabs
+  sit on the pill container in ink-soft text, brightening on hover.
   hover = container-high. Keyboard focus ring in terra-deep, never removed.
   Order and names unchanged (Verify · Stock & forecast · Hotspots ·
   Registry · My medicines · AI assistant) — mockup names (Household
@@ -100,6 +105,23 @@ failure at boot keeps the current error card, restyled.
 Terracotta `#b44b2a` fill carries white text (verify ratio ≥ 4.5 at ship;
 fallback: deepen to `#943414`). Body links and active-pill text never sit
 below AA. Focus-visible ring 2px terra-deep with 2px offset on all nav.
+
+### Footer (built P0 — rich density, decision 2026-10-15)
+
+Four columns on paper-dim, legal strip beneath, riding the same tokens:
+
+1. **Brand column**: small seal + Bricolage wordmark, then the honesty
+   paragraph ("fictional registry — nothing connected to NAFDAC"), so the
+   disclaimers live in the chrome, not just on one tab.
+2. **Regulatory portals**: real links only (NAFDAC Greenbook, NAFDAC HQ);
+   PCN/FMOH listed as plain reference text, never fake links.
+3. **Product column**: internal tab jumps (Check a pack, My medicines,
+   Stock & forecast) — navigation, not decoration.
+4. **Helpline box** (rose wash): "Suspect a fake?" → Hotspots tab direction
+   + the real `sf.alert@nafdac.gov.ng` mailto. No invented phone numbers,
+   ever.
+5. **Legal strip**: © line, "Mock registry — all products fictional",
+   "Decision support, not medical advice" right-aligned.
 
 ## 3. Fitting the system to OUR text and features
 
@@ -134,19 +156,24 @@ their decision-support notice), steal the shape, keep our facts.
 
 ## 5. Font + icon loading
 
-- Self-host via Fontsource (`@fontsource/newsreader` incl. italic + opsz,
-  `@fontsource/plus-jakarta-sans` 400/500/600/700) — bundled, deterministic,
-  works offline/airplane, no Google CDN at runtime.
-- Newsreader is display-only (headlines, names, verdict word, KPI numerals);
+- Google Fonts CDN link tags in `index.html` (decision 2026-10-15 — the
+  provided links, verbatim): Bricolage Grotesque variable (opsz 12..96,
+  wght 200..800) + Plus Jakarta Sans 400–700, with preconnects. CDN over
+  self-host because the demo always runs online; revisit fontsource if an
+  offline-first build is ever needed.
+- Bricolage is display-only (wordmark, headlines, verdict word, KPI
+  numerals, seal monogram) with `font-optical-sizing: auto`; 20px minimum
+  except the seal monogram drawn at its optical small size.
   Jakarta owns UI text; mono owns codes/hashes/dates. Never set body copy
-  in Newsreader.
-- Material Symbols Outlined via fontsource (or inline SVG set): replace the
-  six emoji icons in MedicineGuide plus all ✕/✓/⚠ glyphs with symbol names
-  (`pill`, `schedule`, `warning`, `block`, `home_storage`, `alarm`…).
+  in Bricolage.
+- Icons: inline SVG for the seal, pin, and status glyphs (offline-safe, no
+  extra webfont this pass). Material Symbols migration deferred — emoji in
+  MedicineGuide stays until the symbol pass, flagged, not forgotten.
 - Anthropic note: their serif/sans pairing (Tiempos/Styrene school) is the
   reason this world feels "wholesome" — both are paid families, so we match
-  the feeling with free analogues (Newsreader ≈ contemporary Times-descended
-  serif; Jakarta ≈ warm humanist sans) at zero licensing cost. No action.
+  the feeling with free faces (Bricolage ≈ characterful contemporary
+  grotesque with optical sizing; Jakarta ≈ warm humanist sans) at zero
+  licensing cost.
 
 ## 6. Pre-step (same pass, before any paint): honesty relabels
 

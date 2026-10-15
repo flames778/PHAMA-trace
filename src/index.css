@@ -1,12 +1,63 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0b1120;
-  --color-ink-soft: #131c31;
-  --color-line: #1e293b;
-  --color-paper: #f1f5f9;
-  --font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Warm Editorial Humanist (see docs/DESIGN_ADOPTION.md + plan §1).
+   * NOTE — historic names, warm values: several tokens below keep their
+   * dark-era names (ink, ink-soft, teal-*, slate-*) so all existing classes
+   * keep working, but their VALUES are the paper system. Do not "fix" the
+   * names without updating every component. */
+  --color-ink: #fff8f6;
+  --color-ink-soft: #f5ecea;
+  --color-line: #e4dfd5;
+  --color-paper: #ffffff;
+
+  /* teal-* ramp now reads as terracotta: all primary actions, active
+   * states and focus rings follow automatically, opacities intact. */
+  --color-teal-200: #9a3d1c;
+  --color-teal-300: #943414;
+  --color-teal-400: #c05a35;
+  --color-teal-500: #b44b2a;
+  --color-teal-950: #ffffff;
+
+  /* emerald-* ramp now reads as sage pine (genuine / ok / health). */
+  --color-emerald-200: #2f4a3e;
+  --color-emerald-300: #405b4d;
+  --color-emerald-400: #567263;
+
+  /* amber-* deepened to read on paper (was tuned for dark). */
+  --color-amber-100: #6e520b;
+  --color-amber-200: #8a6d1a;
+  --color-amber-300: #b07c0a;
+  --color-amber-400: #d97706;
+
+  /* rose-* deepened to read on paper. */
+  --color-rose-200: #9f1239;
+  --color-rose-300: #be123c;
+  --color-rose-400: #e11d48;
+  --color-rose-500: #be123c;
+
+  /* slate-* text ramp inverted to warm charcoals (100 brightest use). */
+  --color-slate-50: #1e1b1a;
+  --color-slate-100: #292524;
+  --color-slate-200: #44403c;
+  --color-slate-300: #57534e;
+  --color-slate-400: #6f6a63;
+  --color-slate-500: #8a7058;
+  --color-slate-600: #475569;
+
+  /* sky/cyan accents quieted to a dusty neutral blue (info, not brand). */
+  --color-sky-300: #3f6d8e;
+  --color-sky-400: #6b94b5;
+  --color-cyan-300: #3f6d8e;
+  --color-cyan-400: #6b94b5;
+
+  --font-display: "Bricolage Grotesque", Verdana, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", "Menlo", ui-monospace, monospace;
+}
+
+.font-display {
+  font-optical-sizing: auto;
 }
 
 html,
@@ -18,9 +69,13 @@ body,
 body {
   margin: 0;
   background: var(--color-ink);
-  color: #e2e8f0;
-  font-family: var(--font-display);
+  color: #292524;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(180 75 42 / 0.18);
 }
 
 /* Leaflet draws its own panes; keep them above our cards but below modals. */
@@ -69,10 +124,10 @@ body {
   line-height: 1.45;
 }
 
-/* Thin scrollbars so the dense panels do not look like a 2010 admin console. */
+/* Thin scrollbars in bone tones to match the paper system. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+  scrollbar-color: #d7d1c5 transparent;
 }
 
 ::-webkit-scrollbar {
@@ -81,7 +136,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #d7d1c5;
   border-radius: 999px;
 }
 
