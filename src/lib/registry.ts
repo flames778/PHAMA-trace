@@ -339,9 +339,10 @@ function supabaseRegistry(): Registry {
         .from("custody_events")
         .select("*")
         .eq("batch_id", batchId)
-        // Chain order matters to verifyChain: occurred_at ties must fall back
-        // to id order, or same-timestamp events false-report a broken chain.
-        .order("occurred_at", { ascending: true })
+        // Chain order, not timestamp order: several legs share a day, so
+        // sorting by occurred_at scrambles the hash linkage (verified live
+        // against the Express backend). Event ids are sequential by
+        // construction (buildChain/appendEvent), so id order IS chain order.
         .order("id", { ascending: true });
       if (error) throw error;
       return (data ?? []).map(mapCustody);

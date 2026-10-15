@@ -37,7 +37,11 @@ function seed(): Db {
     products: PRODUCTS,
     locations: LOCATIONS,
     batches: BATCHES,
-    custodyEvents: custody.all,
+    // Chain order, NOT timestamp order: several legs share a day, so
+    // sorting by occurredAt scrambles each batch's hash linkage (verified
+    // live: timestamp-sorted mf-0917 breaks at event 006). custody.all is
+    // timestamp-sorted for the map feed; the ledger needs causal order.
+    custodyEvents: [...custody.byBatch.values()].flat(),
     stockPositions: series.positions,
     stockMovements: series.movements,
     scans: [],

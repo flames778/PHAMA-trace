@@ -127,6 +127,19 @@ check("chain does not start mid-flight", chain[0]?.prevHash === GENESIS_HASH);
   check("a legitimately appended event still verifies", verifyChain([...chain, appended]).ok);
 }
 
+// Chain order is causal, not chronological: several legs share a day, so a
+// timestamp-sorted copy of a valid chain must NOT verify. Every custody
+// endpoint (local, server, Supabase) is contractually required to serve
+// chain order — this check pins that.
+{
+  const byTime = [...chain].sort((a, b) => a.occurredAt.localeCompare(b.occurredAt));
+  check(
+    "timestamp order is not chain order",
+    verifyChain(chain).ok && !verifyChain(byTime).ok,
+    `${chain.length} events, ${byTime.length} re-sorted`,
+  );
+}
+
 console.log("\nForecast");
 const series = generateSeries();
 // Must be a pair assignPairs() emits AND a SQUEEZE key in demand.ts,

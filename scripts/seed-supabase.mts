@@ -107,7 +107,14 @@ async function seed() {
   await db.from("scans").delete().neq("id", "");
   await db.from("stock_movements").delete().neq("id", 0);
   await db.from("stock_positions").delete().neq("batch_id", "");
-  await db.from("custody_events").delete().neq("id", "");
+  // custody_events is append-only by database trigger, so this delete fails
+  // on any project that already has rows: surface that loudly instead of
+  // limping on into duplicate-key conflicts. Reseed = fresh project, or
+  // re-paste supabase/schema.sql first.
+  const { error: custodyClearError } = await db.from("custody_events").delete().neq("id", "");
+  if (custodyClearError) {
+    throw new Error(`Cannot reseed: ${custodyClearError.message}. Use a fresh project or re-paste supabase/schema.sql first.`);
+  }
   await db.from("batches").delete().neq("id", "");
   await db.from("products").delete().neq("id", "");
   await db.from("locations").delete().neq("id", "");
@@ -125,7 +132,11 @@ async function seed() {
   if (e3) throw e3;
 
   console.log(`Seeding ${custody.all.length} custody events...`);
-  const { error: e4 } = await db.from("custody_events").insert(custody.all.map(mapCustody));
+  // Chain order, not custody.all (which is timestamp-sorted for the map
+  // feed): same-day legs share timestamps and timestamp order breaks each
+  // batch's hash linkage. See server/store.ts.
+  const chainOrdered = [...custody.byBatch.values()].flat();
+  const { error: e4 } = await db.from("custody_events").insert(chainOrdered.map(mapCustody));
   if (e4) throw e4;
 
   // Movements first: the schema's apply_stock_movement trigger derives

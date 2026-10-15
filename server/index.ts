@@ -86,9 +86,10 @@ app.get("/api/batches/code/:code", (req, res) => {
 // ------------------------------------------------------------------ custody
 
 app.get("/api/custody/:batchId", (req, res) => {
-  const events = db.custodyEvents
-    .filter((e) => e.batchId === req.params.batchId)
-    .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt));
+  // Seed order IS chain order (see store.ts). Do NOT sort by occurredAt
+  // here: same-day legs share timestamps and re-sorting breaks the hash
+  // linkage verifyChain checks (verified live: broken at event 006).
+  const events = db.custodyEvents.filter((e) => e.batchId === req.params.batchId);
   ok(res, events);
 });
 
