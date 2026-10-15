@@ -112,7 +112,15 @@ export function ForecastPanel({
                   return (
                     <tr
                       key={key}
+                      tabIndex={0}
+                      aria-selected={active}
                       onClick={() => setSelectedKey(key)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setSelectedKey(key);
+                        }
+                      }}
                       className={`cursor-pointer transition ${
                         active ? "bg-teal-500/10" : "hover:bg-white/[0.03]"
                       }`}

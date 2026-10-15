@@ -162,6 +162,9 @@ function near(scan: ScanResult, loc: Location): boolean {
 
 function FitBounds({ locations }: { locations: Location[] }) {
   const map = useMap();
+  // Identity-stable signature: registry reloads hand back new arrays with the
+  // same sites, and refitting on every one would yank the user's pan/zoom.
+  const signature = locations.map((l) => l.id).join(",");
   useEffect(() => {
     if (locations.length === 0) return;
     const lats = locations.map((l) => l.lat);
@@ -174,6 +177,7 @@ function FitBounds({ locations }: { locations: Location[] }) {
       ],
       { animate: false },
     );
-  }, [map, locations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, signature]);
   return null;
 }

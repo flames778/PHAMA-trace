@@ -4,8 +4,11 @@ import { generateSeries } from "../src/data/demand.ts";
 import { buildCustodyChain } from "../src/data/custody.ts";
 import { verifyChain, appendEvent, GENESIS_HASH } from "../src/lib/ledger.ts";
 import { forecastStockout, summarizeProductStock } from "../src/lib/forecast.ts";
+import { verify, decide, type VerifyInput } from "../src/lib/verify.ts";
+import type { ScanResult, VisionReport } from "../src/types.ts";
 import { batchById, batchByCode, TODAY, BATCHES } from "../src/data/batches.ts";
 import { locationById, PHARMACIES } from "../src/data/locations.ts";
+import { productById } from "../src/data/products.ts";
 
 /**
  * Headless check of the two claims the demo leans on hardest:
@@ -35,7 +38,7 @@ async function imageData(path: string) {
     rgba[j + 2] = data[i + 2];
     rgba[j + 3] = 255;
   }
-  return { width: info.width, height: info.height, data: rgba };
+  return { width: info.width, height: info.height, data: rgba } as unknown as ImageData;
 }
 
 function correlate(ref: ImageData, photo: ImageData) {
@@ -86,7 +89,11 @@ check("wrong-product palette below genuine", wrongPalette < genPalette);
 
 // Gray conversion sanity: 1x1 red pixel -> Rec.709 luma of (255,0,0).
 {
-  const px = { width: 1, height: 1, data: new Uint8ClampedArray([255, 0, 0, 255]) };
+  const px = {
+    width: 1,
+    height: 1,
+    data: new Uint8ClampedArray([255, 0, 0, 255]),
+  } as unknown as ImageData;
   const luma = toGray(px).data[0];
   check("Rec.709 luma of pure red", Math.abs(luma - 0.2126 * 255) < 0.5, luma.toFixed(2));
 }
@@ -181,6 +188,92 @@ if (fc) {
   const noSummary = summarizeProductStock("prd-nope", BATCHES, series.movements, series.positions, TODAY);
   check("unknown product has no summary", noSummary.worst === null && noSummary.shelves === 0 && noSummary.atRisk.length === 0);
 }
+
+console.log("\nDecision rules");
+// The code-only cap sits above the score>=3 line on purpose: a typed-in
+// code must never read genuine, however strong the registry signals are.
+check("code-only success caps at unverifiable", decide(3.5, [], true, false) === "unverifiable");
+check("photo-backed success still reads genuine", decide(4.5, [], true, true) === "genuine");
+check("deep-negative still reads suspicious", decide(-3, [], true, false) === "suspicious");
+
+const ikeja = PHARMACIES[0];
+const decisionBase: VerifyInput = {
+  rawCode: "NG-AC-25-0442",
+  codeSource: "manual",
+  vision: null,
+  photoProvided: false,
+  batch: batchByCode.get("NG-AC-25-0442")!,
+  product: productById.get("prd-amoxaclear")!,
+  custody: [],
+  positions: [],
+  scanLocation: ikeja,
+  priorScans: [],
+  registeredCodes: [...batchByCode.keys()],
+  locationById: (id) => locationById.get(id) ?? null,
+  locationName: () => null,
+};
+// A recalled batch stays suspicious with no photo — the critical signal
+// outranks the code-only cap.
+const recalledCodeOnly = verify(decisionBase);
+check("code-only recalled batch is suspicious", recalledCodeOnly.verdict === "suspicious", recalledCodeOnly.verdict);
+// Unknown code + analysed photo but no reference artwork: the verdict may
+// rest on the unknown code, but it must not claim a measured mismatch.
+const noRefVision: VisionReport = {
+  checks: [
+    { id: "capture-quality", label: "Capture quality", status: "pass", detail: "adequate", weight: 0, measured: 0.8 },
+  ],
+  score: 0,
+  width: 600,
+  height: 820,
+};
+const unknownPhoto = verify({
+  ...decisionBase,
+  rawCode: "NG-XX-26-0000",
+  batch: null,
+  product: null,
+  vision: noRefVision,
+  photoProvided: true,
+});
+check(
+  "unknown-product photo carries no phantom mismatch",
+  !unknownPhoto.evidence.flags.includes("PACKAGING_MISMATCH") &&
+    unknownPhoto.evidence.flags.includes("NO_REFERENCE_ARTWORK"),
+  unknownPhoto.evidence.flags.join(","),
+);
+
+// Reuse detection: the owner re-scanning their own shelf is forgiven, but
+// the same code surfacing at two far-apart sites is the copied-serial
+// pattern and must flag.
+const mkPrior = (lat: number, lng: number): ScanResult => ({
+  id: `scn_prior_${lat}_${lng}`,
+  batchCode: "NG-MF-26-0917",
+  productId: "prd-malafem",
+  batchId: "bat-mf-0917",
+  verdict: "genuine",
+  confidence: 0.9,
+  headline: "prior",
+  reasons: [],
+  evidence: {
+    codeSource: "demo",
+    codeRead: "NG-MF-26-0917",
+    vision: null,
+    custody: { hops: 1, lastKnownCustodian: null, lastMovement: null, chainIntact: true, brokenAtEventId: null },
+    flags: [],
+  },
+  lat,
+  lng,
+  createdAt: new Date().toISOString(),
+});
+const repeatBase = {
+  ...decisionBase,
+  rawCode: "NG-MF-26-0917",
+  batch: batchByCode.get("NG-MF-26-0917")!,
+  product: productById.get("prd-malafem")!,
+};
+const sameSite = verify({ ...repeatBase, priorScans: [mkPrior(6.61, 3.34), mkPrior(6.61, 3.34)] });
+check("same-site double scan is not reuse", !sameSite.evidence.flags.includes("REPEATED_CODE"));
+const crossSite = verify({ ...repeatBase, priorScans: [mkPrior(6.61, 3.34), mkPrior(12.0, 8.59)] });
+check("cross-site reuse is flagged", crossSite.evidence.flags.includes("REPEATED_CODE"));
 
 console.log("\nData integrity");
 check("recalled batch is in the registry", batchByCode.get("NG-AC-25-0442")?.status === "recalled");

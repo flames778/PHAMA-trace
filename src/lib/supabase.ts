@@ -24,4 +24,4 @@ export const supabase: SupabaseClient | null =
 export const usingSupabase = supabase !== null;
 
 export const SUPABASE_CONFIG_HINT =
-  "Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local, then run `npm run db:push` to apply supabase/schema.sql.";
+  "Create a Supabase project, paste supabase/schema.sql into the SQL editor, copy .env.example to .env.local with the project URL and anon key. The demo seed loader is tracked as BE-2 (scripts/seed-demo.mjs).";

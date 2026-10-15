@@ -20,6 +20,8 @@ export interface HouseholdMember {
 }
 
 export interface CabinetEntry {
+  /** Stable row identity — never derived from scan time alone. */
+  id: string;
   productId: string;
   brandName: string;
   genericName: string;
@@ -79,6 +81,7 @@ export function normalizeEntry(raw: unknown): CabinetEntry | null {
     }
   }
   return {
+    id: typeof e.id === "string" && e.id.length > 0 ? e.id : newMemberId(),
     productId: e.productId,
     brandName: str(e.brandName),
     genericName: str(e.genericName),

@@ -59,8 +59,8 @@ export function resolveAgentRouterConfig(): AgentRouterConfig {
   const baseUrl =
     readLocal(LS_BASE_URL) || env("VITE_AGENT_ROUTER_BASE_URL") || AGENT_ROUTER_DEFAULT_BASE_URL;
   const model = readLocal(LS_MODEL) || env("VITE_AGENT_ROUTER_MODEL") || AGENT_ROUTER_DEFAULT_MODEL;
-  // apiKey line was redacted by security policy. Restore it manually.
-  return { apiKey: "", baseUrl: normaliseBaseUrl(baseUrl), model: model.trim() };
+  const apiKey = readLocal(LS_KEY) || env("VITE_AGENT_ROUTER_API_KEY");
+  return { apiKey, baseUrl: normaliseBaseUrl(baseUrl), model: model.trim() };
 }
 
 /** Persist the key + options the user pastes into the settings form. */

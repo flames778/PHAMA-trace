@@ -67,7 +67,12 @@ async function referenceFor(product: Product | null): Promise<ImageData | null> 
   if (!product?.artworkRef) return null;
   let pending = referenceCache.get(product.artworkRef);
   if (!pending) {
-    pending = loadImageData(product.artworkRef).catch(() => null);
+    // A failed load is evicted, not cached: the next scan retries instead of
+    // running every later comparison with no reference until reload.
+    pending = loadImageData(product.artworkRef).catch((e) => {
+      referenceCache.delete(product.artworkRef);
+      throw e;
+    });
     referenceCache.set(product.artworkRef, pending);
   }
   return pending;
@@ -266,11 +271,18 @@ export function usePharmaTrace(): PharmaTraceState {
 
 /**
  * When the decoded code is unknown, we still want the packaging analysis to
- * compare against *something*. This guesses the product from the prefix the
- * mock registry uses (`NG-MF-…` -> `prd-malafem`).
+ * compare against *something*. The mock registry uses country — product —
+ * year — serial codes, so the product family reads straight off the prefix.
  */
+const PRODUCT_BY_CODE_PREFIX: Record<string, string> = {
+  MF: "prd-malafem",
+  AC: "prd-amoxaclear",
+  SF: "prd-sulfix",
+  PX: "prd-paraxp",
+  RH: "prd-rehydra",
+};
+
 function productMatchesCode(product: Product, code: string): boolean {
-  const prefix = code.split("-")[1];
-  if (!prefix) return false;
-  return product.id.includes(prefix.toLowerCase().slice(0, 2));
+  const prefix = code.split("-")[1]?.toUpperCase();
+  return !!prefix && PRODUCT_BY_CODE_PREFIX[prefix] === product.id;
 }

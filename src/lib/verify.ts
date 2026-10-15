@@ -203,10 +203,13 @@ export function verify(input: VerifyInput): ScanResult {
     }
 
     // ---------------------------------------------------- repeated-scan check
+    // One genuine pack carries one code — but the owner re-scanning their own
+    // shelf is not an attack. Flag only cross-site reuse (the copied-serial
+    // pattern) or relentless same-site repetition.
     const today = new Date().toISOString().slice(0, 10);
     const todayScans = input.priorScans.filter((s) => s.createdAt.slice(0, 10) === today);
-    if (todayScans.length >= 2) {
-      const lgas = new Set(todayScans.map((s) => `${s.lat.toFixed(2)},${s.lng.toFixed(2)}`));
+    const lgas = new Set(todayScans.map((s) => `${s.lat.toFixed(2)},${s.lng.toFixed(2)}`));
+    if (todayScans.length >= 2 && (lgas.size > 1 || todayScans.length >= 4)) {
       flags.push("REPEATED_CODE");
       signals.push({
         id: "repeated",
@@ -240,7 +243,20 @@ export function verify(input: VerifyInput): ScanResult {
   }
 
   // ------------------------------------------------------------------ vision
-  if (vision) {
+  // A report with no weighted checks means "no reference artwork on file",
+  // not "the print failed every measurement" — score 0 must not read as a
+  // measured mismatch.
+  if (vision && vision.checks.every((c) => c.weight === 0)) {
+    flags.push("NO_REFERENCE_ARTWORK");
+    signals.push({
+      id: "vision-no-reference",
+      label: "Packaging analysis",
+      weight: -1.3,
+      severity: "warning",
+      detail:
+        "A photograph was analysed but the registry holds no reference artwork for this product, so the print could not be compared. The verdict rests on the code and custody checks below.",
+    });
+  } else if (vision) {
     const failing = vision.checks.filter((c) => c.weight > 0 && c.status === "fail");
     const warning = vision.checks.filter((c) => c.weight > 0 && c.status === "warn");
 
@@ -271,17 +287,29 @@ export function verify(input: VerifyInput): ScanResult {
       });
     }
   } else if (batch && product) {
+    // A failed analysis is worse than none: the user did the right thing and
+    // still got no comparison. photoProvided distinguishes the two.
+    const analysed = input.photoProvided;
     signals.push({
       id: "vision-missing",
       label: "Packaging analysis",
-      weight: -1.1,
+      weight: analysed ? -1.6 : -1.1,
       severity: "warning",
-      detail: "No pack photograph was analysed. A batch code on its own can be photocopied onto a fake pack.",
+      detail: analysed
+        ? "A pack photograph was provided but could not be analysed. Retake with even light and the pack filling the frame — a batch code on its own can be photocopied onto a fake pack."
+        : "No pack photograph was analysed. A batch code on its own can be photocopied onto a fake pack.",
     });
   }
 
   // --------------------------------------------------------------- decision
-  const score = signals.reduce((s, x) => s + x.weight, 0);
+  // Frequently falsified products (Product.highRisk) amplify negative
+  // evidence by 15%. Positive evidence is untouched, so a clean pack from a
+  // high-risk line still reads genuine — only borderline packs tip sooner.
+  const riskMultiplier = product?.highRisk ? 1.15 : 1;
+  const score = signals.reduce(
+    (s, x) => s + (x.weight < 0 ? x.weight * riskMultiplier : x.weight),
+    0,
+  );
   const verdict = decide(score, signals, Boolean(batch), Boolean(vision));
   const confidence = confidenceFor(verdict, score, signals, Boolean(vision));
 
@@ -315,12 +343,13 @@ export function verify(input: VerifyInput): ScanResult {
   };
 }
 
-function decide(score: number, signals: Signal[], hasBatch: boolean, hasVision: boolean): Verdict {
+export function decide(score: number, signals: Signal[], hasBatch: boolean, hasVision: boolean): Verdict {
   const critical = signals.some((s) => s.severity === "critical" && s.weight <= -2.5);
   if (critical || score <= -2.5) return "suspicious";
-  if (score >= 3) return "genuine";
-  // Code-only success is deliberately not enough to call a pack genuine.
+  // Code-only success is deliberately not enough to call a pack genuine —
+  // this cap sits above the score>=3 line on purpose.
   if (!hasVision && hasBatch && score >= 0) return "unverifiable";
+  if (score >= 3) return "genuine";
   if (score >= 0.5 && hasBatch && hasVision) return "genuine";
   return "unverifiable";
 }

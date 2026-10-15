@@ -59,7 +59,19 @@ check("mode still reports the primary", resilient.mode === "supabase");
 check("reads fall back to bundled data", (await resilient.products()).length === 5);
 check("custody falls back", (await resilient.custodyFor("bat-mf-0917")).length > 10);
 check("degrade signal fired", degradedCalls > 0, `${degradedCalls} call(s)`);
-await resilient.saveScan({
+
+// Writes must be observed, not assumed: wrap the fallback so the saved scan
+// is captured in memory (localStorage does not exist headlessly) and assert
+// it actually landed.
+const saved: import("../src/types.ts").ScanResult[] = [];
+const capturing: Registry = {
+  ...local,
+  saveScan: async (scan) => {
+    saved.push(scan);
+  },
+};
+const resilientWrites = withFallback(failingRegistry(), capturing);
+await resilientWrites.saveScan({
   id: "scn_test",
   batchCode: "NG-MF-26-0917",
   productId: "prd-malafem",
@@ -77,9 +89,9 @@ await resilient.saveScan({
   },
   lat: 0,
   lng: 0,
-  createdAt: new Date().toISOString(),
+  createdAt: "2026-10-13T09:00:00Z",
 });
-check("writes fall back without throwing", true);
+check("write reaches the fallback store", saved.length === 1 && saved[0].id === "scn_test");
 check("degraded flag is module-level", typeof isDegraded() === "boolean");
 
 console.log(failures === 0 ? "\nAll checks passed.\n" : `\n${failures} check(s) failed.\n`);

@@ -65,6 +65,11 @@ export function buildCustodyChain(): CustodyBundle {
     arrivals.set(key, list);
   }
 
+  function plusDays(day: string, n: number): string {
+    const t = Date.parse(`${day}T00:00:00Z`) + n * 86_400_000;
+    return new Date(t).toISOString().slice(0, 10);
+  }
+
   for (const [batchId, legs] of [...arrivals.entries()].sort(([a], [b]) => (a < b ? -1 : 1))) {
     const batch = batchById.get(batchId)!;
     const plant = PLANT_BY_PRODUCT[batch.productId];
@@ -105,12 +110,14 @@ export function buildCustodyChain(): CustodyBundle {
     ];
 
     let running = batch.quantityReleased;
+    let lastLegDay = "";
     for (const leg of legs) {
       const pharmacy = PHARMACIES.find((p) => p.id === leg.locationId)!;
       const shipAt = `${leg.day}T06:30:00Z`;
       const receiveAt = `${leg.day}T11:00:00Z`;
       if (running < leg.received) break;
       running -= leg.received;
+      lastLegDay = leg.day;
 
       raws.push(
         {
@@ -137,13 +144,21 @@ export function buildCustodyChain(): CustodyBundle {
     }
 
     if (batch.status === "recalled" && batch.recallReason) {
+      // Dated just after the final distribution leg: the flag lands when the
+      // bad batch is actually found, and the halt that follows is why the
+      // series carries no later shipments for it (see demand.ts recallBlock).
+      // A fixed offset from registration would predate the legs it closes.
+      const flaggedAt = lastLegDay ? `${lastLegDay}T14:00:00Z` : shift(batch.registeredAt, 3200);
+      const recalledAt = lastLegDay
+        ? `${plusDays(lastLegDay, 6)}T09:00:00Z`
+        : shift(batch.registeredAt, 3260);
       raws.push({
         batchId,
         eventType: "flagged",
         fromLocationId: null,
         toLocationId: "loc-reg-sw",
         quantity: 0,
-        occurredAt: shift(batch.registeredAt, 3200),
+        occurredAt: flaggedAt,
         actor: "Regulator Desk (demo) — post-market surveillance",
         note: batch.recallReason,
       });
@@ -153,7 +168,7 @@ export function buildCustodyChain(): CustodyBundle {
         fromLocationId: "loc-reg-sw",
         toLocationId: null,
         quantity: batch.quantityReleased,
-        occurredAt: shift(batch.registeredAt, 3260),
+        occurredAt: recalledAt,
         actor: "Regulator Desk (demo)",
         note: "Batch withdrawn from distribution and all retail shelves notified.",
       });

@@ -2,8 +2,9 @@
 -- PharmaTrace — Supabase schema
 -- ============================================================================
 -- PASTE THIS FILE ONCE into the Supabase SQL editor (Database -> SQL editor).
--- It creates the structure only; run `npm run db:seed` afterwards to load the
--- demo registry.
+-- It creates the structure only; the demo seed loader is tracked as BE-2
+-- (scripts/seed-demo.mjs) and must connect with the service_role key,
+-- because the anon policies below deliberately cannot write registry rows.
 --
 -- IMPORTANT — this is a demo schema.
 --   * Every table allows anonymous INSERT into `scans` and `stock_movements`
@@ -136,6 +137,10 @@ create index if not exists stock_movements_loc_idx on stock_movements (location_
 create index if not exists stock_movements_day_idx on stock_movements (day);
 
 -- Keep the position table in step with the movement ledger.
+-- Movements are append-only by convention (the app only ever inserts, and
+-- the unique key on (batch, location, day) rejects duplicates), so the
+-- trigger handles INSERT only. An UPDATE/DELETE path would need a full
+-- recompute — out of scope for the demo; reseed instead of editing rows.
 create or replace function apply_stock_movement() returns trigger as $$
 begin
   insert into stock_positions (batch_id, location_id, on_hand, updated_at)
@@ -196,13 +201,39 @@ alter table stock_positions   enable row level security;
 alter table stock_movements   enable row level security;
 alter table scans             enable row level security;
 
--- Demo policy: anyone holding the anon key may read the registry and may
--- append a scan or a stock movement. Replace with role-scoped policies.
+-- Demo policy set: anyone holding the anon key may read the registry and
+-- may append a scan or a stock movement. Replace with role-scoped policies
+-- before real use. Every statement below is re-runnable: policies are
+-- dropped first, matching the trigger guards above.
+--
+-- Two gaps this block deliberately closes (both broke Supabase mode):
+--   * scans needs a SELECT policy or the scan feed and hotspot reads fail;
+--   * the stock trigger writes stock_positions as the anon caller, so that
+--     table needs INSERT + UPDATE policies, not just SELECT.
+-- Deliberately absent: INSERT on the registry tables (products, batches,
+-- locations, custody_events) — seeding uses the service_role key (BE-2).
+-- The append-only custody trigger cannot stop TRUNCATE (row triggers never
+-- fire for it): reseed by re-pasting this file, never by truncating tables.
+
+drop policy if exists "registry is publicly readable" on products;
 create policy "registry is publicly readable"  on products        for select using (true);
+drop policy if exists "locations are publicly readable" on locations;
 create policy "locations are publicly readable" on locations      for select using (true);
+drop policy if exists "batches are publicly readable" on batches;
 create policy "batches are publicly readable"  on batches        for select using (true);
+drop policy if exists "custody is publicly readable" on custody_events;
 create policy "custody is publicly readable"   on custody_events for select using (true);
+drop policy if exists "stock is publicly readable" on stock_positions;
 create policy "stock is publicly readable"     on stock_positions for select using (true);
+drop policy if exists "positions maintained by movement trigger" on stock_positions;
+create policy "positions maintained by movement trigger" on stock_positions for insert with check (true);
+drop policy if exists "positions updated by movement trigger" on stock_positions;
+create policy "positions updated by movement trigger" on stock_positions for update using (true) with check (true);
+drop policy if exists "movements are publicly readable" on stock_movements;
 create policy "movements are publicly readable" on stock_movements for select using (true);
+drop policy if exists "scans are publicly readable" on scans;
+create policy "scans are publicly readable" on scans for select using (true);
+drop policy if exists "anyone may log a scan" on scans;
 create policy "anyone may log a scan"          on scans          for insert with check (true);
+drop policy if exists "anyone may log stock movement" on stock_movements;
 create policy "anyone may log stock movement"  on stock_movements for insert with check (true);

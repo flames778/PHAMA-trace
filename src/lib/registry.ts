@@ -213,8 +213,10 @@ export function localRegistry(): Registry {
       writeLocal(LS_SCANS, [scan, ...existing].slice(0, 500));
     },
     async recordMovement(movement) {
+      // Cap the local mirror like scans (500): the forecast only reads the
+      // window, and an unbounded log eventually hits the storage quota.
       const existing = readLocal<StockMovement[]>(LS_MOVEMENTS, []);
-      writeLocal(LS_MOVEMENTS, [...existing, movement]);
+      writeLocal(LS_MOVEMENTS, [...existing, movement].slice(-2000));
     },
   };
 }
@@ -223,6 +225,15 @@ export function localRegistry(): Registry {
 
 function supabaseRegistry(): Registry {
   const db = supabase!;
+
+  /** Database rows are untyped: coerce defensively so one malformed row
+   *  cannot poison a forecast with NaN or crash a render with undefined. */
+  const num = (v: unknown, fallback = 0): number => {
+    const n = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  };
+  const str = (v: unknown, fallback = ""): string => (typeof v === "string" ? v : fallback);
+  const optStr = (v: unknown): string | null => (typeof v === "string" && v ? v : null);
 
   const mapBatch = (r: Record<string, unknown>): Batch => ({
     id: r.id as string,
@@ -265,25 +276,25 @@ function supabaseRegistry(): Registry {
   });
 
   const mapCustody = (r: Record<string, unknown>): CustodyEvent => ({
-    id: r.id as string,
-    batchId: r.batch_id as string,
+    id: str(r.id),
+    batchId: str(r.batch_id),
     eventType: r.event_type as CustodyEvent["eventType"],
-    fromLocationId: (r.from_location_id as string | null) ?? null,
-    toLocationId: (r.to_location_id as string | null) ?? null,
-    quantity: Number(r.quantity),
-    occurredAt: r.occurred_at as string,
-    actor: r.actor as string,
-    note: (r.note as string | null) ?? null,
-    prevHash: r.prev_hash as string,
-    eventHash: r.event_hash as string,
+    fromLocationId: optStr(r.from_location_id),
+    toLocationId: optStr(r.to_location_id),
+    quantity: num(r.quantity),
+    occurredAt: str(r.occurred_at),
+    actor: str(r.actor, "unknown"),
+    note: optStr(r.note),
+    prevHash: str(r.prev_hash),
+    eventHash: str(r.event_hash),
   });
 
   const mapMovement = (r: Record<string, unknown>): StockMovement => ({
-    batchId: r.batch_id as string,
-    locationId: r.location_id as string,
+    batchId: str(r.batch_id),
+    locationId: str(r.location_id),
     day: String(r.day).slice(0, 10),
-    dispensed: Number(r.dispensed),
-    received: Number(r.received),
+    dispensed: num(r.dispensed),
+    received: num(r.received),
   });
 
   return {
@@ -328,7 +339,10 @@ function supabaseRegistry(): Registry {
         .from("custody_events")
         .select("*")
         .eq("batch_id", batchId)
-        .order("occurred_at", { ascending: true });
+        // Chain order matters to verifyChain: occurred_at ties must fall back
+        // to id order, or same-timestamp events false-report a broken chain.
+        .order("occurred_at", { ascending: true })
+        .order("id", { ascending: true });
       if (error) throw error;
       return (data ?? []).map(mapCustody);
     },
@@ -336,10 +350,10 @@ function supabaseRegistry(): Registry {
       const { data, error } = await db.from("stock_positions").select("*");
       if (error) throw error;
       return (data ?? []).map((r) => ({
-        batchId: r.batch_id as string,
-        locationId: r.location_id as string,
-        onHand: Number(r.on_hand),
-        updatedAt: r.updated_at as string,
+        batchId: str(r.batch_id),
+        locationId: str(r.location_id),
+        onHand: num(r.on_hand),
+        updatedAt: str(r.updated_at),
       }));
     },
     async movements() {
@@ -355,18 +369,18 @@ function supabaseRegistry(): Registry {
       if (error) throw error;
       return (data ?? []).map(
         (r): ScanResult => ({
-          id: r.id as string,
-          batchCode: (r.batch_code as string) ?? "",
-          productId: (r.product_id as string | null) ?? null,
-          batchId: (r.batch_id as string | null) ?? null,
+          id: str(r.id),
+          batchCode: str(r.batch_code),
+          productId: optStr(r.product_id),
+          batchId: optStr(r.batch_id),
           verdict: r.verdict as ScanResult["verdict"],
-          confidence: Number(r.confidence),
-          headline: r.headline as string,
-          reasons: (r.reasons as string[]) ?? [],
-          evidence: r.evidence as ScanResult["evidence"],
-          lat: Number(r.lat),
-          lng: Number(r.lng),
-          createdAt: r.created_at as string,
+          confidence: num(r.confidence),
+          headline: str(r.headline, "(no headline)"),
+          reasons: Array.isArray(r.reasons) ? r.reasons.filter((x: unknown): x is string => typeof x === "string") : [],
+          evidence: (r.evidence ?? {}) as ScanResult["evidence"],
+          lat: num(r.lat),
+          lng: num(r.lng),
+          createdAt: str(r.created_at),
         }),
       );
     },

@@ -62,6 +62,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
   const stopCamera = () => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
     setLive(false);
   };
 
@@ -104,20 +105,35 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
       return;
     }
     setStatus("Analysing photograph…");
-    await onScan({ photo: blob, codeSource: "camera" });
+    try {
+      await onScan({ photo: blob, codeSource: "camera" });
+    } catch (e) {
+      setStatus(`Scan failed: ${e instanceof Error ? e.message : String(e)}`);
+      return;
+    }
     setStatus(null);
   };
 
   const onFile = async (file: File | undefined) => {
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setStatus("That file is not an image. Choose a photo of the pack.");
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      setStatus("That photo is over 12 MB. Pick a smaller one and retry.");
+      return;
+    }
     setStatus("Reading barcode and analysing packaging…");
     try {
       const hit = await probeBarcode(file);
       setLastBarcode(hit);
       await onScan({ photo: file, codeSource: "upload" });
-    } finally {
-      setStatus(null);
+    } catch (e) {
+      setStatus(`Scan failed: ${e instanceof Error ? e.message : String(e)}`);
+      return;
     }
+    setStatus(null);
   };
 
   const runDemo = async (pack: DemoPack) => {
@@ -127,9 +143,11 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
       const hit = await probeBarcode(blob);
       setLastBarcode(hit);
       await onScan({ code: pack.code, photo: blob, codeSource: "demo" });
-    } finally {
-      setStatus(null);
+    } catch (e) {
+      setStatus(`Scan failed: ${e instanceof Error ? e.message : String(e)}`);
+      return;
     }
+    setStatus(null);
   };
 
   const runManual = async () => {
@@ -137,9 +155,11 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
     setStatus("Checking code against the registry…");
     try {
       await onScan({ code: manualCode, codeSource: "manual" });
-    } finally {
-      setStatus(null);
+    } catch (e) {
+      setStatus(`Scan failed: ${e instanceof Error ? e.message : String(e)}`);
+      return;
     }
+    setStatus(null);
   };
 
   return (
@@ -224,7 +244,12 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(e) => void onFile(e.target.files?.[0] ?? undefined)}
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? undefined;
+              // Reset so picking the same file twice still fires a change.
+              e.target.value = "";
+              void onFile(file);
+            }}
           />
           <p className="mt-3 text-[11px] text-slate-500">
             The batch code is read from the barcode when the browser supports it, and the print is

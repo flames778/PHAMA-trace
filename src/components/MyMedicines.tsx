@@ -33,12 +33,27 @@ function saveJSON(key: string, value: unknown) {
   }
 }
 
+function readRaw(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
 function loadEntries(): CabinetEntry[] {
-  const current = loadJSON<unknown[]>(ENTRIES_KEY);
-  if (current) {
-    return current
-      .map(normalizeEntry)
-      .filter((e): e is CabinetEntry => e !== null);
+  const raw = readRaw(ENTRIES_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.map(normalizeEntry).filter((e): e is CabinetEntry => e !== null);
+      }
+    } catch {
+      // A corrupt blob must never silently wipe the cabinet: quarantine it
+      // for inspection and fall through to legacy migration.
+      saveJSON(`${ENTRIES_KEY}:corrupt`, raw);
+    }
   }
   const legacy = loadJSON<unknown[]>(LEGACY_KEY) ?? [];
   const migrated = legacy
@@ -88,6 +103,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
         if (!product) continue;
         if (have.has(`${scan.productId}|${scan.createdAt}`)) continue;
         fresh.push({
+          id: newMemberId(),
           productId: product.id,
           brandName: product.brandName,
           genericName: product.genericName,
@@ -121,12 +137,18 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
   };
 
   const removeMember = (id: string) => {
+    // Both updates are functional: a scan folding in on the same tick cannot
+    // silently drop either write.
     setMembers((prev) => {
       const next = prev.filter((m) => m.id !== id);
       saveJSON(MEMBERS_KEY, next);
       return next;
     });
-    updateEntries(entries.map((e) => (e.memberId === id ? { ...e, memberId: null } : e)));
+    setEntries((prev) => {
+      const next = prev.map((e) => (e.memberId === id ? { ...e, memberId: null } : e));
+      saveJSON(ENTRIES_KEY, next);
+      return next;
+    });
   };
 
   const now = new Date();
@@ -243,7 +265,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
           <ul className="space-y-2">
             {group.entries.map((entry) => (
               <EntryCard
-                key={`${entry.productId}-${entry.scannedAt}`}
+                key={entry.id}
                 entry={entry}
                 members={members}
                 now={now}
@@ -375,7 +397,7 @@ function EntryCard({
                       <button
                         type="button"
                         onClick={() => setTimes(entry.schedule!.times.filter((_, j) => j !== i))}
-                        className="text-[11px] text-slate-500 hover:text-rose-300"
+                        className="rounded p-1 text-[11px] leading-none text-slate-500 hover:text-rose-300"
                         aria-label={`Remove dose ${t}`}
                       >
                         ✕
@@ -419,7 +441,7 @@ function EntryCard({
         <button
           type="button"
           onClick={onRemove}
-          className="shrink-0 text-[11px] text-slate-500 hover:text-rose-300"
+          className="shrink-0 rounded p-1 text-[11px] leading-none text-slate-500 hover:text-rose-300"
           aria-label={`Remove ${entry.brandName}`}
         >
           ✕

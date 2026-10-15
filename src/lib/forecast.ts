@@ -97,10 +97,11 @@ function holt(series: number[]): { level: number; trend: number; rmse: number } 
   const errors: number[] = [];
 
   for (let t = 1; t < series.length; t++) {
+    const predicted = level + trend;
     const prevLevel = level;
     level = ALPHA * series[t] + (1 - ALPHA) * (level + trend);
     trend = BETA * (level - prevLevel) + (1 - BETA) * trend;
-    errors.push(series[t] - (prevLevel + trend));
+    errors.push(series[t] - predicted);
   }
 
   const rmse = Math.sqrt(mean(errors.map((e) => e * e)));
@@ -167,7 +168,11 @@ export function forecastStockout(input: ForecastInput): ForecastResult | null {
 
   // 3. Re-seasonalise the projection horizon.
   const last = calendar[calendar.length - 1];
-  const series: ForecastPoint[] = days.map((day, i) => ({ day, demand: observed[i], observed: observed[i] }));
+  const series: ForecastPoint[] = calendar.map((date, i) => ({
+    day: date.toISOString().slice(0, 10),
+    demand: observed[i],
+    observed: observed[i],
+  }));
 
   let horizonTotal = 0;
   for (let h = 1; h <= HORIZON; h++) {
@@ -183,7 +188,8 @@ export function forecastStockout(input: ForecastInput): ForecastResult | null {
   const onHand = Math.max(0, input.position?.onHand ?? 0);
   const interval = DELIVERY_INTERVAL[productId] ?? 10;
   const dayIndex = Math.floor(today.getTime() / MS_DAY);
-  const nextDeliveryInDays = interval - (dayIndex % interval);
+  // A delivery due today is 0 days out, not a full interval away.
+  const nextDeliveryInDays = (interval - (dayIndex % interval)) % interval;
   const nextDeliveryDay = new Date(today.getTime() + nextDeliveryInDays * MS_DAY).toISOString().slice(0, 10);
 
   // Days of shelf life at the projected rate. A delivery only helps if it can

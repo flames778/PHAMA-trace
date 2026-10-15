@@ -6,7 +6,7 @@
  * manual code entry as well — which the demo screen does.
  */
 
-export type BarcodeFormat = "code_128" | "code_39" | "qr_code" | "data_matrix" | "unknown";
+export type BarcodeFormat = "code_128" | "code_39" | "code_93" | "qr_code" | "data_matrix" | "unknown";
 
 export interface BarcodeHit {
   rawValue: string;
@@ -21,11 +21,11 @@ export function barcodeSupported(): boolean {
   return typeof globalThis !== "undefined" && "BarcodeDetector" in globalThis;
 }
 
-const KNOWN: BarcodeFormat[] = ["code_128", "code_39", "qr_code", "data_matrix"];
+const KNOWN: BarcodeFormat[] = ["code_128", "code_39", "code_93", "qr_code", "data_matrix"];
 
 function normaliseFormat(f: string | undefined): BarcodeFormat {
   const v = (f ?? "").toLowerCase();
-  return (KNOWN.find((k) => v.includes(k.split("_")[0])) ?? "unknown") as BarcodeFormat;
+  return ((KNOWN as string[]).includes(v) ? v : "unknown") as BarcodeFormat;
 }
 
 /**
@@ -69,6 +69,8 @@ export function formatLabel(f: BarcodeFormat): string {
       return "Code 128";
     case "code_39":
       return "Code 39";
+    case "code_93":
+      return "Code 93";
     case "qr_code":
       return "QR";
     case "data_matrix":

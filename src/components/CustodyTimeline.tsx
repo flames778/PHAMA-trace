@@ -77,10 +77,10 @@ export function CustodyTimeline({
               )}
               {e.note && <p className="mt-0.5 text-[11.5px] leading-snug text-slate-500">{e.note}</p>}
               <p className="mt-1 text-[10.5px] text-slate-500">
-                {e.actor} · {e.occurredAt.replace("T", " ").slice(0, 16)}Z
+                {String(e.actor ?? "unknown")} · {String(e.occurredAt ?? "").replace("T", " ").slice(0, 16)}Z
               </p>
-              <p className="mt-0.5 font-mono text-[10px] text-slate-700" title={e.eventHash}>
-                hash {e.eventHash.slice(0, 16)}…
+              <p className="mt-0.5 font-mono text-[10px] text-slate-600" title={e.eventHash ?? e.id}>
+                hash {(e.eventHash ?? "").slice(0, 16)}…
               </p>
             </li>
           );

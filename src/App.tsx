@@ -80,7 +80,7 @@ export default function App() {
   }, [state.products, state.batches, state.movements, state.positions]);
 
   const riskByLocation = useMemo(() => {
-    const map = new Map<string, "critical">();
+    const map = new Map<string, "critical" | "warning" | "watch" | "ok">();
     for (const s of state.scans) {
       if (s.verdict !== "suspicious") continue;
       const loc = state.locations.find(
@@ -88,8 +88,19 @@ export default function App() {
       );
       if (loc) map.set(loc.id, "critical");
     }
+    // Forecast bands reach the map too, as the prop contract promises:
+    // a shelf reading critical/warning paints its pharmacy even with no
+    // suspicious scan there yet. Suspicious scans always win ties.
+    for (const summary of stockByProduct.values()) {
+      for (const shelf of summary.atRisk) {
+        if (shelf.band === "critical") map.set(shelf.locationId, "critical");
+        else if (shelf.band === "warning" && map.get(shelf.locationId) !== "critical") {
+          map.set(shelf.locationId, "warning");
+        }
+      }
+    }
     return map;
-  }, [state.scans, state.locations]);
+  }, [state.scans, state.locations, stockByProduct]);
 
   const content = (() => {
     if (state.error) {
@@ -125,7 +136,11 @@ export default function App() {
                   <button
                     type="button"
                     disabled={state.busy || demoRunning || !state.ready}
-                    onClick={() => void runDemoFlow()}
+                    onClick={() => {
+                      runDemoFlow().catch(() =>
+                        setDemoStep("Demo failed before the second scan. Check the connection and retry."),
+                      );
+                    }}
                     className="shrink-0 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
                   >
                     {demoRunning ? "Running…" : "▶ Play demo"}
@@ -213,6 +228,7 @@ export default function App() {
               </p>
               <div className="max-w-3xl">
                 <StockLogger
+                  key={state.scanLocation.id}
                   batches={state.batches}
                   products={state.products}
                   locations={state.locations}
@@ -322,7 +338,7 @@ export default function App() {
             key={id}
             type="button"
             onClick={() => setTab(id)}
-            className={`relative px-4 py-2.5 text-[13px] font-medium transition ${
+            className={`relative px-4 py-3 text-[13px] font-medium transition ${
               tab === id ? "text-teal-300" : "text-slate-400 hover:text-slate-200"
             }`}
           >

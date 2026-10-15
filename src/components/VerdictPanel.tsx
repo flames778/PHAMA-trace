@@ -92,7 +92,7 @@ export function VerdictPanel({ result, product, visionError }: VerdictPanelProps
           <h3 className="mb-2 flex items-baseline justify-between text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
             <span>Packaging analysis</span>
             <span className="font-mono normal-case tracking-normal text-slate-400">
-              aggregate {(vision.score * 100).toFixed(0)}%
+              aggregate {Number.isFinite(vision.score) ? `${(vision.score * 100).toFixed(0)}%` : "—"}
             </span>
           </h3>
           <div className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-ink-soft/60">

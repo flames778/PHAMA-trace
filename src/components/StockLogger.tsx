@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Batch, Location, Product, StockPosition } from "../types";
 import type { StockMovement } from "../types";
 
@@ -30,6 +30,13 @@ export function StockLogger({
   const [day, setDay] = useState("2026-10-13");
   const [saving, setSaving] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
+  const [flashError, setFlashError] = useState(false);
+
+  // The batch list arrives asynchronously (and can change if the registry
+  // reloads). Never leave the select pointing at a batch that is gone.
+  useEffect(() => {
+    if (!sellable.some((b) => b.id === batchId)) setBatchId(sellable[0]?.id ?? "");
+  }, [sellable, batchId]);
 
   const batch = batches.find((b) => b.id === batchId);
   const product = batch ? productById.get(batch.productId) : null;
@@ -41,6 +48,7 @@ export function StockLogger({
     if (invalid || !batch) return;
     setSaving(true);
     setFlash(null);
+    setFlashError(false);
     try {
       await onRecord({
         batchId,
@@ -56,6 +64,7 @@ export function StockLogger({
       );
       setQty(kind === "dispensed" ? "20" : "50");
     } catch (e) {
+      setFlashError(true);
       setFlash(e instanceof Error ? e.message : String(e));
     } finally {
       setSaving(false);
@@ -151,7 +160,11 @@ export function StockLogger({
           {saving ? "Recording…" : `Record ${kind === "received" ? "receipt" : "dispensing"}`}
         </button>
 
-        {flash && <p className="mt-2 text-[12px] text-teal-200">{flash}</p>}
+        {flash && (
+          <p className={`mt-2 text-[12px] ${flashError ? "text-rose-200" : "text-teal-200"}`}>
+            {flashError ? `Could not record: ${flash}` : flash}
+          </p>
+        )}
       </div>
 
       <p className="text-[11.5px] leading-relaxed text-slate-500">
