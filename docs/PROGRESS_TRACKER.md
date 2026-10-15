@@ -19,6 +19,8 @@ Verified 2026-10-14 on a clean install (`npm install` from `package-lock.json`):
 | `npm run build` | PASS (production bundle builds). |
 | `npm run source-check` | PASS — new in ME-2 (`41a9a49`): 12 checks over local boot and degraded fallback. |
 
+**Review score: 96/100** (2026-10-15, after audit + 3-shard review + fixes; math in the log entry for `c68a940`). Audit health: 16/20 (Good), up from 13/20.
+
 ## 2. Frozen contract (both sides rely on this — do not change silently)
 
 - `src/types.ts` — the shared shapes (Product, Batch, CustodyEvent, ScanResult, …).
@@ -79,8 +81,12 @@ is mostly the seed script (`package.json` references it but the file does not ex
 
 ## 7. Doing now (week of 2026-10-14)
 
+- Ayonife's track is complete through ME-5 plus the audit and review passes.
+  Next optional polish (not tracked as MEs): code-split the bundle, keyboard
+  access for map markers, live-Supabase e2e once Evans provisions (BE-4).
 - Evans: **BE-1 → BE-2**. Nothing else until the DB has real rows.
-- Ayonife: **ME-0 → ME-1**. Gates green first, then the household feature.
+  Note: schema.sql now has working anon policies + `.env.example` exists, and
+  the seed must use service_role (documented in the schema header).
 - Merge rule: each BE task merges only after joint review; the tracker row flips in the
   same sitting, with the commit hash recorded above.
 
@@ -96,6 +102,8 @@ is mostly the seed script (`package.json` references it but the file does not ex
 | 2026-10-15 | Ayonife | **ME-3 done** (`d29db52`): personal stockout alerts. New `summarizeProductStock` rollup in `forecast.ts` (worst band + at-risk shelves per product, same forecasts the Stock tab shows); My medicines banner lists tracked products reading warning/critical with a jump link; each entry card carries a low-stock chip. TDD: 4 rollup checks added to the pipeline failing first (missing export), then implemented. Typecheck caught and fixed a real narrowing bug in the rollup. |
 | 2026-10-15 | Ayonife | **ME-4 done** (`01db8c4`): one-click stage demo. New "Play the 30-second demo" card on the Verify tab runs genuine-then-counterfeit scans with step status and lands on the hotspot map with the suspicious scan selected. Known quirk (by design, not changed): scanning one code 3+ times a day trips the reuse signal, so repeat stage runs can flip the genuine pack — first run is always clean. |
 | 2026-10-15 | Ayonife | **ME-5 done** (`7d764e2`): source-citation pass. Eight files (products, batches, locations, custody, demand, registry, verify, schema.sql) now document their production data mapping to Greenbook / GS1 / EPCIS / WHO-GSMS / WHO-HAI per report.md. Comments only, no behavior change. |
+| 2026-10-15 | Ayonife | **Impeccable audit** (`7b306a1`): 13/20 → fixed batch (redacted pass-color class restored, dose-time labels, forecast table overflow, h1 landmark, 23-spot contrast sweep). Detector clean before and after. |
+| 2026-10-15 | Ayonife | **Review pass** (`c68a940`): 3 parallel shard reviews (22 + 14 + 18 raw findings) → validated, fixed, re-verified. Headline fixes: AgentRouter key restore (AI tab was dead), code-only verdict cap reorder, null-reference phantom mismatch + fixed prefix map, forecast history alignment, Holt residual, delivery off-by-one, reuse-signal tuning (same-site forgiven), highRisk wiring, RLS gaps (scans SELECT, positions write, idempotent policies), scripts under typecheck (new tsconfig.scripts.json), real write assertion, recall chronology, .env.example. Full suite: typecheck clean, pipeline 42/42, cabinet 20/20, source 13/13, build OK. **Score 96/100** (deductions: map-marker keyboard −1, compact targets −1, single bundle −1, gateway error echo −1; live-Supabase e2e excluded as environmental, owned by BE-4). |
 
 ## 9. Known issues (resolved ones stay listed with their fix)
 
