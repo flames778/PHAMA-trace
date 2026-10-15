@@ -542,20 +542,27 @@ function Shell({
 
       <div className="mx-auto max-w-6xl px-5 pb-16">{children}</div>
 
-      <footer className="border-t border-line bg-ink-soft/60">
+      <footer className="bg-ink-soft/60">
+        <div aria-hidden="true" className="h-[3px] bg-teal-500" />
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <button type="button" onClick={onHome} aria-label="PharmaTrace home" className="block">
-              <img
-                src="/brand/logo.svg"
-                alt="PharmaTrace: Community Care and Medicine Verification"
-                className="h-auto w-52"
-              />
+            <button type="button" onClick={onHome} aria-label="PharmaTrace home" className="block text-left">
+              <span className="flex items-center gap-3">
+                <img src="/brand/icon.svg" alt="" className="h-11 w-11 shrink-0" />
+                <span>
+                  <span className="font-display block text-[24px] font-bold leading-none tracking-tight">
+                    <span className="text-slate-100">Pharma</span><span className="text-teal-500">Trace</span>
+                  </span>
+                  <span className="mt-1.5 block text-[9.5px] font-bold uppercase tracking-[0.22em] text-teal-300">
+                    Community Care &amp; Medicine Verification
+                  </span>
+                </span>
+              </span>
             </button>
-            <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
+            <p className="mt-4 max-w-xs text-[12px] leading-relaxed text-slate-500">
               Scan a pack, know if it is real, and see where shortages are.
-              This demo runs on a fictional registry. Nothing here is
-              connected to NAFDAC or any manufacturer.
+              This demo runs on a fictional registry. Nothing here connects
+              to NAFDAC or any manufacturer.
             </p>
           </div>
           <nav aria-label="Regulatory portals">
