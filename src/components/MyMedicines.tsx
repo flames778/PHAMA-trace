@@ -10,6 +10,7 @@ import {
   type CabinetEntry,
   type HouseholdMember,
 } from "../lib/cabinet";
+import { Select } from "./Select";
 
 const ENTRIES_KEY = "pharmatrace:cabinet:entries:v1";
 const MEMBERS_KEY = "pharmatrace:cabinet:members:v1";
@@ -83,9 +84,10 @@ export interface MyMedicinesProps {
   products: Product[];
   stockByProduct: Map<string, ProductStockSummary>;
   onViewStock?: () => void;
+  onScanPack?: () => void;
 }
 
-export function MyMedicines({ scans, products, stockByProduct, onViewStock }: MyMedicinesProps) {
+export function MyMedicines({ scans, products, stockByProduct, onViewStock, onScanPack }: MyMedicinesProps) {
   const [entries, setEntries] = useState<CabinetEntry[]>(loadEntries);
   const [members, setMembers] = useState<HouseholdMember[]>(loadMembers);
   const [newName, setNewName] = useState("");
@@ -170,12 +172,22 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock }: My
   if (entries.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-10 text-center">
-        <p className="text-[13px] text-slate-400">No medicines tracked yet</p>
+        <p className="font-display text-[17px] font-bold text-slate-100">Your cabinet is empty</p>
         <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-slate-500">
-          Scan a medicine pack and it will be added here with a plain-language explanation of
-          what it is for and how to take it. Add the people in your household, assign each
-          medicine to someone, and set dose times so nobody misses one.
+          Scan a medicine pack and it lands here with a plain-language
+          explanation of what it is for and how to take it. Add the people in
+          your household, assign each medicine to someone, and set dose times
+          so nobody misses one.
         </p>
+        {onScanPack && (
+          <button
+            type="button"
+            onClick={onScanPack}
+            className="pt-press mt-4 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400"
+          >
+            Scan your first pack
+          </button>
+        )}
       </div>
     );
   }
@@ -356,22 +368,16 @@ function EntryCard({
             {entry.howToTake}
           </p>
 
-          <div className="mt-2.5 flex flex-wrap items-center gap-2">
-            <label className="text-[11px] text-slate-500">
-              Person{" "}
-              <select
-                value={entry.memberId ?? ""}
-                onChange={(e) => onChange({ ...entry, memberId: e.target.value || null })}
-                className="ml-1 rounded-md border border-line bg-ink px-1.5 py-1 text-[11.5px] text-slate-200 outline-none focus:border-teal-500/60"
-              >
-                <option value="">Unassigned</option>
-                {members.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <div className="mt-2.5 max-w-xs">
+            <Select
+              label="Person"
+              value={entry.memberId ?? ""}
+              onChange={(v) => onChange({ ...entry, memberId: v || null })}
+              options={[
+                { value: "", label: "Unassigned" },
+                ...members.map((m) => ({ value: m.id, label: m.name })),
+              ]}
+            />
           </div>
 
           <div className="mt-2 border-t border-line pt-2">

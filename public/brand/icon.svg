@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b44b2a" />
+      <stop offset="100%" stop-color="#8a3419" />
+    </linearGradient>
+    <filter id="subtleShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#541b0b" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Rounded Shield Container -->
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#bgGrad)" filter="url(#subtleShadow)" />
+  
+  <!-- Subtle Internal Border / Ring -->
+  <rect x="44" y="44" width="424" height="424" rx="100" fill="none" stroke="#fcf8f6" stroke-width="2" stroke-opacity="0.2" />
+
+  <!-- Central Graphic: Interlocking Apothecary Cross + Capsule / Verification Ribbon -->
+  <g transform="translate(256, 256)">
+    <!-- Protective Outer Verification Ring / Crest Segments -->
+    <circle cx="0" cy="0" r="148" fill="none" stroke="#fff8f6" stroke-width="8" stroke-dasharray="14 10" stroke-opacity="0.35" />
+    
+    <!-- Clean Tactile White Medical / Apothecary Cross with Refined Inward Flutes -->
+    <path d="M -34 -115 
+             C -34 -126 -25 -135 -14 -135 
+             L 14 -135 
+             C 25 -135 34 -126 34 -115 
+             L 34 -42 
+             C 34 -38 38 -34 42 -34 
+             L 115 -34 
+             C 126 -34 135 -25 135 -14 
+             L 135 14 
+             C 135 25 126 34 115 34 
+             L 42 34 
+             C 38 34 34 38 34 42 
+             L 34 115 
+             C 34 126 25 135 14 135 
+             L -14 135 
+             C -25 135 -34 126 -34 115 
+             L -34 42 
+             C -34 38 -38 34 -42 34 
+             L -115 34 
+             C -126 34 -135 25 -135 14 
+             L -135 -14 
+             C -135 -25 -126 -34 -115 -34 
+             L -42 -34 
+             C -38 -34 -34 -38 -34 -42 
+             Z" 
+          fill="#fff8f6" />
+          
+    <!-- Core Center Token: Integrity Dot / Verification Seal Cutout -->
+    <circle cx="0" cy="0" r="24" fill="#b44b2a" />
+    <circle cx="0" cy="0" r="12" fill="#fff8f6" />
+
+    <!-- Delicate Minimalist Leaf / Botanical Integrity Accent at Top Right Corner -->
+    <path d="M 62 -62 C 62 -95 95 -95 95 -62 C 95 -29 62 -29 62 -62 Z" fill="#d97757" opacity="0.9" />
+    <path d="M 62 -62 L 95 -95" stroke="#fff8f6" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+  </g>
+</svg>

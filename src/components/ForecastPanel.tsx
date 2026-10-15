@@ -71,12 +71,14 @@ export function ForecastPanel({
               <div className="text-[10.5px] font-semibold uppercase tracking-[0.16em] opacity-80">
                 {style.label}
               </div>
-              <div className="mt-1 text-2xl font-bold tabular-nums">{n}</div>
+              <div className="font-display mt-1 text-2xl font-bold tabular-nums">{n}</div>
               <div className="text-[11px] opacity-70">shelves</div>
             </div>
           );
         })}
       </div>
+
+      <BandDonut results={results} />
 
       {atRisk.length > 0 && (
         <div className="rounded-xl border border-amber-400/25 bg-amber-400/5 px-4 py-3">
@@ -91,8 +93,8 @@ export function ForecastPanel({
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <div className="overflow-hidden rounded-xl border border-line">
-          <div className="max-h-[430px] overflow-auto">
-            <table className="w-full border-collapse text-left text-[12px]">
+          <div className="pt-scroll max-h-[430px] overflow-auto">
+            <table className="pt-cards w-full border-collapse text-left text-[12px]">
               <thead className="sticky top-0 z-10 bg-ink-soft">
                 <tr className="text-[10.5px] uppercase tracking-[0.12em] text-slate-500">
                   <th className="px-3 py-2.5 font-semibold">Shelf</th>
@@ -125,20 +127,20 @@ export function ForecastPanel({
                         active ? "bg-teal-500/10" : "hover:bg-white/[0.03]"
                       }`}
                     >
-                      <td className="px-3 py-2.5">
+                      <td data-label="Shelf" className="px-3 py-2.5">
                         <div className="font-medium text-slate-200">{loc?.name ?? r.locationId}</div>
                         <div className="text-[10.5px] text-slate-500">
                           {loc?.lga} · {loc?.state}
                         </div>
                       </td>
-                      <td className="px-3 py-2.5">
+                      <td data-label="Product" className="px-3 py-2.5">
                         <div className="text-slate-300">{product?.brandName ?? "—"}</div>
                         <div className="font-mono text-[10.5px] text-slate-500">{batch?.batchCode}</div>
                       </td>
-                      <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
+                      <td data-label="On hand" className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
                         {r.onHand.toLocaleString()}
                       </td>
-                      <td className="px-3 py-2.5 text-right font-mono tabular-nums">
+                      <td data-label="Days" className="px-3 py-2.5 text-right font-mono tabular-nums">
                         <span
                           className={
                             r.band === "critical"
@@ -151,7 +153,7 @@ export function ForecastPanel({
                           {r.daysToStockout === null ? "∞" : r.daysToStockout.toFixed(1)}
                         </span>
                       </td>
-                      <td className="px-3 py-2.5">
+                      <td data-label="Band" className="px-3 py-2.5">
                         <span
                           className={`rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${BAND_STYLE[r.band].classes}`}
                         >
@@ -213,6 +215,81 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
+/**
+ * Band donut: the four shelf counts as one readable figure. Built for older
+ * eyes — big numerals, thick segments, high-contrast legend, no thin
+ * chartjunk. Pure SVG, no library.
+ */
+function BandDonut({ results }: { results: ForecastResult[] }) {
+  const counts = {
+    critical: 0,
+    warning: 0,
+    watch: 0,
+    ok: 0,
+  } as Record<ForecastResult["band"], number>;
+  for (const r of results) counts[r.band]++;
+  const total = results.length;
+  if (total === 0) return null;
+
+  const SEG: Record<ForecastResult["band"], string> = {
+    critical: "#e11d48",
+    warning: "#d97706",
+    watch: "#6b94b5",
+    ok: "#567263",
+  };
+  const R = 52;
+  const C = 2 * Math.PI * R;
+  let acc = 0;
+  const arcs = (Object.keys(counts) as ForecastResult["band"][])
+    .map((band) => {
+      const frac = counts[band] / total;
+      const seg = { band, frac, offset: acc };
+      acc += frac;
+      return seg;
+    })
+    .filter((s) => s.frac > 0);
+
+  return (
+    <div className="flex flex-wrap items-center gap-5 rounded-xl border border-line bg-ink-soft/60 px-5 py-4">
+      <svg viewBox="0 0 140 140" className="h-32 w-32 shrink-0" role="img" aria-label={`Shelf bands: ${counts.critical} critical, ${counts.warning} warning, ${counts.watch} watch, ${counts.ok} ok`}>
+        <circle cx="70" cy="70" r={R} fill="none" strokeWidth="17" stroke="currentColor" opacity="0.12" />
+        {arcs.map((s) => (
+          <circle
+            key={s.band}
+            cx="70"
+            cy="70"
+            r={R}
+            fill="none"
+            stroke={SEG[s.band]}
+            strokeWidth="17"
+            strokeDasharray={`${Math.max(0, s.frac * C - 2)} ${C}`}
+            strokeDashoffset={-s.offset * C}
+            strokeLinecap="butt"
+            transform="rotate(-90 70 70)"
+          />
+        ))}
+        <text x="70" y="66" textAnchor="middle" fontSize="26" fontWeight="800" fill="currentColor" className="font-display tabular-nums">
+          {total}
+        </text>
+        <text x="70" y="86" textAnchor="middle" fontSize="11" fill="currentColor" opacity="0.65">
+          shelves
+        </text>
+      </svg>
+      <ul className="min-w-40 flex-1 space-y-1.5">
+        {(Object.keys(counts) as ForecastResult["band"][]).map((band) => (
+          <li key={band} className="flex items-baseline gap-2.5 text-[13px]">
+            <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: SEG[band] }} />
+            <span className="font-display text-[17px] font-bold tabular-nums text-slate-100">
+              {counts[band]}
+            </span>
+            <span className="text-slate-500">{BAND_STYLE[band].label.toLowerCase()} shelves</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Sparkline({ series, band }: { series: ForecastPoint[]; band: ForecastResult["band"] }) {
   const W = 320;
   const H = 132;
@@ -233,14 +310,14 @@ function Sparkline({ series, band }: { series: ForecastPoint[]; band: ForecastRe
       .join(" ");
 
   const stroke =
-    band === "critical" ? "#fb7185" : band === "warning" ? "#fcd34d" : band === "watch" ? "#7dd3fc" : "#6ee7b7";
+    band === "critical" ? "#e11d48" : band === "warning" ? "#d97706" : band === "watch" ? "#6b94b5" : "#567263";
 
   const areaPath = `${line(series)} L${x(n - 1).toFixed(1)},${H - pad.b} L${x(0).toFixed(1)},${H - pad.b} Z`;
 
   return (
     <div className="rounded-xl border border-line bg-ink-soft/60 p-3">
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Demand history and projection">
-        <path d={areaPath} fill={stroke} opacity="0.08" />
+        <path d={areaPath} fill={stroke} opacity="0.12" />
         {[0, 0.5, 1].map((f) => (
           <g key={f}>
             <line
@@ -248,21 +325,21 @@ function Sparkline({ series, band }: { series: ForecastPoint[]; band: ForecastRe
               x2={W - pad.r}
               y1={y(max * f)}
               y2={y(max * f)}
-              stroke="#1e293b"
+              stroke="#d7d1c5"
               strokeWidth="1"
             />
-            <text x={2} y={y(max * f) + 3} fontSize="8" fill="#475569">
+            <text x={2} y={y(max * f) + 3} fontSize="10" fill="#8a7058">
               {Math.round(max * f)}
             </text>
           </g>
         ))}
-        <path d={line(observed)} fill="none" stroke={stroke} strokeWidth="1.7" />
+        <path d={line(observed)} fill="none" stroke={stroke} strokeWidth="2.2" />
         <path
           d={line(projected, splitIndex - 1 >= 0 ? splitIndex - 1 : 0)}
           fill="none"
           stroke={stroke}
-          strokeWidth="1.5"
-          strokeDasharray="4 3"
+          strokeWidth="2"
+          strokeDasharray="5 4"
           opacity="0.85"
         />
         {splitIndex > 0 && (
@@ -276,10 +353,10 @@ function Sparkline({ series, band }: { series: ForecastPoint[]; band: ForecastRe
             strokeDasharray="2 3"
           />
         )}
-        <text x={pad.l} y={H - 5} fontSize="8" fill="#475569">
+        <text x={pad.l} y={H - 5} fontSize="10" fill="#8a7058">
           {series[0]?.day.slice(5)}
         </text>
-        <text x={W - pad.r} y={H - 5} fontSize="8" fill="#475569" textAnchor="end">
+        <text x={W - pad.r} y={H - 5} fontSize="10" fill="#8a7058" textAnchor="end">
           {series[n - 1]?.day.slice(5)}
         </text>
       </svg>

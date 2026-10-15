@@ -203,16 +203,17 @@ export function forecastStockout(input: ForecastInput): ForecastResult | null {
   else if (daysToStockout <= 12) band = "watch";
 
   const finite = Number.isFinite(daysToStockout) ? Math.round(daysToStockout * 10) / 10 : null;
+  const cover = finite !== null ? `${finite.toFixed(1)} days` : "the foreseeable future";
   const note =
     band === "critical"
       ? stockoutBeforeDelivery
-        ? `Shelf covers ${finite?.toFixed(1) ?? "—"} days at ${dailyDemand.toFixed(1)}/day but the next delivery is ${nextDeliveryInDays} days out. Stockout lands first — reorder now.`
-        : `Shelf covers ${finite?.toFixed(1) ?? "—"} days at ${dailyDemand.toFixed(1)}/day. Reorder now by expedited route.`
+        ? `Shelf covers ${cover} at ${dailyDemand.toFixed(1)}/day but the next delivery is ${nextDeliveryInDays} days out. The stockout lands first. Reorder now.`
+        : `Shelf covers ${cover} at ${dailyDemand.toFixed(1)}/day. Reorder now by expedited route.`
       : band === "warning"
-        ? `Shelf covers ${finite?.toFixed(1) ?? "—"} days at ${dailyDemand.toFixed(1)}/day. Raise a purchase order this week.`
+        ? `Shelf covers ${cover} at ${dailyDemand.toFixed(1)}/day. Raise a purchase order this week.`
         : band === "watch"
-          ? `Shelf covers ${finite?.toFixed(1) ?? "—"} days. Demand is climbing with the season; keep the next order on schedule.`
-          : `Shelf covers ${finite?.toFixed(1) ?? "—"} days at ${dailyDemand.toFixed(1)}/day. No action needed.`;
+          ? `Shelf covers ${cover}. Demand is climbing with the season; keep the next order on schedule.`
+          : `Shelf covers ${cover} at ${dailyDemand.toFixed(1)}/day. No action needed.`;
 
   return {
     batchId: input.batchId,

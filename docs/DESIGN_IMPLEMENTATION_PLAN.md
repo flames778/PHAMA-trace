@@ -184,6 +184,15 @@ lives in the adoption doc; verify each ported screen against it.
 
 ## 7. Phased build (gates per phase)
 
+Shipped 2026-10-15 (design pass `impeccable + frontend-design + modern-web-design +
+micro-interactions + animate + humanizer`): P0 tokens/fonts/header/nav/footer,
+plus early deliveries pulled forward — minimal Landing page, custom Select
+replacing all native dropdowns, responsive card-tables, collapsible
+explainers, band donut + senior-readable sparkline, simplified AI panel,
+My-medicines scan CTA, Bricolage-only type, press/focus/indicator motion
+system, custom scrollbars, emdash-free UI copy. Deferred as planned: dark map
+tiles (P4), MedicineGuide emoji icons (symbol pass), translations, PWA.
+
 - **P0 tokens + fonts + header/nav** (this plan §1–2, §5): @theme rewrite,
   fontsource wiring, icon swap, new shell. Gate: suites green + detector +
   screenshot review desktop/mobile + contrast spot-checks.

@@ -111,7 +111,7 @@ export function verify(input: VerifyInput): ScanResult {
         label: "Recall status",
         weight: -6,
         severity: "critical",
-        detail: `This batch is under recall — ${batch.recallReason ?? "reason on file"}`,
+        detail: `This batch is under recall: ${batch.recallReason ?? "reason on file"}`,
       });
     }
 
@@ -228,7 +228,7 @@ export function verify(input: VerifyInput): ScanResult {
         label: "Batch registry",
         weight: -2.8,
         severity: "critical",
-        detail: `Code ${code} is not in the registry, but ${near} is. It differs by ${editDistance(code, near)} character(s) — the classic pattern of a copied serial.`,
+        detail: `Code ${code} is not in the registry, but ${near} is. It differs by ${editDistance(code, near)} character(s). That is the classic pattern of a copied serial.`,
       });
     } else {
       flags.push("CODE_UNKNOWN");
@@ -296,7 +296,7 @@ export function verify(input: VerifyInput): ScanResult {
       weight: analysed ? -1.6 : -1.1,
       severity: "warning",
       detail: analysed
-        ? "A pack photograph was provided but could not be analysed. Retake with even light and the pack filling the frame — a batch code on its own can be photocopied onto a fake pack."
+        ? "A pack photograph was provided but could not be analysed. Retake with even light and the pack filling the frame. A batch code on its own can be photocopied onto a fake pack."
         : "No pack photograph was analysed. A batch code on its own can be photocopied onto a fake pack.",
     });
   }
@@ -365,7 +365,7 @@ function confidenceFor(verdict: Verdict, score: number, signals: Signal[], hasVi
 function headlineFor(verdict: Verdict, code: string, product: Product | null): string {
   switch (verdict) {
     case "genuine":
-      return `${product?.brandName ?? "Pack"} — matches the registered batch`;
+      return `${product?.brandName ?? "Pack"}: matches the registered batch`;
     case "suspicious":
       return `Do not dispense ${code}`;
     default:

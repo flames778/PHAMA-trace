@@ -1,7 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ScanRequest } from "./lib/usePharmaTrace";
 import { usePharmaTrace, type ScanOutcome } from "./lib/usePharmaTrace";
 import { Scanner, DEMO_PACKS } from "./components/Scanner";
+import { Landing } from "./components/Landing";
+import { Select } from "./components/Select";
 import { VerdictPanel } from "./components/VerdictPanel";
 import { CustodyTimeline } from "./components/CustodyTimeline";
 import { ForecastPanel } from "./components/ForecastPanel";
@@ -28,6 +30,7 @@ const TABS: [Tab, string][] = [
 
 export default function App() {
   const state = usePharmaTrace();
+  const [view, setView] = useState<"landing" | "app">("landing");
   const [tab, setTab] = useState<Tab>("verify");
   const [outcome, setOutcome] = useState<ScanOutcome | null>(null);
   const [selectedScanId, setSelectedScanId] = useState<string | null>(null);
@@ -117,14 +120,18 @@ export default function App() {
     switch (tab) {
       case "verify":
         return (
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-            <section>
-              <h2 className="mb-1 text-[15px] font-semibold text-slate-100">Scan a pack</h2>
+          <div className="grid gap-5 lg:grid-cols-12">
+            <section className="rounded-xl border border-line bg-ink-soft/60 p-4 sm:p-5 lg:col-span-7">
+              <h2 className="font-display mb-1 text-[19px] font-bold text-slate-100">Scan a pack</h2>
               <p className="mb-4 text-[12.5px] leading-relaxed text-slate-500">
                 Read the batch code from the barcode, then compare the print against the
-                manufacturer&apos;s registered artwork. Both are needed — a code alone can be copied.
+                manufacturer&apos;s registered artwork. Both are needed. A code alone can be copied.
               </p>
-              <div className="mb-4 rounded-xl border border-teal-400/25 bg-teal-400/5 px-4 py-3">
+              <Scanner busy={state.busy} locationName={state.scanLocation.name} onScan={handleScan} />
+            </section>
+
+            <div className="space-y-5 lg:col-span-5">
+              <div className="rounded-xl border border-teal-400/25 bg-teal-400/5 px-4 py-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-semibold text-slate-100">Play the 30-second demo</p>
@@ -141,7 +148,7 @@ export default function App() {
                         setDemoStep("Demo failed before the second scan. Check the connection and retry."),
                       );
                     }}
-                    className="shrink-0 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
+                    className="pt-press shrink-0 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
                   >
                     {demoRunning ? "Running…" : "▶ Play demo"}
                   </button>
@@ -150,63 +157,61 @@ export default function App() {
                   <p className="mt-2 text-[12px] text-teal-200">{demoStep}</p>
                 )}
               </div>
-              <Scanner busy={state.busy} locationName={state.scanLocation.name} onScan={handleScan} />
 
-              <div className="mt-6">
-                <label
-                  htmlFor="scan-location"
-                  className="mb-1 block text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500"
-                >
-                  Scan location
-                </label>
-                <select
-                  id="scan-location"
+              <div className="rounded-xl border border-line bg-ink-soft/60 p-4">
+                <Select
+                  label="Scan location"
                   value={state.scanLocation.id}
-                  onChange={(e) => state.setScanLocationId(e.target.value)}
-                  className="w-full rounded-lg border border-line bg-ink-soft px-3 py-2 text-[13px] text-slate-100 outline-none focus:border-teal-500/60"
-                >
-                  {state.locations
+                  onChange={state.setScanLocationId}
+                  options={state.locations
                     .filter((l) => l.kind === "pharmacy" || l.kind === "regulator")
-                    .map((l) => (
-                      <option key={l.id} value={l.id}>
-                        {l.name} — {l.lga}, {l.state}
-                      </option>
-                    ))}
-                </select>
+                    .map((l) => ({
+                      value: l.id,
+                      label: `${l.name} · ${l.lga}, ${l.state}`,
+                    }))}
+                />
                 <p className="mt-1.5 text-[11px] text-slate-500">
                   Changing this drives the route-plausibility check: a pack found hundreds of
                   kilometres off its recorded distribution path is flagged.
                 </p>
               </div>
-            </section>
+            </div>
 
-            <section className="space-y-6">
-              {outcome ? (
-                <>
+            {outcome ? (
+              <>
+                <section className="lg:col-span-7">
                   <VerdictPanel
                     result={outcome.result}
                     product={outcome.product}
                     visionError={outcome.visionError}
                   />
-                  {outcome.product && <MedicineGuide product={outcome.product} />}
-                  {outcome.batch && (
-                    <div>
-                      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                        Chain of custody — {outcome.batch.batchCode}
-                      </h3>
-                      <CustodyTimeline
-                        events={state.custody}
-                        locationById={(id) => state.locations.find((l) => l.id === id) ?? null}
-                        chainIntact={chainCheck.ok}
-                        brokenAtEventId={chainCheck.brokenAtEventId}
-                      />
+                </section>
+                {outcome.batch && (
+                  <section className="rounded-xl border border-line bg-ink-soft/60 p-4 lg:col-span-5">
+                    <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                      Chain of custody: {outcome.batch.batchCode}
+                    </h3>
+                    <CustodyTimeline
+                      events={state.custody}
+                      locationById={(id) => state.locations.find((l) => l.id === id) ?? null}
+                      chainIntact={chainCheck.ok}
+                      brokenAtEventId={chainCheck.brokenAtEventId}
+                    />
+                  </section>
+                )}
+                {outcome.product && (
+                  <section className="lg:col-span-12">
+                    <div className="max-w-4xl">
+                      <MedicineGuide product={outcome.product} />
                     </div>
-                  )}
-                </>
-              ) : (
+                  </section>
+                )}
+              </>
+            ) : (
+              <section className="lg:col-span-12">
                 <EmptyVerdict />
-              )}
-            </section>
+              </section>
+            )}
           </div>
         );
 
@@ -248,11 +253,14 @@ export default function App() {
           <div className="space-y-5">
             <div>
               <h2 className="mb-1 text-[15px] font-semibold text-slate-100">Falsification hotspots</h2>
-              <p className="text-[12.5px] leading-relaxed text-slate-500">
-                Every scan is plotted. Suspicious results accumulate into clusters a regulator or
-                NGO can act on. This demo workspace is not connected to NAFDAC — it shows what a
-                shared view would look like.
-              </p>
+              <details className="pt-details">
+                <summary>How hotspot reporting works</summary>
+                <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-slate-500">
+                  Every scan is plotted. Suspicious results accumulate into clusters a regulator or
+                  NGO can act on. This demo workspace is not connected to NAFDAC. It shows what a
+                  shared view would look like.
+                </p>
+              </details>
             </div>
             <HotspotMap
               locations={state.locations}
@@ -281,9 +289,9 @@ export default function App() {
               products={state.products}
               positions={state.positions}
             />
-            <div className="rounded-xl border border-line bg-ink-soft/60 px-4 py-3">
-              <h3 className="text-[12px] font-semibold text-slate-200">About this data</h3>
-              <p className="mt-1 text-[12px] leading-relaxed text-slate-400">
+            <details className="pt-details rounded-xl border border-line bg-ink-soft/60 px-4 py-3">
+              <summary>About this data</summary>
+              <p className="mt-2 text-[12px] leading-relaxed text-slate-400">
                 {state.degraded
                   ? "The live backend failed, so these rows are the local fallback copy. Nothing here leaves this browser."
                   : state.mode === "supabase"
@@ -291,9 +299,9 @@ export default function App() {
                     : "Bundled mock registry. Every brand, manufacturer and serial below is fictional and exists only so this demo runs end to end."}{" "}
                 A production deployment would read these same shapes from the NAFDAC
                 Greenbook (registered products), GS1 identifiers (code identity) and the
-                NAFDAC traceability system (custody events) — see report.md for the mapping.
+                NAFDAC traceability system (custody events). See report.md for the mapping.
               </p>
-            </div>
+            </details>
           </div>
         );
 
@@ -305,7 +313,7 @@ export default function App() {
               <p className="text-[12.5px] leading-relaxed text-slate-500">
                 Every medicine you scan is saved here with a plain-language explanation of what
                 it is for and how to take it. Handy for keeping track of everything in the
-                household — especially for elderly family members who may not remember.
+                household, especially for elderly family members who may not remember.
               </p>
             </div>
             <MyMedicines
@@ -313,6 +321,7 @@ export default function App() {
               products={state.products}
               stockByProduct={stockByProduct}
               onViewStock={() => setTab("stock")}
+              onScanPack={() => setTab("verify")}
             />
           </div>
         );
@@ -336,19 +345,45 @@ export default function App() {
       siteName={state.scanLocation.name}
       tabs={TABS}
       activeTab={tab}
-      onNavigate={setTab}
+      onNavigate={(t) => {
+        setView("app");
+        setTab(t);
+      }}
+      onHome={() => setView("landing")}
     >
       <main className="pt-6">
         {state.degraded && (
           <div className="mb-4 rounded-xl border border-amber-400/25 bg-amber-400/5 px-4 py-3">
             <p className="text-[12.5px] text-amber-100/90">
               <span className="font-semibold">Live registry unreachable.</span> Showing the
-              bundled demo registry so the demo can continue — scans and stock entries are
+              bundled demo registry so the demo can continue. Scans and stock entries are
               kept locally until the connection is back.
             </p>
           </div>
         )}
-        {content}
+        {view === "landing" ? (
+          <Landing
+            productCount={state.products.length}
+            batchCount={state.batches.length}
+            pharmacyCount={state.locations.filter((l) => l.kind === "pharmacy").length}
+            onCheckPack={() => {
+              setView("app");
+              setTab("verify");
+            }}
+            onMyMedicines={() => {
+              setView("app");
+              setTab("medicines");
+            }}
+            onPlayDemo={() => {
+              setView("app");
+              void runDemoFlow();
+            }}
+          />
+        ) : (
+          <div key={tab} className="pt-rise">
+            {content}
+          </div>
+        )}
       </main>
     </Shell>
   );
@@ -357,59 +392,12 @@ export default function App() {
 function EmptyVerdict() {
   return (
     <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-14 text-center">
-      <p className="text-[13px] text-slate-400">No scan yet</p>
-      <p className="mx-auto mt-1 max-w-xs text-[12px] leading-relaxed text-slate-500">
-        Pick one of the demo packs to run the full pipeline — barcode decode, registry lookup,
-        packaging comparison and custody verification.
+      <p className="font-display text-[17px] font-bold text-slate-200">No scan yet</p>
+      <p className="mx-auto mt-1 max-w-md text-[12.5px] leading-relaxed text-slate-500">
+        Pick a demo pack above, or press play. Each scan runs barcode decode,
+        registry lookup, packaging comparison, and custody verification.
       </p>
-      <div className="mt-4 flex flex-wrap justify-center gap-2">
-        {DEMO_PACKS.map((p) => (
-          <span
-            key={p.src}
-            className="rounded-md border border-line px-2 py-0.5 font-mono text-[10.5px] text-slate-500"
-          >
-            {p.code}
-          </span>
-        ))}
-      </div>
     </div>
-  );
-}
-
-function SealMark() {
-  return (
-    <svg
-      width="38"
-      height="38"
-      viewBox="0 0 38 38"
-      role="img"
-      aria-label="PharmaTrace seal"
-      className="shrink-0"
-    >
-      <circle cx="19" cy="19" r="17.5" fill="none" stroke="#b44b2a" strokeWidth="1.6" />
-      <circle
-        cx="19"
-        cy="19"
-        r="14"
-        fill="none"
-        stroke="#b44b2a"
-        strokeWidth="0.8"
-        strokeDasharray="2.5 2"
-        opacity="0.7"
-      />
-      <circle cx="19" cy="19" r="10.5" fill="#b44b2a" opacity="0.12" />
-      <text
-        x="19"
-        y="23.5"
-        textAnchor="middle"
-        fontSize="11"
-        fontWeight="800"
-        fill="#943414"
-        className="font-display"
-      >
-        PT
-      </text>
-    </svg>
   );
 }
 
@@ -437,6 +425,7 @@ function Shell({
   tabs,
   activeTab,
   onNavigate,
+  onHome,
   children,
 }: {
   mode: "local" | "server" | "supabase";
@@ -444,16 +433,36 @@ function Shell({
   tabs: [Tab, string][];
   activeTab: Tab;
   onNavigate: (tab: Tab) => void;
+  onHome: () => void;
   children: React.ReactNode;
 }) {
   const badge = MODE_BADGE[mode];
+  const tabRefs = useRef(new Map<Tab, HTMLButtonElement>());
+  const [pill, setPill] = useState({ left: 0, width: 0, ready: false });
+  const reduceMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Follow-pill: the indicator slides to the active tab (transform only).
+  // Re-measured on every tab change so font loading or resize cannot strand
+  // it, and the strip scrolls the active tab into view on mobile.
+  useLayoutEffect(() => {
+    const el = tabRefs.current.get(activeTab);
+    if (!el) return;
+    setPill({ left: el.offsetLeft, width: el.offsetWidth, ready: true });
+    el.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, [activeTab, tabs, reduceMotion]);
   return (
     <div className="min-h-full">
       <div className="border-b border-line bg-ink-soft">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-0.5 px-5 py-1.5 text-[11px] text-slate-500">
           <span className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" aria-hidden="true" />
-            Demo environment — bundled registry, no regulator connection
+            Demo environment: bundled registry, no regulator connection
           </span>
           <span className="ml-auto hidden sm:inline">FMOH · PCN protocol</span>
         </div>
@@ -461,15 +470,22 @@ function Shell({
 
       <header className="border-b border-line bg-ink">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-5 pb-3 pt-4">
-          <SealMark />
-          <div className="min-w-0">
-            <h1 className="font-display text-[22px] font-bold leading-none tracking-tight text-slate-100">
-              PharmaTrace
-            </h1>
-            <p className="mt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Verify · track · predict · report
-            </p>
-          </div>
+          <button
+            type="button"
+            onClick={onHome}
+            aria-label="PharmaTrace home"
+            className="flex min-w-0 items-center gap-3 rounded-lg text-left"
+          >
+            <img src="/brand/icon.svg" alt="" className="h-[38px] w-[38px] shrink-0" />
+            <span className="min-w-0">
+              <span className="font-display block text-[22px] font-bold leading-none tracking-tight text-slate-100">
+                PharmaTrace
+              </span>
+              <span className="mt-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Verify · track · predict · report
+              </span>
+            </span>
+          </button>
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <span className="hidden items-center gap-1.5 rounded-full border border-line bg-ink-soft px-2.5 py-1 text-[11px] text-slate-400 md:flex">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -489,27 +505,38 @@ function Shell({
             </span>
           </div>
         </div>
-        <div className="mx-auto max-w-6xl px-5 pb-3">
-          <nav
-            aria-label="Primary"
-            className="flex gap-1 overflow-x-auto rounded-full border border-line bg-ink-soft p-1"
-          >
-            {tabs.map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => onNavigate(id)}
-                aria-current={activeTab === id ? "page" : undefined}
-                className={`whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-semibold transition ${
-                  activeTab === id
-                    ? "bg-teal-500 text-teal-950 shadow-sm"
-                    : "text-slate-500 hover:bg-white/40 hover:text-slate-200"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
+        <div className="mx-auto max-w-6xl px-5 pb-1">
+          <div className="pt-scroll overflow-x-auto">
+            <nav aria-label="Primary" className="relative flex min-w-max gap-7 px-1">
+              {tabs.map(([id, label]) => (
+                <button
+                  key={id}
+                  ref={(el) => {
+                    if (el) tabRefs.current.set(id, el);
+                    else tabRefs.current.delete(id);
+                  }}
+                  type="button"
+                  onClick={() => onNavigate(id)}
+                  aria-current={activeTab === id ? "page" : undefined}
+                  className={`whitespace-nowrap px-1 py-3 text-[14px] transition ${
+                    activeTab === id
+                      ? "font-semibold text-teal-300"
+                      : "font-medium text-slate-500 hover:text-slate-200"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              <span
+                aria-hidden="true"
+                className="pt-tab-indicator absolute bottom-[5px] left-0 h-[3px] w-[100px] rounded-full bg-teal-500"
+                style={{
+                  transform: `translateX(${pill.left}px) scaleX(${pill.width / 100})`,
+                  opacity: pill.ready ? 1 : 0,
+                }}
+              />
+            </nav>
+          </div>
         </div>
       </header>
 
@@ -518,20 +545,21 @@ function Shell({
       <footer className="border-t border-line bg-ink-soft/60">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="flex items-center gap-2">
-              <SealMark />
-              <span className="font-display text-[16px] font-bold text-slate-100">PharmaTrace</span>
-            </div>
-            <p className="mt-3 text-[12px] leading-relaxed text-slate-500">
+            <button type="button" onClick={onHome} aria-label="PharmaTrace home" className="block">
+              <img
+                src="/brand/logo.svg"
+                alt="PharmaTrace: Community Care and Medicine Verification"
+                className="h-auto w-52"
+              />
+            </button>
+            <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
               Scan a pack, know if it is real, and see where shortages are.
-              This demo runs on a fictional registry — nothing here is
+              This demo runs on a fictional registry. Nothing here is
               connected to NAFDAC or any manufacturer.
             </p>
           </div>
           <nav aria-label="Regulatory portals">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-              Regulatory portals
-            </h2>
+            <h2 className="font-display text-[15px] font-bold text-slate-100">Regulatory portals</h2>
             <ul className="mt-3 space-y-2 text-[12.5px]">
               <li>
                 <a
@@ -558,9 +586,7 @@ function Shell({
             </ul>
           </nav>
           <nav aria-label="Product">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-              Product
-            </h2>
+            <h2 className="font-display text-[15px] font-bold text-slate-100">Product</h2>
             <ul className="mt-3 space-y-2 text-[12.5px]">
               <li>
                 <button
@@ -592,26 +618,41 @@ function Shell({
             </ul>
           </nav>
           <div>
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-              Suspect a fake?
-            </h2>
-            <div className="mt-3 rounded-xl border border-rose-400/30 bg-rose-400/10 px-3.5 py-3">
-              <p className="text-[12px] leading-relaxed text-rose-200">
-                Run it through the Hotspots tab, then escalate to the
-                regulator — this demo never replaces an official report.
-              </p>
-              <p className="mt-2 font-mono text-[11px] text-rose-200">
+            <h2 className="font-display text-[15px] font-bold text-slate-100">Suspect a fake?</h2>
+            <div className="mt-3 space-y-2.5 rounded-xl border border-rose-400/30 bg-rose-400/10 px-3.5 py-3.5">
+              <ol className="space-y-1.5 text-[12px] leading-snug text-rose-200">
+                <li>
+                  <span className="font-semibold">1. Quarantine it.</span> Take the pack off
+                  the shelf and do not dispense it.
+                </li>
+                <li>
+                  <span className="font-semibold">2. Note the code.</span> Batch code,
+                  expiry, and where you bought it.
+                </li>
+                <li>
+                  <span className="font-semibold">3. Report it.</span> Scan it here so it
+                  lands on the hotspot map, then escalate:
+                </li>
+              </ol>
+              <p className="font-mono text-[11px] text-rose-200">
                 <a className="underline-offset-2 hover:underline" href="mailto:sf.alert@nafdac.gov.ng">
                   sf.alert@nafdac.gov.ng
                 </a>
               </p>
+              <button
+                type="button"
+                onClick={() => onNavigate("hotspots")}
+                className="pt-press mt-1 w-full rounded-lg bg-rose-400/15 px-3 py-2 text-[12px] font-semibold text-rose-200 transition hover:bg-rose-400/25"
+              >
+                Open the hotspot map →
+              </button>
             </div>
           </div>
         </div>
         <div className="border-t border-line">
           <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-5 py-4 text-[11px] text-slate-500">
             <span>© 2026 PharmaTrace demo</span>
-            <span>Mock registry — all products fictional</span>
+            <span>Mock registry: all products fictional</span>
             <span className="ml-auto">Decision support, not medical advice</span>
           </div>
         </div>
@@ -698,8 +739,8 @@ function BatchTable({
   };
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-line">
-      <table className="w-full border-collapse text-left text-[12px]">
+    <div className="pt-scroll overflow-auto rounded-xl border border-line">
+      <table className="pt-cards w-full border-collapse text-left text-[12px]">
         <thead className="bg-ink-soft">
           <tr className="text-[10.5px] uppercase tracking-[0.12em] text-slate-500">
             <th className="px-3 py-2.5 font-semibold">Batch code</th>
@@ -715,18 +756,18 @@ function BatchTable({
           {batches.map((b) => {
             const p = prodById.get(b.productId);
             return (
-              <tr key={b.id} className="hover:bg-white/[0.02]">
-                <td className="px-3 py-2.5 font-mono text-slate-200">{b.batchCode}</td>
-                <td className="px-3 py-2.5 text-slate-300">{p?.brandName ?? b.productId}</td>
-                <td className="px-3 py-2.5 text-slate-400">{p?.manufacturer ?? "—"}</td>
-                <td className="px-3 py-2.5 font-mono text-slate-400">{b.expiresOn}</td>
-                <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-400">
+              <tr key={b.id} className="transition hover:bg-teal-500/5">
+                <td data-label="Batch code" className="px-3 py-2.5 font-mono text-slate-200">{b.batchCode}</td>
+                <td data-label="Product" className="px-3 py-2.5 text-slate-300">{p?.brandName ?? b.productId}</td>
+                <td data-label="Manufacturer" className="px-3 py-2.5 text-slate-400">{p?.manufacturer ?? "—"}</td>
+                <td data-label="Expiry" className="px-3 py-2.5 font-mono text-slate-400">{b.expiresOn}</td>
+                <td data-label="Released" className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-400">
                   {b.quantityReleased.toLocaleString()}
                 </td>
-                <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
+                <td data-label="On shelves" className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
                   {onHandFor(b.id).toLocaleString()}
                 </td>
-                <td className="px-3 py-2.5">
+                <td data-label="Status" className="px-3 py-2.5">
                   <span
                     className={`rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${tone[b.status]}`}
                   >

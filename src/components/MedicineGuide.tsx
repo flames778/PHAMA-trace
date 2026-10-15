@@ -74,7 +74,7 @@ export function MedicineGuide({ product }: MedicineGuideProps) {
           What is this medicine for?
         </h3>
         <p className="mt-0.5 text-[11px] text-slate-500">
-          {product.brandName} ({product.genericName}) — explained in plain language
+          {product.brandName} ({product.genericName}): explained in plain language
         </p>
       </div>
       <div className="divide-y divide-line">

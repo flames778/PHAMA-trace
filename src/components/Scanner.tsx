@@ -35,7 +35,7 @@ export const DEMO_PACKS: DemoPack[] = [
     label: "Recalled Amoxaclear",
     code: "NG-AC-25-0442",
     src: "/packs/amoxaclear-recalled.png",
-    note: "Registered, then withdrawn — sub-potent batch.",
+    note: "Registered, then withdrawn: sub-potent batch.",
     expected: "suspicious",
   },
 ];
@@ -204,7 +204,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               type="button"
               disabled={busy}
               onClick={() => runDemo(pack)}
-              className="group overflow-hidden rounded-xl border border-line bg-ink-soft text-left transition hover:border-teal-500/50 disabled:opacity-50"
+              className="pt-press group overflow-hidden rounded-xl border border-line bg-ink-soft text-left transition hover:border-teal-500/50 disabled:opacity-50"
             >
               <img
                 src={pack.src}
@@ -282,7 +282,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
                 <button
                   type="button"
                   onClick={() => void shoot()}
-                  className="rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-teal-950 transition hover:bg-teal-400"
+                  className="pt-press rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-teal-950 transition hover:bg-teal-400"
                 >
                   Capture &amp; verify
                 </button>
@@ -321,7 +321,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
           </div>
           <p className="text-[11px] text-slate-500">
             Code-only checks are reported as <span className="text-slate-300">can&apos;t verify</span> on
-            purpose — a serial alone can be photocopied onto a fake pack.
+            purpose. A serial alone can be photocopied onto a fake pack.
           </p>
         </div>
       )}

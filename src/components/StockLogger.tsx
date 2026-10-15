@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Batch, Location, Product, StockPosition } from "../types";
 import type { StockMovement } from "../types";
+import { Select } from "./Select";
 
 export interface StockLoggerProps {
   batches: Batch[];
@@ -75,29 +76,28 @@ export function StockLogger({
     <div className="space-y-4">
       <div className="rounded-xl border border-line bg-ink-soft/60 p-4">
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Pharmacy">
-            <select value={locationId} onChange={(e) => setLocationId(e.target.value)} className={selectCls}>
-              {pharmacies.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} — {p.lga}, {p.state}
-                </option>
-              ))}
-            </select>
-          </Field>
+          <Select
+            label="Pharmacy"
+            value={locationId}
+            onChange={setLocationId}
+            options={pharmacies.map((p) => ({
+              value: p.id,
+              label: `${p.name} · ${p.lga}, ${p.state}`,
+            }))}
+          />
 
-          <Field label="Batch">
-            <select value={batchId} onChange={(e) => setBatchId(e.target.value)} className={selectCls}>
-              {sellable.map((b) => {
-                const prod = productById.get(b.productId);
-                return (
-                  <option key={b.id} value={b.id}>
-                    {prod?.brandName ?? b.productId} · {b.batchCode}
-                    {b.status === "recalled" ? " (RECALLED)" : ""}
-                  </option>
-                );
-              })}
-            </select>
-          </Field>
+          <Select
+            label="Batch"
+            value={batchId}
+            onChange={setBatchId}
+            options={sellable.map((b) => {
+              const prod = productById.get(b.productId);
+              return {
+                value: b.id,
+                label: `${prod?.brandName ?? b.productId} · ${b.batchCode}${b.status === "recalled" ? " (RECALLED)" : ""}`,
+              };
+            })}
+          />
 
           <Field label="Movement">
             <div className="flex gap-2">
@@ -146,7 +146,7 @@ export function StockLogger({
 
         {batch?.status === "recalled" && (
           <p className="mt-3 rounded-lg border border-rose-400/40 bg-rose-400/10 px-3 py-2 text-[12px] text-rose-200">
-            This batch is under recall. Receiving more of it should not happen — the movement is
+            This batch is under recall. Receiving more of it should not happen. The movement is
             still logged so the audit trail stays complete.
           </p>
         )}
@@ -155,7 +155,7 @@ export function StockLogger({
           type="button"
           onClick={() => void submit()}
           disabled={saving || invalid}
-          className="mt-4 w-full rounded-lg bg-teal-500 px-4 py-2.5 text-sm font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
+          className="pt-press mt-4 w-full rounded-lg bg-teal-500 px-4 py-2.5 text-sm font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
         >
           {saving ? "Recording…" : `Record ${kind === "received" ? "receipt" : "dispensing"}`}
         </button>
@@ -167,12 +167,15 @@ export function StockLogger({
         )}
       </div>
 
-      <p className="text-[11.5px] leading-relaxed text-slate-500">
-        Every movement is appended to the same ledger the forecast reads, so logging a sale today
-        changes tomorrow&apos;s stockout estimate. In the Supabase deployment the movement also
-        updates <span className="font-mono text-slate-400">stock_positions</span> through a database
-        trigger, which keeps the two tables from drifting.
-      </p>
+      <details className="pt-details">
+        <summary>Why logging matters</summary>
+        <p className="mt-1.5 text-[11.5px] leading-relaxed text-slate-500">
+          Every movement is appended to the same ledger the forecast reads, so logging a sale today
+          changes tomorrow&apos;s stockout estimate. In the Supabase deployment the movement also
+          updates <span className="font-mono text-slate-400">stock_positions</span> through a database
+          trigger, which keeps the two tables from drifting.
+        </p>
+      </details>
     </div>
   );
 }

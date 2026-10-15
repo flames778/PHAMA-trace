@@ -52,12 +52,139 @@
   --color-cyan-400: #6b94b5;
 
   --font-display: "Bricolage Grotesque", Verdana, sans-serif;
-  --font-sans: "Plus Jakarta Sans", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Bricolage Grotesque", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", "Menlo", ui-monospace, monospace;
+
+  /* Motion language: one expo-out curve, two durations. Everything
+   * interactive answers in these; nothing invents its own easing. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-quick: 160ms;
+  --duration-calm: 260ms;
 }
 
 .font-display {
   font-optical-sizing: auto;
+}
+
+body {
+  font-optical-sizing: auto;
+}
+
+/* Visible keyboard focus everywhere — the app is used by older adults
+ * and counter staff who tab as much as they tap. */
+:focus-visible {
+  outline: 2px solid #943414;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Custom scrollbars for scrollable regions (never browser-native grey).
+ * Apply .pt-scroll to any overflow container. Firefox pairing included. */
+.pt-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #c9a48f transparent;
+}
+.pt-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.pt-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.pt-scroll::-webkit-scrollbar-thumb {
+  background: #ddbda8;
+  border-radius: 999px;
+}
+.pt-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b44b2a;
+}
+.pt-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Responsive tables that become cards: under 640px the head row hides and
+ * each body row becomes a labelled card (labels from data-label attrs).
+ * Keeps real table semantics for screen readers and desktop. */
+@media (max-width: 639px) {
+  .pt-cards thead {
+    display: none;
+  }
+  .pt-cards tbody {
+    display: block;
+    padding: 0.6rem;
+  }
+  .pt-cards tr {
+    display: block;
+    margin-bottom: 0.6rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: var(--color-paper);
+    padding: 0.35rem 0.15rem;
+  }
+  .pt-cards tr:last-child {
+    margin-bottom: 0;
+  }
+  .pt-cards td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: right;
+    border: 0;
+    padding: 0.3rem 0.9rem;
+  }
+  .pt-cards td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-slate-500);
+    text-align: left;
+  }
+}
+
+/* Collapsible explainer sections: native disclosure, terra marker, no JS. */
+.pt-details > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-teal-300);
+}
+.pt-details > summary::-webkit-details-marker {
+  display: none;
+}
+.pt-details > summary::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform var(--duration-quick) var(--ease-out-expo);
+  flex-shrink: 0;
+}
+.pt-details[open] > summary::before {
+  transform: rotate(-135deg) translate(-1px, -1px);
+}
+.pt-tab-indicator {
+  /* Transform-only: a 100px bar scaled on X with a left origin, so the
+   * slide never animates width (layout thrash). */
+  transform-origin: left center;
+  transition: transform var(--duration-calm) var(--ease-out-expo);
+}
+
+/* Pressed-button confirmation: tactile, instant, interruptible. */
+.pt-press {
+  transition: transform 120ms var(--ease-out-expo), background-color var(--duration-quick) ease-out, box-shadow var(--duration-quick) ease-out;
+}
+.pt-press:active {
+  transform: scale(0.98);
 }
 
 html,
@@ -175,5 +302,9 @@ body {
   .pt-pulse,
   .pt-rise {
     animation: none;
+  }
+  .pt-tab-indicator,
+  .pt-press {
+    transition: none;
   }
 }
