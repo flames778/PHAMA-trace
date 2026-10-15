@@ -416,7 +416,14 @@ function supabaseRegistry(): Registry {
 
 // -------------------------------------------------------------------- server
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3001/api";
+/**
+ * `import.meta.env` only exists inside Vite. Under plain node (headless check
+ * scripts that import this module) it is undefined, so read defensively the
+ * same way src/lib/supabase.ts does.
+ */
+const viteEnv =
+  (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
+const API_BASE = viteEnv.VITE_API_URL ?? "http://localhost:3001/api";
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -456,6 +463,6 @@ function serverRegistry(): Registry {
 
 export const registry: Registry = usingSupabase
   ? withFallback(supabaseRegistry(), localRegistry())
-  : import.meta.env.VITE_USE_SERVER === "true"
+  : viteEnv.VITE_USE_SERVER === "true"
     ? withFallback(serverRegistry(), localRegistry())
     : localRegistry();

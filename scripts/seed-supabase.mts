@@ -128,13 +128,20 @@ async function seed() {
   const { error: e4 } = await db.from("custody_events").insert(custody.all.map(mapCustody));
   if (e4) throw e4;
 
-  console.log(`Seeding ${series.positions.length} stock positions...`);
-  const { error: e5 } = await db.from("stock_positions").insert(series.positions.map(mapPosition));
-  if (e5) throw e5;
-
+  // Movements first: the schema's apply_stock_movement trigger derives
+  // positions from them, which is the production path.
   console.log(`Seeding ${series.movements.length} stock movements...`);
   const { error: e6 } = await db.from("stock_movements").insert(series.movements.map(mapMovement));
   if (e6) throw e6;
+
+  // Then upsert the app's own positions. Opening stock in generateSeries() is
+  // not a movement row, so a pure trigger accumulation can drift; overwriting
+  // with positionsFrom(movements) keeps Supabase rows identical to local mode.
+  console.log(`Seeding ${series.positions.length} stock positions (reconciled)...`);
+  const { error: e5 } = await db
+    .from("stock_positions")
+    .upsert(series.positions.map(mapPosition), { onConflict: "batch_id,location_id" });
+  if (e5) throw e5;
 
   console.log("Seed complete.");
 }
