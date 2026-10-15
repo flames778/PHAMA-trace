@@ -745,7 +745,88 @@ function BatchTable({
     expired: "text-amber-200 border-amber-400/30 bg-amber-400/5",
   };
 
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | Batch["status"]>("all");
+
+  const counts = {
+    active: batches.filter((b) => b.status === "active").length,
+    recalled: batches.filter((b) => b.status === "recalled").length,
+    expired: batches.filter((b) => b.status === "expired").length,
+  };
+  const totalOnShelves = positions.reduce((s, p) => s + p.onHand, 0);
+
+  const q = query.trim().toLowerCase();
+  const visible = batches.filter((b) => {
+    if (statusFilter !== "all" && b.status !== statusFilter) return false;
+    if (!q) return true;
+    const p = prodById.get(b.productId);
+    return (
+      b.batchCode.toLowerCase().includes(q) ||
+      (p?.brandName ?? "").toLowerCase().includes(q) ||
+      (p?.manufacturer ?? "").toLowerCase().includes(q)
+    );
+  });
+
   return (
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-4">
+        <RegistryStat value={String(batches.length)} label="batches registered" />
+        <RegistryStat value={totalOnShelves.toLocaleString()} label="units on shelves" />
+        <RegistryStat value={String(counts.recalled)} label="under recall" tone="text-rose-300" />
+        <RegistryStat value={String(counts.expired)} label="expired" tone="text-amber-200" />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative min-w-52 flex-1">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search code, product, manufacturer…"
+            aria-label="Search the batch registry"
+            spellCheck={false}
+            className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[12px] leading-none text-slate-500 hover:text-rose-300"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {(
+          [
+            ["all", `All (${batches.length})`],
+            ["active", `Active (${counts.active})`],
+            ["recalled", `Recalled (${counts.recalled})`],
+            ["expired", `Expired (${counts.expired})`],
+          ] as const
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={statusFilter === key}
+            onClick={() => setStatusFilter(key)}
+            className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
+              statusFilter === key
+                ? "border-teal-500/50 bg-teal-500/10 text-teal-300"
+                : "border-line text-slate-500 hover:text-slate-200"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <p className="text-[12px] text-slate-500" role="status">
+        Showing {visible.length} of {batches.length} batches
+        {q ? ` matching “${query.trim()}”` : ""}
+        {statusFilter !== "all" ? ` with status ${statusFilter}` : ""}.
+      </p>
+
     <div className="pt-scroll overflow-auto rounded-xl border border-line">
       <table className="pt-cards w-full border-collapse text-left text-[12px]">
         <thead className="bg-ink-soft">
@@ -760,7 +841,7 @@ function BatchTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-line">
-          {batches.map((b) => {
+          {visible.map((b) => {
             const p = prodById.get(b.productId);
             return (
               <tr key={b.id} className="transition hover:bg-teal-500/5">
@@ -791,6 +872,21 @@ function BatchTable({
           })}
         </tbody>
       </table>
+      {visible.length === 0 && (
+        <p className="border-t border-line px-4 py-8 text-center text-[12.5px] text-slate-500">
+          No batches match. Clear the search or pick a different status.
+        </p>
+      )}
+    </div>
+    </div>
+  );
+}
+
+function RegistryStat({ value, label, tone }: { value: string; label: string; tone?: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-ink-soft/60 px-3.5 py-3">
+      <div className={`font-display text-2xl font-bold tabular-nums ${tone ?? "text-slate-100"}`}>{value}</div>
+      <div className="mt-0.5 text-[11px] text-slate-500">{label}</div>
     </div>
   );
 }
