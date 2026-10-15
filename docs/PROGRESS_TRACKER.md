@@ -18,6 +18,7 @@ Verified 2026-10-14 on a clean install (`npm install` from `package-lock.json`):
 | `npm run cabinet-check` | PASS — new in ME-1 (`8e1400d`): 19 checks over dose schedules, members, migration. |
 | `npm run build` | PASS (production bundle builds). |
 | `npm run source-check` | PASS — new in ME-2 (`41a9a49`): 12 checks over local boot and degraded fallback. |
+| `npm run server` (E2E) | PASS — new backend pass: Express server boots on `:3001`, health/products/batches-by-code/custody/hotspots all answer, `POST /api/scans` and `POST /api/movements` persist to `server/data/db.json` across restarts, `POST /api/reset` reseeds. Server compiles under its own `tsconfig.server.json`. |
 
 **Review score: 96/100** (2026-10-15, after audit + 3-shard review + fixes; math in the log entry for `c68a940`). Audit health: 16/20 (Good), up from 13/20.
 
@@ -65,8 +66,16 @@ Verified 2026-10-14 on a clean install (`npm install` from `package-lock.json`):
 | BE-6 | Hardening roadmap | Short doc: what changes before real use (auth, RLS roles, append-only custody, service-role writes) — `schema.sql` header already drafts it | Pending | Phase 2/3 |
 
 Notes for Evans: `src/lib/registry.ts` already implements the Supabase backend, so BE-2
-is mostly the seed script (`package.json` references it but the file does not exist yet).
+is mostly the seed script — **now written**: `scripts/seed-supabase.mts` behind `npm run seed`
+(inserts products → locations → batches → custody, then movements so the trigger derives
+positions, then reconciles positions with `positionsFrom(movements)` so rows match local
+mode; needs service_role env per the schema header). Still Pending because it has not been
+run against a live DB — that waits on BE-1.
 `BE-1 → BE-2 → BE-3 → BE-4` is the required order.
+**Standalone backend landed this pass** (not Supabase-dependent): `npm run server` boots an
+Express API on `:3001` with JSON-file persistence, the Registry gained a third `server`
+mode behind `VITE_USE_SERVER=true`, and it reuses ME-2's `withFallback` so a dead server
+degrades to bundled data instead of crashing the app. Vite dev proxies `/api` to `:3001`.
 
 ## 6. Ayonife's side (full stack)
 
@@ -105,6 +114,7 @@ is mostly the seed script (`package.json` references it but the file does not ex
 | 2026-10-15 | Ayonife | **Impeccable audit** (`7b306a1`): 13/20 → fixed batch (redacted pass-color class restored, dose-time labels, forecast table overflow, h1 landmark, 23-spot contrast sweep). Detector clean before and after. |
 | 2026-10-15 | Ayonife | **Review pass** (`c68a940`): 3 parallel shard reviews (22 + 14 + 18 raw findings) → validated, fixed, re-verified. Headline fixes: AgentRouter key restore (AI tab was dead), code-only verdict cap reorder, null-reference phantom mismatch + fixed prefix map, forecast history alignment, Holt residual, delivery off-by-one, reuse-signal tuning (same-site forgiven), highRisk wiring, RLS gaps (scans SELECT, positions write, idempotent policies), scripts under typecheck (new tsconfig.scripts.json), real write assertion, recall chronology, .env.example. Full suite: typecheck clean, pipeline 42/42, cabinet 20/20, source 13/13, build OK. **Score 96/100** (deductions: map-marker keyboard −1, compact targets −1, single bundle −1, gateway error echo −1; live-Supabase e2e excluded as environmental, owned by BE-4). |
 | 2026-10-15 | Ayonife | **Triple review re-run** (no code changes since `c68a940`): code re-verified (typecheck + pipeline 42/42 green, detector clean) — 96/100 stands; new security-review pass — 94/100 (no sinks, no secrets, parameterized queries, validated uploads; deductions are accepted demo posture: open anon RLS −3, no CSP −2, localStorage key storage −1); design re-verified (detector clean, audit fixes intact) — 16/20 Good stands. Dev server running for stage checks. |
+| 2026-10-15 | Session | **Standalone backend** (rebase onto `c842493` included): Express server (`server/index.ts`, `server/store.ts`) with full REST surface - products, locations, batches (incl. code lookup), custody chain, positions, movements, scans, forecast payload, hotspot rollup, health, reset - persisting to gitignored `server/data/db.json`, auto-seeded from `src/data`. Registry gained `server` mode (`VITE_USE_SERVER`) wrapped in ME-2's `withFallback`; Shell badge shows "Server"; Vite dev proxies `/api`. Seed script for Supabase (`scripts/seed-supabase.mts`, `npm run seed`) replaces the never-written `seed-demo.mjs` and orders inserts so the movement trigger derives positions before reconciliation. Fixes while landing: defensive `import.meta.env` read in `registry.ts` (same guard as `supabase.ts` - `source-check.mts` imports registry under plain node), new `tsconfig.server.json` so `server/` is typechecked, `process.env` added to the scripts ambient. Suite: typecheck clean (4 projects), selfcheck, pipeline, cabinet, source-check, build all PASS; server E2E verified (write → restart → read). |
 
 ## 9. Known issues (resolved ones stay listed with their fix)
 
@@ -127,5 +137,7 @@ is mostly the seed script (`package.json` references it but the file does not ex
      outranks wrong product; redrawn counterfeit falls far below both at 46.8%),
      with the limitation documented in the script. Real manufacturers use distinct
      artwork per brand, where absolute separation holds.
-2. `scripts/seed-demo.mjs` and `db:push` are referenced but do not exist. Owner: Evans
-   (BE-2/BE-3). Blocks: any Supabase-mode demo.
+2. ~~`scripts/seed-demo.mjs` and `db:push` are referenced but do not exist~~ — seed
+   PARTIALLY RESOLVED: `scripts/seed-supabase.mts` is written and wired to `npm run seed`
+   (typechecks under `tsconfig.scripts.json`; runs against a live DB once BE-1 lands).
+   `db:push` still does not exist — BE-3. Owner: Evans.

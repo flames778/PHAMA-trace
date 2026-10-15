@@ -37,7 +37,7 @@ export interface ScanOutcome {
 export interface PharmaTraceState {
   ready: boolean;
   error: string | null;
-  mode: "local" | "supabase";
+  mode: "local" | "server" | "supabase";
   /** True once any registry call has fallen back to bundled data. */
   degraded: boolean;
   products: Product[];

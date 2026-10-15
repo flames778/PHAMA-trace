@@ -385,7 +385,7 @@ function EmptyVerdict() {
   );
 }
 
-function Shell({ mode, children }: { mode: "local" | "supabase"; children: React.ReactNode }) {
+function Shell({ mode, children }: { mode: "local" | "server" | "supabase"; children: React.ReactNode }) {
   return (
     <div className="min-h-full">
       <header className="border-b border-line bg-ink-soft/50">
@@ -401,10 +401,12 @@ function Shell({ mode, children }: { mode: "local" | "supabase"; children: React
             className={`ml-auto rounded-full border px-2.5 py-1 text-[10.5px] font-medium ${
               mode === "supabase"
                 ? "border-teal-400/40 bg-teal-400/10 text-teal-300"
-                : "border-slate-500/30 bg-slate-500/10 text-slate-400"
+                : mode === "server"
+                  ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-300"
+                  : "border-slate-500/30 bg-slate-500/10 text-slate-400"
             }`}
           >
-            {mode === "supabase" ? "Supabase" : "Local mock registry"}
+            {mode === "supabase" ? "Supabase" : mode === "server" ? "Server" : "Local mock registry"}
           </span>
         </div>
       </header>
