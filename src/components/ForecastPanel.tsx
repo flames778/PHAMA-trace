@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Batch, Location, Product, StockMovement, StockPosition } from "../types";
 import { forecastAll, type ForecastPoint, type ForecastResult } from "../lib/forecast";
+import { useCountUp } from "../lib/useCountUp";
 
 const BAND_STYLE: Record<ForecastResult["band"], { label: string; classes: string }> = {
   critical: { label: "CRITICAL", classes: "border-rose-400/50 bg-rose-400/10 text-rose-300" },
-  warning: { label: "WARNING", classes: "border-amber-400/50 bg-amber-400/10 text-amber-200" },
-  watch: { label: "WATCH", classes: "border-sky-400/40 bg-sky-400/10 text-sky-300" },
-  ok: { label: "OK", classes: "border-emerald-400/30 bg-emerald-400/5 text-emerald-300" },
+  warning: { label: "WARNING", classes: "border-ochre-400/50 bg-ochre-400/10 text-ochre-200" },
+  watch: { label: "WATCH", classes: "border-steel-400/40 bg-steel-400/10 text-steel-300" },
+  ok: { label: "OK", classes: "border-sage-400/30 bg-sage-400/5 text-sage-300" },
 };
 
 export interface ForecastPanelProps {
@@ -115,26 +116,20 @@ export function ForecastPanel({
   return (
     <div className="space-y-5">
       <div className="grid gap-3 sm:grid-cols-4">
-        {(["critical", "warning", "watch", "ok"] as const).map((band) => {
-          const n = results.filter((r) => r.band === band).length;
-          const style = BAND_STYLE[band];
-          return (
-            <div key={band} className={`rounded-xl border px-3.5 py-3 ${style.classes}`}>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.16em] opacity-80">
-                {style.label}
-              </div>
-              <div className="font-display mt-1 text-2xl font-bold tabular-nums">{n}</div>
-              <div className="text-[11px] opacity-70">shelves</div>
-            </div>
-          );
-        })}
+        {(["critical", "warning", "watch", "ok"] as const).map((band) => (
+          <BandCard
+            key={band}
+            band={band}
+            n={results.filter((r) => r.band === band).length}
+          />
+        ))}
       </div>
 
       <BandDonut results={results} />
 
       {atRisk.length > 0 && (
-        <div className="rounded-xl border border-amber-400/25 bg-amber-400/5 px-4 py-3">
-          <p className="text-[12.5px] text-amber-100/90">
+        <div className="rounded-xl border border-ochre-400/25 bg-ochre-400/5 px-4 py-3">
+          <p className="text-[12.5px] text-ochre-100/90">
             <span className="font-semibold">{atRisk.length} shelves</span> will empty before their
             next scheduled delivery at the current rate. Forecast uses Holt smoothing on
             deseasonalised dispensing, with the wet-season malaria peak applied as an explicit
@@ -147,8 +142,8 @@ export function ForecastPanel({
         <div className="overflow-hidden rounded-xl border border-line">
           <div className="pt-scroll max-h-[430px] overflow-auto">
             <table className="pt-cards w-full border-collapse text-left text-[12px]">
-              <thead className="sticky top-0 z-10 bg-ink-soft">
-                <tr className="text-[10.5px] uppercase tracking-[0.12em] text-slate-500">
+              <thead className="sticky top-0 z-10 bg-card">
+                <tr className="text-[10.5px] uppercase tracking-[0.12em] text-clay-500">
                   {(Object.keys(SORT_LABEL) as SortKey[]).map((k) => {
                     const active = sort?.key === k;
                     const arrow = !active ? "↕" : sort.dir === 1 ? "↑" : "↓";
@@ -163,7 +158,7 @@ export function ForecastPanel({
                           type="button"
                           onClick={() => flipSort(k)}
                           title={`Sort by ${SORT_LABEL[k]} ${active && sort.dir === 1 ? "descending" : "ascending"}`}
-                          className={`inline-flex items-center gap-1 rounded transition hover:text-slate-200 ${active ? "text-teal-300" : ""}`}
+                          className={`inline-flex items-center gap-1 rounded transition hover:text-clay-200 ${active ? "text-terra-300" : ""}`}
                         >
                           {SORT_LABEL[k]}
                           <span aria-hidden="true" className="text-[9px] opacity-70">{arrow}</span>
@@ -192,21 +187,21 @@ export function ForecastPanel({
                           setSelectedKey(key);
                         }
                       }}
-                      className={`cursor-pointer transition ${
-                        active ? "bg-teal-500/10" : "hover:bg-white/[0.03]"
+                      className={`cursor-pointer transition active:bg-terra-500/15 ${
+                        active ? "bg-terra-500/10" : "hover:bg-white/[0.03]"
                       }`}
                     >
                       <td data-label="Shelf" className="px-3 py-2.5">
-                        <div className="font-medium text-slate-200">{loc?.name ?? r.locationId}</div>
-                        <div className="text-[10.5px] text-slate-500">
+                        <div className="font-medium text-clay-200">{loc?.name ?? r.locationId}</div>
+                        <div className="text-[10.5px] text-clay-500">
                           {loc?.lga} · {loc?.state}
                         </div>
                       </td>
                       <td data-label="Product" className="px-3 py-2.5">
-                        <div className="text-slate-300">{product?.brandName ?? "—"}</div>
-                        <div className="font-mono text-[10.5px] text-slate-500">{batch?.batchCode}</div>
+                        <div className="text-clay-300">{product?.brandName ?? "—"}</div>
+                        <div className="font-mono text-[10.5px] text-clay-500">{batch?.batchCode}</div>
                       </td>
-                      <td data-label="On hand" className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
+                      <td data-label="On hand" className="px-3 py-2.5 text-right font-mono tabular-nums text-clay-300">
                         {r.onHand.toLocaleString()}
                       </td>
                       <td data-label="Days" className="px-3 py-2.5 text-right font-mono tabular-nums">
@@ -215,8 +210,8 @@ export function ForecastPanel({
                             r.band === "critical"
                               ? "font-semibold text-rose-300"
                               : r.band === "warning"
-                                ? "text-amber-200"
-                                : "text-slate-300"
+                                ? "text-ochre-200"
+                                : "text-clay-300"
                           }
                         >
                           {r.daysToStockout === null ? "∞" : r.daysToStockout.toFixed(1)}
@@ -240,9 +235,9 @@ export function ForecastPanel({
         <div className="space-y-4">
           {selected ? (
             <>
-              <div className="rounded-xl border border-line bg-ink-soft/60 p-4 sm:p-5">
+              <div className="rounded-xl border border-line bg-card/60 p-4 sm:p-5">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <div className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                  <div className="text-[11px] uppercase tracking-[0.16em] text-clay-500">
                     {locationById.get(selected.locationId)?.name}
                   </div>
                   <span
@@ -250,16 +245,16 @@ export function ForecastPanel({
                   >
                     {BAND_STYLE[selected.band].label}
                   </span>
-                  <span className="ml-auto font-mono text-[11px] text-slate-500">
+                  <span className="ml-auto font-mono text-[11px] text-clay-500">
                     {selected.daysToStockout === null
                       ? "no stockout in view"
                       : `${selected.daysToStockout.toFixed(1)} days of cover`}
                   </span>
                 </div>
-                <div className="font-display mt-1 text-[22px] font-bold text-slate-100">
+                <div className="font-display mt-1 text-[22px] font-bold text-clay-100">
                   {productById.get(selected.productId)?.brandName}
                 </div>
-                <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-slate-400">{selected.note}</p>
+                <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-clay-400">{selected.note}</p>
                 <div className="mt-3 grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-3">
                   <Stat
                     label="Daily demand"
@@ -286,14 +281,14 @@ export function ForecastPanel({
                 band={selected.band}
                 onHand={selected.onHand}
               />
-              <p className="text-[11px] leading-relaxed text-slate-500">
+              <p className="text-[11px] leading-relaxed text-clay-500">
                 The dashed section is the projection. Seasonality is applied from a documented prior
                 rather than fitted. 120 days of history cannot identify a 365-day cycle, and saying
                 otherwise would be dishonest.
               </p>
             </>
           ) : (
-            <p className="rounded-xl border border-line bg-ink-soft/60 px-4 py-8 text-center text-[12.5px] text-slate-500">
+            <p className="rounded-xl border border-line bg-card/60 px-4 py-8 text-center text-[12.5px] text-clay-500">
               No dispensing history loaded.
             </p>
           )}
@@ -307,10 +302,24 @@ type StatTone = "neutral" | "good" | "warn" | "bad";
 
 const STAT_TONE: Record<StatTone, string> = {
   neutral: "bg-black/25",
-  good: "bg-emerald-400/10 ring-1 ring-inset ring-emerald-400/30",
-  warn: "bg-amber-400/10 ring-1 ring-inset ring-amber-400/30",
+  good: "bg-sage-400/10 ring-1 ring-inset ring-sage-400/30",
+  warn: "bg-ochre-400/10 ring-1 ring-inset ring-ochre-400/30",
   bad: "bg-rose-400/10 ring-1 ring-inset ring-rose-400/40",
 };
+
+function BandCard({ band, n }: { band: ForecastResult["band"]; n: number }) {
+  const style = BAND_STYLE[band];
+  const shown = Math.round(useCountUp(n));
+  return (
+    <div className={`rounded-xl border px-3.5 py-3 ${style.classes}`}>
+      <div className="text-[10.5px] font-semibold uppercase tracking-[0.16em] opacity-80">
+        {style.label}
+      </div>
+      <div className="font-display mt-1 text-2xl font-bold tabular-nums">{shown}</div>
+      <div className="text-[11px] opacity-70">shelves</div>
+    </div>
+  );
+}
 
 function Stat({ label, value, tone, detail }: { label: string; value: string; tone: StatTone; detail: string }) {
   const [open, setOpen] = useState(false);
@@ -323,13 +332,13 @@ function Stat({ label, value, tone, detail }: { label: string; value: string; to
       className={`rounded-lg px-2.5 py-2 text-left transition ${STAT_TONE[tone]}`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] uppercase tracking-wider text-slate-500">{label}</span>
-        <span aria-hidden="true" className={`text-[10px] text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+        <span className="text-[10px] uppercase tracking-wider text-clay-500">{label}</span>
+        <span aria-hidden="true" className={`text-[10px] text-clay-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
           ▾
         </span>
       </div>
-      <div className="mt-0.5 font-mono text-[15px] font-semibold tabular-nums text-slate-200">{value}</div>
-      {open && <div className="mt-1 text-[11px] font-sans font-normal leading-snug text-slate-400">{detail}</div>}
+      <div className="mt-0.5 font-mono text-[15px] font-semibold tabular-nums text-clay-200">{value}</div>
+      {open && <div className="mt-1 text-[11px] font-sans font-normal leading-snug text-clay-400">{detail}</div>}
     </button>
   );
 }
@@ -395,11 +404,11 @@ function BandDonut({ results }: { results: ForecastResult[] }) {
     })
     .filter((s) => s.frac > 0);
 
-  const centerTop = active ? String(counts[active]) : String(total);
+  const centerTop = active ? String(counts[active]) : String(Math.round(total * t));
   const centerSub = active ? BAND_STYLE[active].label.toLowerCase() : "shelves";
 
   return (
-    <div className="flex flex-wrap items-center gap-5 rounded-xl border border-line bg-ink-soft/60 px-5 py-4">
+    <div className="flex flex-wrap items-center gap-5 rounded-xl border border-line bg-card/60 px-5 py-4">
       <svg viewBox="0 0 140 140" className="h-32 w-32 shrink-0" role="img" aria-label={`Shelf bands: ${counts.critical} critical, ${counts.warning} warning, ${counts.watch} watch, ${counts.ok} ok`}>
         <circle cx="70" cy="70" r={R} fill="none" strokeWidth="17" stroke="currentColor" opacity="0.12" />
         {arcs.map((s) => {
@@ -447,11 +456,11 @@ function BandDonut({ results }: { results: ForecastResult[] }) {
                 }`}
               >
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: SEG[band] }} />
-                <span className="font-display text-[17px] font-bold tabular-nums text-slate-100">
+                <span className="font-display text-[17px] font-bold tabular-nums text-clay-100">
                   {counts[band]}
                 </span>
-                <span className="text-[12.5px] text-slate-500">{BAND_STYLE[band].label.toLowerCase()} shelves</span>
-                <span className="ml-auto font-mono text-[11px] tabular-nums text-slate-500">{pct}%</span>
+                <span className="text-[12.5px] text-clay-500">{BAND_STYLE[band].label.toLowerCase()} shelves</span>
+                <span className="ml-auto font-mono text-[11px] tabular-nums text-clay-500">{pct}%</span>
               </button>
             </li>
           );
@@ -517,9 +526,9 @@ function Sparkline({ series, band, onHand }: { series: ForecastPoint[]; band: Fo
   const hoverPct = hover !== null ? (x(hover) / W) * 100 : 0;
 
   return (
-    <div className="rounded-xl border border-line bg-ink-soft/60 p-3 sm:p-4">
+    <div className="rounded-xl border border-line bg-card/60 p-3 sm:p-4">
       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-        <span className="mr-auto text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+        <span className="mr-auto text-[11px] font-semibold uppercase tracking-[0.14em] text-clay-500">
           Demand history and projection
         </span>
         {(
@@ -535,8 +544,8 @@ function Sparkline({ series, band, onHand }: { series: ForecastPoint[]; band: Fo
             onClick={() => set(!on)}
             className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
               on
-                ? "border-teal-500/50 bg-teal-500/10 text-teal-300"
-                : "border-line text-slate-500 hover:text-slate-300"
+                ? "border-terra-500/50 bg-terra-500/10 text-terra-300"
+                : "border-line text-clay-500 hover:text-clay-300"
             }`}
           >
             {label}
@@ -634,19 +643,19 @@ function Sparkline({ series, band, onHand }: { series: ForecastPoint[]; band: Fo
             className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 rounded-lg border border-line bg-paper px-2.5 py-1.5 text-center shadow-[0_8px_24px_rgb(41_37_36/0.16)]"
             style={{ left: `${Math.min(88, Math.max(12, hoverPct))}%` }}
           >
-            <div className="font-mono text-[11px] font-semibold text-slate-200">{hovered.day.slice(5)}</div>
-            <div className="font-mono text-[12px] tabular-nums text-slate-100">
-              {hovered.demand} <span className="text-slate-500">units</span>
+            <div className="font-mono text-[11px] font-semibold text-clay-200">{hovered.day.slice(5)}</div>
+            <div className="font-mono text-[12px] tabular-nums text-clay-100">
+              {hovered.demand} <span className="text-clay-500">units</span>
             </div>
             <div
-              className={`mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider ${hovered.observed !== null ? "text-slate-500" : "text-teal-300"}`}
+              className={`mt-0.5 text-[9.5px] font-semibold uppercase tracking-wider ${hovered.observed !== null ? "text-clay-500" : "text-terra-300"}`}
             >
               {hovered.observed !== null ? "observed" : "projected"}
             </div>
           </div>
         )}
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-slate-500">
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-clay-500">
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-[2.5px] w-5 rounded-full" style={{ background: stroke }} /> observed
         </span>

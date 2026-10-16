@@ -1,17 +1,34 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ScanRequest } from "./lib/usePharmaTrace";
 import { usePharmaTrace, type ScanOutcome } from "./lib/usePharmaTrace";
-import { Scanner, DEMO_PACKS } from "./components/Scanner";
+import { DEMO_PACKS } from "./data/demoPacks";
 import { Landing } from "./components/Landing";
 import { Select } from "./components/Select";
 import { VerdictPanel } from "./components/VerdictPanel";
-import { CustodyTimeline } from "./components/CustodyTimeline";
-import { ForecastPanel } from "./components/ForecastPanel";
-import { HotspotMap } from "./components/HotspotMap";
-import { StockLogger } from "./components/StockLogger";
-import { AgentPanel } from "./components/AgentPanel";
 import { MedicineGuide } from "./components/MedicineGuide";
-import { MyMedicines } from "./components/MyMedicines";
+import { CustodyTimeline } from "./components/CustodyTimeline";
+
+// Code-split by tab: the landing shell plus the instant verdict path stay in
+// the initial bundle; everything else loads on first visit. Leaflet alone is
+// a six-figure download — it must never block first paint on a mid-range
+// phone. Each boundary gets a skeleton fallback, never a blank hole.
+const Scanner = lazy(() => import("./components/Scanner").then((m) => ({ default: m.Scanner })));
+const ForecastPanel = lazy(() => import("./components/ForecastPanel").then((m) => ({ default: m.ForecastPanel })));
+const HotspotMap = lazy(() => import("./components/HotspotMap").then((m) => ({ default: m.HotspotMap })));
+const StockLogger = lazy(() => import("./components/StockLogger").then((m) => ({ default: m.StockLogger })));
+const AgentPanel = lazy(() => import("./components/AgentPanel").then((m) => ({ default: m.AgentPanel })));
+const MyMedicines = lazy(() => import("./components/MyMedicines").then((m) => ({ default: m.MyMedicines })));
+
+function TabFallback({ label }: { label: string }) {
+  return (
+    <div aria-busy="true" aria-label={label} className="space-y-3">
+      <div className="pt-pulse h-8 w-48 rounded-md bg-clay-500/20" />
+      <div className="pt-pulse h-40 rounded-xl border border-line bg-card/60" />
+    </div>
+  );
+}
+import { useCountUp } from "./lib/useCountUp";
+import { formatStamp } from "./lib/format";
 import { TODAY } from "./data/batches";
 import { verifyChain } from "./lib/ledger";
 import { summarizeProductStock, type ProductStockSummary } from "./lib/forecast";
@@ -111,7 +128,7 @@ export default function App() {
     }
     if (!state.ready) {
       return (
-        <div className="flex h-64 items-center justify-center text-sm text-slate-500">
+        <div className="flex h-64 items-center justify-center text-sm text-clay-500">
           Loading registry…
         </div>
       );
@@ -121,21 +138,23 @@ export default function App() {
       case "verify":
         return (
           <div className="grid gap-5 lg:grid-cols-12">
-            <section className="rounded-xl border border-line bg-ink-soft/60 p-4 sm:p-5 lg:col-span-7">
-              <h2 className="font-display mb-1 text-[19px] font-bold text-slate-100">Scan a pack</h2>
-              <p className="mb-4 text-[12.5px] leading-relaxed text-slate-500">
+            <section className="rounded-xl border border-line bg-card/60 p-4 sm:p-5 lg:col-span-7">
+              <h2 className="font-display mb-1 text-[19px] font-bold text-clay-100">Scan a pack</h2>
+              <p className="mb-4 text-[12.5px] leading-relaxed text-clay-500">
                 Read the batch code from the barcode, then compare the print against the
                 manufacturer&apos;s registered artwork. Both are needed. A code alone can be copied.
               </p>
-              <Scanner busy={state.busy} locationName={state.scanLocation.name} onScan={handleScan} />
+              <Suspense fallback={<TabFallback label="Loading scanner" />}>
+                <Scanner busy={state.busy} locationName={state.scanLocation.name} onScan={handleScan} />
+              </Suspense>
             </section>
 
             <div className="space-y-5 lg:col-span-5">
-              <div className="rounded-xl border border-teal-400/25 bg-teal-400/5 px-4 py-3">
+              <div className="rounded-xl border border-terra-400/25 bg-terra-400/5 px-4 py-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-semibold text-slate-100">Play the 30-second demo</p>
-                    <p className="text-[12px] leading-snug text-slate-500">
+                    <p className="text-[13px] font-semibold text-clay-100">Play the 30-second demo</p>
+                    <p className="text-[12px] leading-snug text-clay-500">
                       Scans a genuine pack, then a counterfeit, then opens the hotspot map on the
                       new alert.
                     </p>
@@ -148,17 +167,17 @@ export default function App() {
                         setDemoStep("Demo failed before the second scan. Check the connection and retry."),
                       );
                     }}
-                    className="pt-press shrink-0 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
+                    className="pt-press shrink-0 rounded-lg bg-terra-500 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-terra-400 disabled:opacity-40"
                   >
                     {demoRunning ? "Running…" : "▶ Play demo"}
                   </button>
                 </div>
                 {demoStep && (
-                  <p className="mt-2 text-[12px] text-teal-200">{demoStep}</p>
+                  <p role="status" className="mt-2 text-[12px] text-terra-200">{demoStep}</p>
                 )}
               </div>
 
-              <div className="rounded-xl border border-line bg-ink-soft/60 p-4">
+              <div className="rounded-xl border border-line bg-card/60 p-4">
                 <Select
                   label="Scan location"
                   value={state.scanLocation.id}
@@ -170,7 +189,7 @@ export default function App() {
                       label: `${l.name} · ${l.lga}, ${l.state}`,
                     }))}
                 />
-                <p className="mt-1.5 text-[11px] text-slate-500">
+                <p className="mt-1.5 text-[11px] text-clay-500">
                   Changing this drives the route-plausibility check: a pack found hundreds of
                   kilometres off its recorded distribution path is flagged.
                 </p>
@@ -179,7 +198,7 @@ export default function App() {
 
             {outcome ? (
               <>
-                <section className="lg:col-span-7">
+                <section className="lg:col-span-7" role="status">
                   <VerdictPanel
                     result={outcome.result}
                     product={outcome.product}
@@ -187,8 +206,8 @@ export default function App() {
                   />
                 </section>
                 {outcome.batch && (
-                  <section className="rounded-xl border border-line bg-ink-soft/60 p-4 lg:col-span-5">
-                    <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  <section className="rounded-xl border border-line bg-card/60 p-4 lg:col-span-5">
+                    <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-clay-500">
                       Chain of custody: {outcome.batch.batchCode}
                     </h3>
                     <CustodyTimeline
@@ -207,6 +226,18 @@ export default function App() {
                   </section>
                 )}
               </>
+            ) : state.busy ? (
+              <section aria-busy="true" aria-label="Scan in progress" className="space-y-4 lg:col-span-7">
+                <div className="rounded-xl border border-line bg-card/60 p-4">
+                  <div className="pt-pulse h-6 w-40 rounded-md bg-terra-500/20" />
+                  <div className="pt-pulse mt-3 h-4 w-3/4 rounded bg-clay-500/20" />
+                </div>
+                <div className="space-y-2" aria-hidden="true">
+                  {[90, 78, 64].map((w) => (
+                    <div key={w} className="pt-pulse h-3 rounded bg-clay-500/15" style={{ width: `${w}%` }} />
+                  ))}
+                </div>
+              </section>
             ) : (
               <section className="lg:col-span-12">
                 <EmptyVerdict />
@@ -218,21 +249,24 @@ export default function App() {
       case "stock":
         return (
           <div className="space-y-6">
-            <ForecastPanel
-              movements={state.movements}
-              positions={state.positions}
-              batches={state.batches}
-              products={state.products}
-              locations={state.locations}
-              today={TODAY}
-            />
+            <Suspense fallback={<TabFallback label="Loading forecast" />}>
+              <ForecastPanel
+                movements={state.movements}
+                positions={state.positions}
+                batches={state.batches}
+                products={state.products}
+                locations={state.locations}
+                today={TODAY}
+              />
+            </Suspense>
             <div className="border-t border-line pt-6">
-              <h2 className="mb-1 text-[15px] font-semibold text-slate-100">Log stock</h2>
-              <p className="mb-4 text-[12.5px] text-slate-500">
+              <h2 className="font-display mb-1 text-[19px] font-bold text-clay-100">Log stock</h2>
+              <p className="mb-4 text-[12.5px] text-clay-500">
                 Receipts and dispensing, written straight into the ledger the forecast reads.
               </p>
               <div className="max-w-3xl">
-                <StockLogger
+                <Suspense fallback={<TabFallback label="Loading stock form" />}>
+                  <StockLogger
                   key={state.scanLocation.id}
                   batches={state.batches}
                   products={state.products}
@@ -243,6 +277,7 @@ export default function App() {
                   }
                   onRecord={state.recordMovement}
                 />
+                </Suspense>
               </div>
             </div>
           </div>
@@ -252,23 +287,25 @@ export default function App() {
         return (
           <div className="space-y-5">
             <div>
-              <h2 className="mb-1 text-[15px] font-semibold text-slate-100">Falsification hotspots</h2>
+              <h2 className="font-display mb-1 text-[19px] font-bold text-clay-100">Falsification hotspots</h2>
               <details className="pt-details">
                 <summary>How hotspot reporting works</summary>
-                <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-slate-500">
+                <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-clay-500">
                   Every scan is plotted. Suspicious results accumulate into clusters a regulator or
                   NGO can act on. This demo workspace is not connected to NAFDAC. It shows what a
                   shared view would look like.
                 </p>
               </details>
             </div>
-            <HotspotMap
-              locations={state.locations}
-              scans={state.scans}
-              riskByLocation={riskByLocation}
-              selectedScanId={selectedScanId}
-              onSelectScan={setSelectedScanId}
-            />
+            <Suspense fallback={<TabFallback label="Loading map" />}>
+              <HotspotMap
+                locations={state.locations}
+                scans={state.scans}
+                riskByLocation={riskByLocation}
+                selectedScanId={selectedScanId}
+                onSelectScan={setSelectedScanId}
+              />
+            </Suspense>
             <ScanFeed scans={state.scans} selectedId={selectedScanId} onSelect={setSelectedScanId} />
           </div>
         );
@@ -277,8 +314,8 @@ export default function App() {
         return (
           <div className="space-y-5">
             <div>
-              <h2 className="mb-1 text-[15px] font-semibold text-slate-100">Batch registry</h2>
-              <p className="text-[12.5px] leading-relaxed text-slate-500">
+              <h2 className="font-display mb-1 text-[19px] font-bold text-clay-100">Batch registry</h2>
+              <p className="text-[12.5px] leading-relaxed text-clay-500">
                 {state.mode === "supabase"
                   ? "Live rows from Supabase."
                   : "Bundled mock registry. Every brand, manufacturer and serial below is fictional and exists only so this demo runs end to end."}
@@ -289,9 +326,9 @@ export default function App() {
               products={state.products}
               positions={state.positions}
             />
-            <details className="pt-details rounded-xl border border-line bg-ink-soft/60 px-4 py-3">
+            <details className="pt-details rounded-xl border border-line bg-card/60 px-4 py-3">
               <summary>About this data</summary>
-              <p className="mt-2 text-[12px] leading-relaxed text-slate-400">
+              <p className="mt-2 text-[12px] leading-relaxed text-clay-400">
                 {state.degraded
                   ? "The live backend failed, so these rows are the local fallback copy. Nothing here leaves this browser."
                   : state.mode === "supabase"
@@ -309,31 +346,35 @@ export default function App() {
         return (
           <div className="space-y-5">
             <div>
-              <h2 className="mb-1 text-[15px] font-semibold text-slate-100">My medicines</h2>
-              <p className="text-[12.5px] leading-relaxed text-slate-500">
+              <h2 className="font-display mb-1 text-[19px] font-bold text-clay-100">My medicines</h2>
+              <p className="text-[12.5px] leading-relaxed text-clay-500">
                 Every medicine you scan is saved here with a plain-language explanation of what
                 it is for and how to take it. Handy for keeping track of everything in the
                 household, especially for elderly family members who may not remember.
               </p>
             </div>
-            <MyMedicines
-              scans={state.scans}
-              products={state.products}
-              stockByProduct={stockByProduct}
-              onViewStock={() => setTab("stock")}
-              onScanPack={() => setTab("verify")}
-            />
+            <Suspense fallback={<TabFallback label="Loading cabinet" />}>
+              <MyMedicines
+                scans={state.scans}
+                products={state.products}
+                stockByProduct={stockByProduct}
+                onViewStock={() => setTab("stock")}
+                onScanPack={() => setTab("verify")}
+              />
+            </Suspense>
           </div>
         );
 
       case "ai":
         return (
           <div className="max-w-3xl">
-            <AgentPanel
-              result={outcome?.result ?? null}
-              product={outcome?.product ?? null}
-              batch={outcome?.batch ?? null}
-            />
+            <Suspense fallback={<TabFallback label="Loading assistant" />}>
+              <AgentPanel
+                result={outcome?.result ?? null}
+                product={outcome?.product ?? null}
+                batch={outcome?.batch ?? null}
+              />
+            </Suspense>
           </div>
         );
     }
@@ -351,10 +392,10 @@ export default function App() {
       }}
       onHome={() => setView("landing")}
     >
-      <main className="pt-6">
+      <main id="main-content" className="pt-6">
         {state.degraded && (
-          <div className="mb-4 rounded-xl border border-amber-400/25 bg-amber-400/5 px-4 py-3">
-            <p className="text-[12.5px] text-amber-100/90">
+          <div className="mb-4 rounded-xl border border-ochre-400/25 bg-ochre-400/5 px-4 py-3">
+            <p className="text-[12.5px] text-ochre-100/90">
               <span className="font-semibold">Live registry unreachable.</span> Showing the
               bundled demo registry so the demo can continue. Scans and stock entries are
               kept locally until the connection is back.
@@ -391,9 +432,9 @@ export default function App() {
 
 function EmptyVerdict() {
   return (
-    <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-14 text-center">
-      <p className="font-display text-[17px] font-bold text-slate-200">No scan yet</p>
-      <p className="mx-auto mt-1 max-w-md text-[12.5px] leading-relaxed text-slate-500">
+    <div className="rounded-xl border border-dashed border-line bg-card/40 px-6 py-14 text-center">
+      <p className="font-display text-[17px] font-bold text-clay-200">No scan yet</p>
+      <p className="mx-auto mt-1 max-w-md text-[12.5px] leading-relaxed text-clay-500">
         Pick a demo pack above, or press play. Each scan runs barcode decode,
         registry lookup, packaging comparison, and custody verification.
       </p>
@@ -406,15 +447,15 @@ const MODE_BADGE: Record<
   { classes: string; label: string }
 > = {
   supabase: {
-    classes: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
+    classes: "border-sage-400/40 bg-sage-400/10 text-sage-300",
     label: "Supabase",
   },
   server: {
-    classes: "border-cyan-400/40 bg-cyan-400/10 text-cyan-300",
+    classes: "border-steel-400/40 bg-steel-400/10 text-steel-300",
     label: "Server",
   },
   local: {
-    classes: "border-slate-500/30 bg-slate-500/10 text-slate-400",
+    classes: "border-clay-500/30 bg-clay-500/10 text-clay-400",
     label: "Local mock registry",
   },
 };
@@ -458,17 +499,24 @@ function Shell({
   }, [activeTab, tabs, reduceMotion]);
   return (
     <div className="min-h-full">
-      <div className="border-b border-line bg-ink-soft">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-0.5 px-5 py-1.5 text-[11px] text-slate-500">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-terra-500 focus:px-4 focus:py-2 focus:text-[13px] focus:font-semibold focus:text-white"
+      >
+        Skip to content
+      </a>
+      <div className="border-b border-line bg-card">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-0.5 px-5 py-1.5 text-[11px] text-clay-500">
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" aria-hidden="true" />
+            <span className="h-1.5 w-1.5 rounded-full bg-ochre-400" aria-hidden="true" />
             Demo environment: bundled registry, no regulator connection
           </span>
           <span className="ml-auto hidden sm:inline">FMOH · PCN protocol</span>
         </div>
       </div>
 
-      <header className="border-b border-line bg-ink">
+      <header className="border-b border-line bg-canvas">
+        <h1 className="sr-only">PharmaTrace — medicine verification demo</h1>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-5 pb-3 pt-4">
           <button
             type="button"
@@ -478,16 +526,16 @@ function Shell({
           >
             <img src="/brand/icon.svg" alt="" className="h-[38px] w-[38px] shrink-0" />
             <span className="min-w-0">
-              <span className="font-display block text-[22px] font-bold leading-none tracking-tight text-slate-100">
+              <span className="font-display block text-[22px] font-bold leading-none tracking-tight text-clay-100">
                 PharmaTrace
               </span>
-              <span className="mt-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              <span className="mt-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.18em] text-clay-500">
                 Verify · track · predict · report
               </span>
             </span>
           </button>
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            <span className="hidden items-center gap-1.5 rounded-full border border-line bg-ink-soft px-2.5 py-1 text-[11px] text-slate-400 md:flex">
+            <span className="hidden items-center gap-1.5 rounded-full border border-line bg-card px-2.5 py-1 text-[11px] text-clay-400 md:flex">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z"
@@ -520,8 +568,8 @@ function Shell({
                   aria-current={activeTab === id ? "page" : undefined}
                   className={`whitespace-nowrap px-1 py-3 text-[14px] transition ${
                     activeTab === id
-                      ? "font-semibold text-teal-300"
-                      : "font-medium text-slate-500 hover:text-slate-200"
+                      ? "font-semibold text-terra-300"
+                      : "font-medium text-clay-500 hover:text-clay-200"
                   }`}
                 >
                   {label}
@@ -529,7 +577,7 @@ function Shell({
               ))}
               <span
                 aria-hidden="true"
-                className="pt-tab-indicator absolute bottom-[5px] left-0 h-[3px] w-[100px] rounded-full bg-teal-500"
+                className="pt-tab-indicator absolute bottom-[5px] left-0 h-[3px] w-[100px] rounded-full bg-terra-500"
                 style={{
                   transform: `translateX(${pill.left}px) scaleX(${pill.width / 100})`,
                   opacity: pill.ready ? 1 : 0,
@@ -542,8 +590,8 @@ function Shell({
 
       <div className="mx-auto max-w-6xl px-5 pb-16">{children}</div>
 
-      <footer className="bg-ink-soft/60">
-        <div aria-hidden="true" className="h-[3px] bg-teal-500" />
+      <footer className="bg-card/60">
+        <div aria-hidden="true" className="h-[3px] bg-terra-500" />
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <button type="button" onClick={onHome} aria-label="PharmaTrace home" className="block text-left">
@@ -551,26 +599,26 @@ function Shell({
                 <img src="/brand/icon.svg" alt="" className="h-11 w-11 shrink-0" />
                 <span>
                   <span className="font-display block text-[24px] font-bold leading-none tracking-tight">
-                    <span className="text-slate-100">Pharma</span><span className="text-teal-500">Trace</span>
+                    <span className="text-clay-100">Pharma</span><span className="text-terra-500">Trace</span>
                   </span>
-                  <span className="mt-1.5 block text-[9.5px] font-bold uppercase tracking-[0.22em] text-teal-300">
+                  <span className="mt-1.5 block text-[9.5px] font-bold uppercase tracking-[0.22em] text-terra-300">
                     Community Care &amp; Medicine Verification
                   </span>
                 </span>
               </span>
             </button>
-            <p className="mt-4 max-w-xs text-[12px] leading-relaxed text-slate-500">
+            <p className="mt-4 max-w-xs text-[12px] leading-relaxed text-clay-500">
               Scan a pack, know if it is real, and see where shortages are.
               This demo runs on a fictional registry. Nothing here connects
               to NAFDAC or any manufacturer.
             </p>
           </div>
           <nav aria-label="Regulatory portals">
-            <h2 className="font-display text-[15px] font-bold text-slate-100">Regulatory portals</h2>
+            <h2 className="font-display text-[15px] font-bold text-clay-100">Regulatory portals</h2>
             <ul className="mt-3 space-y-2 text-[12.5px]">
               <li>
                 <a
-                  className="text-teal-300 underline-offset-2 hover:underline"
+                  className="text-terra-300 underline-offset-2 hover:underline"
                   href="https://greenbook.nafdac.gov.ng"
                   target="_blank"
                   rel="noreferrer"
@@ -580,7 +628,7 @@ function Shell({
               </li>
               <li>
                 <a
-                  className="text-teal-300 underline-offset-2 hover:underline"
+                  className="text-terra-300 underline-offset-2 hover:underline"
                   href="https://nafdac.gov.ng"
                   target="_blank"
                   rel="noreferrer"
@@ -588,18 +636,18 @@ function Shell({
                   NAFDAC
                 </a>
               </li>
-              <li className="text-slate-500">Pharmacists Council of Nigeria (reference)</li>
-              <li className="text-slate-500">Federal Ministry of Health (reference)</li>
+              <li className="text-clay-500">Pharmacists Council of Nigeria (reference)</li>
+              <li className="text-clay-500">Federal Ministry of Health (reference)</li>
             </ul>
           </nav>
           <nav aria-label="Product">
-            <h2 className="font-display text-[15px] font-bold text-slate-100">Product</h2>
+            <h2 className="font-display text-[15px] font-bold text-clay-100">Product</h2>
             <ul className="mt-3 space-y-2 text-[12.5px]">
               <li>
                 <button
                   type="button"
                   onClick={() => onNavigate("verify")}
-                  className="text-teal-300 underline-offset-2 hover:underline"
+                  className="text-terra-300 underline-offset-2 hover:underline"
                 >
                   Check a pack
                 </button>
@@ -608,7 +656,7 @@ function Shell({
                 <button
                   type="button"
                   onClick={() => onNavigate("medicines")}
-                  className="text-teal-300 underline-offset-2 hover:underline"
+                  className="text-terra-300 underline-offset-2 hover:underline"
                 >
                   My medicines
                 </button>
@@ -617,7 +665,7 @@ function Shell({
                 <button
                   type="button"
                   onClick={() => onNavigate("stock")}
-                  className="text-teal-300 underline-offset-2 hover:underline"
+                  className="text-terra-300 underline-offset-2 hover:underline"
                 >
                   Stock &amp; forecast
                 </button>
@@ -625,7 +673,7 @@ function Shell({
             </ul>
           </nav>
           <div>
-            <h2 className="font-display text-[15px] font-bold text-slate-100">Suspect a fake?</h2>
+            <h2 className="font-display text-[15px] font-bold text-clay-100">Suspect a fake?</h2>
             <div className="mt-3 space-y-2.5 rounded-xl border border-rose-400/30 bg-rose-400/10 px-3.5 py-3.5">
               <ol className="space-y-1.5 text-[12px] leading-snug text-rose-200">
                 <li>
@@ -657,7 +705,7 @@ function Shell({
           </div>
         </div>
         <div className="border-t border-line">
-          <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-5 py-4 text-[11px] text-slate-500">
+          <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-5 py-4 text-[11px] text-clay-500">
             <span>© 2026 PharmaTrace demo</span>
             <span>Mock registry: all products fictional</span>
             <span className="ml-auto">Decision support, not medical advice</span>
@@ -678,18 +726,18 @@ function ScanFeed({
   onSelect: (id: string) => void;
 }) {
   const tone: Record<ScanResult["verdict"], string> = {
-    genuine: "text-emerald-300 border-emerald-400/30 bg-emerald-400/5",
+    genuine: "text-sage-300 border-sage-400/30 bg-sage-400/5",
     suspicious: "text-rose-300 border-rose-400/40 bg-rose-400/10",
-    unverifiable: "text-amber-200 border-amber-400/30 bg-amber-400/5",
+    unverifiable: "text-ochre-200 border-ochre-400/30 bg-ochre-400/5",
   };
 
   return (
     <section>
-      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-clay-500">
         Scan feed ({scans.length})
       </h3>
       {scans.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-line px-4 py-8 text-center text-[12.5px] text-slate-500">
+        <p className="rounded-xl border border-dashed border-line px-4 py-8 text-center text-[12.5px] text-clay-500">
           No scans logged yet. Run one from the Verify tab and it will appear here and on the map.
         </p>
       ) : (
@@ -699,8 +747,8 @@ function ScanFeed({
               <button
                 type="button"
                 onClick={() => onSelect(s.id)}
-                className={`flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition ${
-                  selectedId === s.id ? "bg-teal-500/10" : "hover:bg-white/[0.03]"
+                className={`flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-terra-500/10 ${
+                  selectedId === s.id ? "bg-terra-500/10" : "hover:bg-white/[0.03]"
                 }`}
               >
                 <span
@@ -709,13 +757,13 @@ function ScanFeed({
                   {s.verdict === "unverifiable" ? "unknown" : s.verdict}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[12.5px] text-slate-200">{s.headline}</span>
-                  <span className="font-mono text-[10.5px] text-slate-500">
+                  <span className="block truncate text-[12.5px] text-clay-200">{s.headline}</span>
+                  <span className="font-mono text-[10.5px] text-clay-500">
                     {s.batchCode || "no code"} · {Math.round(s.confidence * 100)}%
                   </span>
                 </span>
-                <span className="shrink-0 font-mono text-[10.5px] text-slate-500">
-                  {s.createdAt.replace("T", " ").slice(11, 16)}Z
+                <span className="shrink-0 font-mono text-[10.5px] text-clay-500">
+                  {formatStamp(s.createdAt)}
                 </span>
               </button>
             </li>
@@ -740,9 +788,9 @@ function BatchTable({
     positions.filter((p) => p.batchId === id).reduce((s, p) => s + p.onHand, 0);
 
   const tone: Record<Batch["status"], string> = {
-    active: "text-emerald-300 border-emerald-400/30 bg-emerald-400/5",
+    active: "text-sage-300 border-sage-400/30 bg-sage-400/5",
     recalled: "text-rose-300 border-rose-400/40 bg-rose-400/10",
-    expired: "text-amber-200 border-amber-400/30 bg-amber-400/5",
+    expired: "text-ochre-200 border-ochre-400/30 bg-ochre-400/5",
   };
 
   const [query, setQuery] = useState("");
@@ -773,7 +821,7 @@ function BatchTable({
         <RegistryStat value={String(batches.length)} label="batches registered" />
         <RegistryStat value={totalOnShelves.toLocaleString()} label="units on shelves" />
         <RegistryStat value={String(counts.recalled)} label="under recall" tone="text-rose-300" />
-        <RegistryStat value={String(counts.expired)} label="expired" tone="text-amber-200" />
+        <RegistryStat value={String(counts.expired)} label="expired" tone="text-ochre-200" />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -784,14 +832,14 @@ function BatchTable({
             placeholder="Search code, product, manufacturer…"
             aria-label="Search the batch registry"
             spellCheck={false}
-            className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
+            className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px] text-clay-100 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[12px] leading-none text-slate-500 hover:text-rose-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[12px] leading-none text-clay-500 hover:text-rose-300"
             >
               ✕
             </button>
@@ -812,8 +860,8 @@ function BatchTable({
             onClick={() => setStatusFilter(key)}
             className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
               statusFilter === key
-                ? "border-teal-500/50 bg-teal-500/10 text-teal-300"
-                : "border-line text-slate-500 hover:text-slate-200"
+                ? "border-terra-500/50 bg-terra-500/10 text-terra-300"
+                : "border-line text-clay-500 hover:text-clay-200"
             }`}
           >
             {label}
@@ -821,7 +869,7 @@ function BatchTable({
         ))}
       </div>
 
-      <p className="text-[12px] text-slate-500" role="status">
+      <p className="text-[12px] text-clay-500" role="status">
         Showing {visible.length} of {batches.length} batches
         {q ? ` matching “${query.trim()}”` : ""}
         {statusFilter !== "all" ? ` with status ${statusFilter}` : ""}.
@@ -829,8 +877,8 @@ function BatchTable({
 
     <div className="pt-scroll overflow-auto rounded-xl border border-line">
       <table className="pt-cards w-full border-collapse text-left text-[12px]">
-        <thead className="bg-ink-soft">
-          <tr className="text-[10.5px] uppercase tracking-[0.12em] text-slate-500">
+        <thead className="bg-card">
+          <tr className="text-[10.5px] uppercase tracking-[0.12em] text-clay-500">
             <th className="px-3 py-2.5 font-semibold">Batch code</th>
             <th className="px-3 py-2.5 font-semibold">Product</th>
             <th className="px-3 py-2.5 font-semibold">Manufacturer</th>
@@ -844,15 +892,15 @@ function BatchTable({
           {visible.map((b) => {
             const p = prodById.get(b.productId);
             return (
-              <tr key={b.id} className="transition hover:bg-teal-500/5">
-                <td data-label="Batch code" className="px-3 py-2.5 font-mono text-slate-200">{b.batchCode}</td>
-                <td data-label="Product" className="px-3 py-2.5 text-slate-300">{p?.brandName ?? b.productId}</td>
-                <td data-label="Manufacturer" className="px-3 py-2.5 text-slate-400">{p?.manufacturer ?? "—"}</td>
-                <td data-label="Expiry" className="px-3 py-2.5 font-mono text-slate-400">{b.expiresOn}</td>
-                <td data-label="Released" className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-400">
+              <tr key={b.id} className="transition hover:bg-terra-500/5">
+                <td data-label="Batch code" className="px-3 py-2.5 font-mono text-clay-200">{b.batchCode}</td>
+                <td data-label="Product" className="px-3 py-2.5 text-clay-300">{p?.brandName ?? b.productId}</td>
+                <td data-label="Manufacturer" className="px-3 py-2.5 text-clay-400">{p?.manufacturer ?? "—"}</td>
+                <td data-label="Expiry" className="px-3 py-2.5 font-mono text-clay-400">{b.expiresOn}</td>
+                <td data-label="Released" className="px-3 py-2.5 text-right font-mono tabular-nums text-clay-400">
                   {b.quantityReleased.toLocaleString()}
                 </td>
-                <td data-label="On shelves" className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">
+                <td data-label="On shelves" className="px-3 py-2.5 text-right font-mono tabular-nums text-clay-300">
                   {onHandFor(b.id).toLocaleString()}
                 </td>
                 <td data-label="Status" className="px-3 py-2.5">
@@ -862,7 +910,7 @@ function BatchTable({
                     {b.status}
                   </span>
                   {b.recallReason && (
-                    <p className="mt-1 max-w-[22rem] text-[10.5px] leading-snug text-slate-500">
+                    <p className="mt-1 max-w-[22rem] text-[10.5px] leading-snug text-clay-500">
                       {b.recallReason}
                     </p>
                   )}
@@ -873,7 +921,7 @@ function BatchTable({
         </tbody>
       </table>
       {visible.length === 0 && (
-        <p className="border-t border-line px-4 py-8 text-center text-[12.5px] text-slate-500">
+        <p className="border-t border-line px-4 py-8 text-center text-[12.5px] text-clay-500">
           No batches match. Clear the search or pick a different status.
         </p>
       )}
@@ -883,10 +931,11 @@ function BatchTable({
 }
 
 function RegistryStat({ value, label, tone }: { value: string; label: string; tone?: string }) {
+  const shown = Math.round(useCountUp(Number(value.replace(/,/g, "")) || 0));
   return (
-    <div className="rounded-xl border border-line bg-ink-soft/60 px-3.5 py-3">
-      <div className={`font-display text-2xl font-bold tabular-nums ${tone ?? "text-slate-100"}`}>{value}</div>
-      <div className="mt-0.5 text-[11px] text-slate-500">{label}</div>
+    <div className="rounded-xl border border-line bg-card/60 px-3.5 py-3">
+      <div className={`font-display text-2xl font-bold tabular-nums ${tone ?? "text-clay-100"}`}>{shown.toLocaleString()}</div>
+      <div className="mt-0.5 text-[11px] text-clay-500">{label}</div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { MapContainer, CircleMarker, Popup, TileLayer, useMap } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import type { Location, ScanResult } from "../types";
+import { formatStamp } from "../lib/format";
 import "leaflet/dist/leaflet.css";
 
 const NIGERIA_CENTRE: LatLngExpression = [9.082, 8.6753];
@@ -127,20 +128,20 @@ export function HotspotMap({
                 <br />
                 {scan.verdict} · {Math.round(scan.confidence * 100)}% confidence
                 <br />
-                {scan.createdAt.replace("T", " ").slice(0, 16)}Z
+                {formatStamp(scan.createdAt)}
               </Popup>
             </CircleMarker>
           );
         })}
       </MapContainer>
 
-      <div className="flex flex-wrap items-center gap-4 border-t border-line bg-ink-soft px-4 py-2.5 text-[11px] text-slate-400">
+      <div className="flex flex-wrap items-center gap-4 border-t border-line bg-card px-4 py-2.5 text-[11px] text-clay-400">
         <LegendItem colour="#34d399" label={`Genuine scans (${scans.length - suspicious.length})`} />
         <LegendItem colour="#fb7185" label={`Suspicious (${suspicious.length})`} />
         <LegendItem colour="#fbbf24" label="Unverifiable" />
         <LegendItem colour="#c084fc" label="Manufacturer" />
         <LegendItem colour="#60a5fa" label="Distributor" />
-        <span className="ml-auto text-slate-500">Marker size scales with scans at that site</span>
+        <span className="ml-auto text-clay-500">Marker size scales with scans at that site</span>
       </div>
     </div>
   );

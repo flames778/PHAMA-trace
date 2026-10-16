@@ -1,58 +1,53 @@
 @import "tailwindcss";
 
 @theme {
-  /* Warm Editorial Humanist (see docs/DESIGN_ADOPTION.md + plan §1).
-   * NOTE — historic names, warm values: several tokens below keep their
-   * dark-era names (ink, ink-soft, teal-*, slate-*) so all existing classes
-   * keep working, but their VALUES are the paper system. Do not "fix" the
-   * names without updating every component. */
-  --color-ink: #fff8f6;
-  --color-ink-soft: #f5ecea;
+  /* Warm Editorial Humanist (see docs/DESIGN_ADOPTION.md).
+   * Names match values — canvas is the page, card holds content, terra is
+   * the brand red, sage the healthy green, ochre the warning amber, clay
+   * the warm text ramp, steel the quiet info blue. */
+  --color-canvas: #fff8f6;
+  --color-card: #f5ecea;
   --color-line: #e4dfd5;
   --color-paper: #ffffff;
 
-  /* teal-* ramp now reads as terracotta: all primary actions, active
-   * states and focus rings follow automatically, opacities intact. */
-  --color-teal-200: #9a3d1c;
-  --color-teal-300: #943414;
-  --color-teal-400: #c05a35;
-  --color-teal-500: #b44b2a;
-  --color-teal-950: #ffffff;
+  /* terra ramp: primary actions, active states, focus rings. */
+  --color-terra-200: #9a3d1c;
+  --color-terra-300: #943414;
+  --color-terra-400: #c05a35;
+  --color-terra-500: #b44b2a;
 
-  /* emerald-* ramp now reads as sage pine (genuine / ok / health). */
-  --color-emerald-200: #2f4a3e;
-  --color-emerald-300: #405b4d;
-  --color-emerald-400: #567263;
+  /* sage pine (genuine / ok / health). */
+  --color-sage-200: #2f4a3e;
+  --color-sage-300: #405b4d;
+  --color-sage-400: #567263;
 
-  /* amber-* deepened to read on paper (was tuned for dark). */
-  --color-amber-100: #6e520b;
-  --color-amber-200: #8a6d1a;
-  --color-amber-300: #b07c0a;
-  --color-amber-400: #d97706;
+  /* ochre (caution), deepened to read on paper. */
+  --color-ochre-100: #6e520b;
+  --color-ochre-200: #8a6d1a;
+  --color-ochre-300: #b07c0a;
+  --color-ochre-400: #d97706;
 
-  /* rose-* deepened to read on paper. */
+  /* rose stays rose: danger red, deepened for paper. */
   --color-rose-200: #9f1239;
   --color-rose-300: #be123c;
   --color-rose-400: #e11d48;
   --color-rose-500: #be123c;
 
-  /* slate-* text ramp inverted to warm charcoals (100 brightest use). */
-  --color-slate-50: #1e1b1a;
-  --color-slate-100: #292524;
-  --color-slate-200: #44403c;
-  --color-slate-300: #57534e;
-  --color-slate-400: #6f6a63;
-  --color-slate-500: #8a7058;
-  --color-slate-600: #475569;
+  /* clay: warm charcoal text ramp (100 brightest use). */
+  --color-clay-50: #1e1b1a;
+  --color-clay-100: #292524;
+  --color-clay-200: #44403c;
+  --color-clay-300: #57534e;
+  --color-clay-400: #6f6a63;
+  --color-clay-500: #8a7058;
+  --color-clay-600: #475569;
 
-  /* sky/cyan accents quieted to a dusty neutral blue (info, not brand). */
-  --color-sky-300: #3f6d8e;
-  --color-sky-400: #6b94b5;
-  --color-cyan-300: #3f6d8e;
-  --color-cyan-400: #6b94b5;
+  /* steel: quiet info blue, never brand. */
+  --color-steel-300: #3f6d8e;
+  --color-steel-400: #6b94b5;
 
   --font-display: "Bricolage Grotesque", Verdana, sans-serif;
-  --font-sans: "Bricolage Grotesque", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", "Menlo", ui-monospace, monospace;
 
   /* Motion language: one expo-out curve, two durations. Everything
@@ -73,9 +68,38 @@ body {
 /* Visible keyboard focus everywhere — the app is used by older adults
  * and counter staff who tab as much as they tap. */
 :focus-visible {
-  outline: 2px solid #943414;
+  outline: 2px solid var(--color-terra-300);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+html {
+  color-scheme: light;
+}
+
+/* Touch tuning: no double-tap zoom delay on controls, no grey flash,
+ * page keeps its native pull-to-refresh (coarse pointers untouched). */
+button,
+a,
+input,
+select,
+[role="button"],
+[role="option"] {
+  touch-action: manipulation;
+}
+@media (pointer: coarse) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Notched phones: breathing room for header and footer chrome. */
+@supports (padding: env(safe-area-inset-left)) {
+  header,
+  footer {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
 /* Custom scrollbars for scrollable regions (never browser-native grey).
@@ -140,7 +164,7 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--color-slate-500);
+    color: var(--color-clay-500);
     text-align: left;
   }
 }
@@ -154,7 +178,7 @@ body {
   gap: 0.5rem;
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-teal-300);
+  color: var(--color-terra-300);
 }
 .pt-details > summary::-webkit-details-marker {
   display: none;
@@ -195,8 +219,8 @@ body,
 
 body {
   margin: 0;
-  background: var(--color-ink);
-  color: #292524;
+  background: var(--color-canvas);
+  color: var(--color-clay-100);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -298,9 +322,28 @@ body {
   animation: pt-rise 260ms ease-out both;
 }
 
+/* Verdict reveal: the one orchestrated moment. The verdict banner settles
+ * with a soft scale while reasons stagger in behind it (delays set inline
+ * per row). Instant under reduced motion. */
+@keyframes pt-verdict {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pt-verdict {
+  animation: pt-verdict 350ms var(--ease-out-expo) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pt-pulse,
-  .pt-rise {
+  .pt-rise,
+  .pt-verdict {
     animation: none;
   }
   .pt-tab-indicator,

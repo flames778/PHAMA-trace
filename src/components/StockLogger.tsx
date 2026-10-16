@@ -74,7 +74,7 @@ export function StockLogger({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-line bg-ink-soft/60 p-4">
+      <div className="rounded-xl border border-line bg-card/60 p-4">
         <div className="grid gap-3 sm:grid-cols-2">
           <Select
             label="Pharmacy"
@@ -113,8 +113,8 @@ export function StockLogger({
                   onClick={() => setKind(k)}
                   className={`flex-1 rounded-lg px-3 py-2 text-[13px] font-medium transition ${
                     kind === k
-                      ? "bg-teal-500/15 text-teal-300 ring-1 ring-teal-400/40"
-                      : "bg-black/25 text-slate-400 hover:text-slate-200"
+                      ? "bg-terra-500/15 text-terra-300 ring-1 ring-terra-400/40"
+                      : "bg-black/25 text-clay-400 hover:text-clay-200"
                   }`}
                 >
                   {label}
@@ -137,9 +137,9 @@ export function StockLogger({
           </Field>
 
           <Field label="On hand now">
-            <div className="rounded-lg bg-black/25 px-3 py-2 font-mono text-[14px] text-slate-200">
+            <div className="rounded-lg bg-black/25 px-3 py-2 font-mono text-[14px] text-clay-200">
               {(current?.onHand ?? 0).toLocaleString()}
-              {product && <span className="ml-2 text-[11px] text-slate-500">{product.brandName}</span>}
+              {product && <span className="ml-2 text-[11px] text-clay-500">{product.brandName}</span>}
             </div>
           </Field>
         </div>
@@ -155,13 +155,13 @@ export function StockLogger({
           type="button"
           onClick={() => void submit()}
           disabled={saving || invalid}
-          className="pt-press mt-4 w-full rounded-lg bg-teal-500 px-4 py-2.5 text-sm font-semibold text-teal-950 transition hover:bg-teal-400 disabled:opacity-40"
+          className="pt-press mt-4 w-full rounded-lg bg-terra-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-terra-400 disabled:opacity-40"
         >
           {saving ? "Recording…" : `Record ${kind === "received" ? "receipt" : "dispensing"}`}
         </button>
 
         {flash && (
-          <p className={`mt-2 text-[12px] ${flashError ? "text-rose-200" : "text-teal-200"}`}>
+          <p role="status" className={`mt-2 text-[12px] ${flashError ? "text-rose-200" : "text-terra-200"}`}>
             {flashError ? `Could not record: ${flash}` : flash}
           </p>
         )}
@@ -169,10 +169,10 @@ export function StockLogger({
 
       <details className="pt-details">
         <summary>Why logging matters</summary>
-        <p className="mt-1.5 text-[11.5px] leading-relaxed text-slate-500">
+        <p className="mt-1.5 text-[11.5px] leading-relaxed text-clay-500">
           Every movement is appended to the same ledger the forecast reads, so logging a sale today
           changes tomorrow&apos;s stockout estimate. In the Supabase deployment the movement also
-          updates <span className="font-mono text-slate-400">stock_positions</span> through a database
+          updates <span className="font-mono text-clay-400">stock_positions</span> through a database
           trigger, which keeps the two tables from drifting.
         </p>
       </details>
@@ -181,12 +181,12 @@ export function StockLogger({
 }
 
 const selectCls =
-  "w-full rounded-lg border border-line bg-black/25 px-3 py-2 text-[13px] text-slate-100 outline-none focus:border-teal-500/60";
+  "w-full rounded-lg border border-line bg-black/25 px-3 py-2 text-[13px] text-clay-100 outline-none focus:border-terra-500/60";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+      <span className="mb-1 block text-[10.5px] font-semibold uppercase tracking-[0.14em] text-clay-500">
         {label}
       </span>
       {children}

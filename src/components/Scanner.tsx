@@ -2,43 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { ScanRequestSource } from "../lib/usePharmaTrace";
 import { barcodeSupported, detectBarcodeInImage, formatLabel, type BarcodeHit } from "../lib/barcode";
-
-export interface DemoPack {
-  label: string;
-  code: string;
-  src: string;
-  note: string;
-  expected: "genuine" | "suspicious" | "unverifiable";
-}
-
-/**
- * The three sample packs that make the stage demo work. Each one is a
- * generated PNG in `public/packs` with a real Code 128 barcode, so the demo
- * exercises exactly the same code path as a phone photo would.
- */
-export const DEMO_PACKS: DemoPack[] = [
-  {
-    label: "Genuine Malafem",
-    code: "NG-MF-26-0917",
-    src: "/packs/malafem-sample.png",
-    note: "Registered batch, artwork matches.",
-    expected: "genuine",
-  },
-  {
-    label: "Counterfeit Malafem",
-    code: "NG-MF-26-0917X",
-    src: "/packs/malafem-counterfeit.png",
-    note: "Serial one character off; seal redrawn; wrong ink.",
-    expected: "suspicious",
-  },
-  {
-    label: "Recalled Amoxaclear",
-    code: "NG-AC-25-0442",
-    src: "/packs/amoxaclear-recalled.png",
-    note: "Registered, then withdrawn: sub-potent batch.",
-    expected: "suspicious",
-  },
-];
+import { DEMO_PACKS, type DemoPack } from "../data/demoPacks";
 
 export interface ScannerProps {
   busy: boolean;
@@ -182,8 +146,8 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
             }}
             className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${
               mode === m
-                ? "bg-teal-500/15 text-teal-300 ring-1 ring-teal-400/40"
-                : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                ? "bg-terra-500/15 text-terra-300 ring-1 ring-terra-400/40"
+                : "text-clay-400 hover:bg-white/5 hover:text-clay-200"
             }`}
           >
             {label}
@@ -191,8 +155,8 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
         ))}
       </div>
 
-      <p className="text-[12px] text-slate-500">
-        Scanning as <span className="text-slate-300">{locationName}</span>
+      <p className="text-[12px] text-clay-500">
+        Scanning as <span className="text-clay-300">{locationName}</span>
         {registryBadge(barcodeSupported())}
       </p>
 
@@ -204,7 +168,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               type="button"
               disabled={busy}
               onClick={() => runDemo(pack)}
-              className="pt-press group overflow-hidden rounded-xl border border-line bg-ink-soft text-left transition hover:border-teal-500/50 disabled:opacity-50"
+              className="pt-press group overflow-hidden rounded-xl border border-line bg-card text-left transition hover:border-terra-500/50 disabled:opacity-50"
             >
               <img
                 src={pack.src}
@@ -212,9 +176,9 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
                 className="h-40 w-full object-cover object-top opacity-90 transition group-hover:opacity-100"
               />
               <div className="space-y-1 p-3">
-                <div className="text-[13px] font-semibold text-slate-100">{pack.label}</div>
-                <div className="font-mono text-[11px] text-slate-400">{pack.code}</div>
-                <div className="text-[11px] leading-snug text-slate-500">{pack.note}</div>
+                <div className="text-[13px] font-semibold text-clay-100">{pack.label}</div>
+                <div className="font-mono text-[11px] text-clay-400">{pack.code}</div>
+                <div className="text-[11px] leading-snug text-clay-500">{pack.note}</div>
               </div>
             </button>
           ))}
@@ -228,14 +192,14 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
             e.preventDefault();
             void onFile(e.dataTransfer.files?.[0]);
           }}
-          className="rounded-xl border border-dashed border-line bg-ink-soft/60 p-8 text-center"
+          className="rounded-xl border border-dashed border-line bg-card/60 p-8 text-center"
         >
-          <p className="text-sm text-slate-300">Drop a pack photo here, or</p>
+          <p className="text-sm text-clay-300">Drop a pack photo here, or</p>
           <button
             type="button"
             disabled={busy}
             onClick={() => fileRef.current?.click()}
-            className="mt-3 rounded-lg bg-teal-500/15 px-4 py-2 text-sm font-medium text-teal-300 ring-1 ring-teal-400/40 transition hover:bg-teal-500/25 disabled:opacity-50"
+            className="mt-3 rounded-lg bg-terra-500/15 px-4 py-2 text-sm font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25 disabled:opacity-50"
           >
             Choose a photo
           </button>
@@ -251,7 +215,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               void onFile(file);
             }}
           />
-          <p className="mt-3 text-[11px] text-slate-500">
+          <p className="mt-3 text-[11px] text-clay-500">
             The batch code is read from the barcode when the browser supports it, and the print is
             compared against the registered artwork.
           </p>
@@ -263,7 +227,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
           <div className="overflow-hidden rounded-xl border border-line bg-black">
             <video ref={videoRef} playsInline muted className={`w-full ${live ? "" : "hidden"}`} />
             {!live && (
-              <div className="flex h-52 items-center justify-center text-sm text-slate-500">
+              <div className="flex h-52 items-center justify-center text-sm text-clay-500">
                 Camera is off
               </div>
             )}
@@ -273,7 +237,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               <button
                 type="button"
                 onClick={() => void startCamera()}
-                className="rounded-lg bg-teal-500/15 px-4 py-2 text-sm font-medium text-teal-300 ring-1 ring-teal-400/40 transition hover:bg-teal-500/25"
+                className="rounded-lg bg-terra-500/15 px-4 py-2 text-sm font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25"
               >
                 Start camera
               </button>
@@ -282,14 +246,14 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
                 <button
                   type="button"
                   onClick={() => void shoot()}
-                  className="pt-press rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-teal-950 transition hover:bg-teal-400"
+                  className="pt-press rounded-lg bg-terra-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-terra-400"
                 >
                   Capture &amp; verify
                 </button>
                 <button
                   type="button"
                   onClick={stopCamera}
-                  className="rounded-lg border border-line px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5"
+                  className="rounded-lg border border-line px-4 py-2 text-sm text-clay-300 transition hover:bg-white/5"
                 >
                   Stop
                 </button>
@@ -308,33 +272,33 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               onKeyDown={(e) => e.key === "Enter" && void runManual()}
               placeholder="NG-MF-26-0917"
               spellCheck={false}
-              className="flex-1 rounded-lg border border-line bg-ink-soft px-3 py-2 font-mono text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
+              className="flex-1 rounded-lg border border-line bg-card px-3 py-2 font-mono text-sm text-clay-100 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
             />
             <button
               type="button"
               disabled={busy || !manualCode.trim()}
               onClick={() => void runManual()}
-              className="rounded-lg bg-teal-500/15 px-4 py-2 text-sm font-medium text-teal-300 ring-1 ring-teal-400/40 transition hover:bg-teal-500/25 disabled:opacity-40"
+              className="rounded-lg bg-terra-500/15 px-4 py-2 text-sm font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25 disabled:opacity-40"
             >
               Check
             </button>
           </div>
-          <p className="text-[11px] text-slate-500">
-            Code-only checks are reported as <span className="text-slate-300">can&apos;t verify</span> on
+          <p className="text-[11px] text-clay-500">
+            Code-only checks are reported as <span className="text-clay-300">can&apos;t verify</span> on
             purpose. A serial alone can be photocopied onto a fake pack.
           </p>
         </div>
       )}
 
       {lastBarcode && (
-        <p className="text-[11px] text-slate-500">
-          Last decoded barcode: <span className="font-mono text-slate-300">{lastBarcode.rawValue}</span>{" "}
+        <p className="text-[11px] text-clay-500">
+          Last decoded barcode: <span className="font-mono text-clay-300">{lastBarcode.rawValue}</span>{" "}
           ({formatLabel(lastBarcode.format)})
         </p>
       )}
 
       {status && (
-        <p className="rounded-lg bg-teal-500/10 px-3 py-2 text-[12px] text-teal-200">{status}</p>
+        <p role="status" className="rounded-lg bg-terra-500/10 px-3 py-2 text-[12px] text-terra-200">{status}</p>
       )}
     </div>
   );
@@ -350,8 +314,8 @@ async function probeBarcode(src: Blob | string): Promise<BarcodeHit | null> {
 
 function registryBadge(supported: boolean): ReactNode {
   return supported ? (
-    <span className="ml-1 text-slate-500"> · barcode reader available</span>
+    <span className="ml-1 text-clay-500"> · barcode reader available</span>
   ) : (
-    <span className="ml-1 text-amber-500/70"> · no barcode reader in this browser</span>
+    <span className="ml-1 text-ochre-500/70"> · no barcode reader in this browser</span>
   );
 }

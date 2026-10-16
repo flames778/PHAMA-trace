@@ -11,6 +11,7 @@ import {
   type HouseholdMember,
 } from "../lib/cabinet";
 import { Select } from "./Select";
+import { formatStamp } from "../lib/format";
 
 const ENTRIES_KEY = "pharmatrace:cabinet:entries:v1";
 const MEMBERS_KEY = "pharmatrace:cabinet:members:v1";
@@ -77,7 +78,7 @@ function loadMembers(): HouseholdMember[] {
     .map((m) => ({ id: m.id, name: m.name }));
 }
 
-const TIME_INPUT = "[color-scheme:dark] rounded-md border border-line bg-ink px-2 py-1 text-[12px] text-slate-200 outline-none focus:border-teal-500/60";
+const TIME_INPUT = "[color-scheme:light] rounded-md border border-line bg-canvas px-2 py-1 text-[12px] text-clay-200 outline-none focus:border-terra-500/60";
 
 export interface MyMedicinesProps {
   scans: ScanResult[];
@@ -91,6 +92,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
   const [entries, setEntries] = useState<CabinetEntry[]>(loadEntries);
   const [members, setMembers] = useState<HouseholdMember[]>(loadMembers);
   const [newName, setNewName] = useState("");
+  const [confirmClear, setConfirmClear] = useState(false);
 
   // Fold new scans in. Functional update so this effect only depends on
   // incoming data, never on the entries it writes.
@@ -171,9 +173,9 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-line bg-ink-soft/40 px-6 py-10 text-center">
-        <p className="font-display text-[17px] font-bold text-slate-100">Your cabinet is empty</p>
-        <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-slate-500">
+      <div className="rounded-xl border border-dashed border-line bg-card/40 px-6 py-10 text-center">
+        <p className="font-display text-[17px] font-bold text-clay-100">Your cabinet is empty</p>
+        <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-clay-500">
           Scan a medicine pack and it lands here with a plain-language
           explanation of what it is for and how to take it. Add the people in
           your household, assign each medicine to someone, and set dose times
@@ -183,7 +185,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
           <button
             type="button"
             onClick={onScanPack}
-            className="pt-press mt-4 rounded-lg bg-teal-500 px-4 py-2 text-[13px] font-semibold text-teal-950 transition hover:bg-teal-400"
+            className="pt-press mt-4 rounded-lg bg-terra-500 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-terra-400"
           >
             Scan your first pack
           </button>
@@ -199,10 +201,10 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
           className={`rounded-xl border px-4 py-3 ${
             anyCritical
               ? "border-rose-400/40 bg-rose-400/10"
-              : "border-amber-400/25 bg-amber-400/5"
+              : "border-ochre-400/25 bg-ochre-400/5"
           }`}
         >
-          <p className={`text-[12.5px] ${anyCritical ? "text-rose-100/90" : "text-amber-100/90"}`}>
+          <p className={`text-[12.5px] ${anyCritical ? "text-rose-100/90" : "text-ochre-100/90"}`}>
             <span className="font-semibold">Running low:</span>{" "}
             {alerts
               .map(
@@ -217,7 +219,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
               type="button"
               onClick={onViewStock}
               className={`mt-1.5 text-[12px] font-medium underline-offset-2 hover:underline ${
-                anyCritical ? "text-rose-300" : "text-amber-200"
+                anyCritical ? "text-rose-300" : "text-ochre-200"
               }`}
             >
               Check stock &amp; forecast →
@@ -226,7 +228,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
         </div>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <p className="mr-auto text-[12px] text-slate-500">
+        <p className="mr-auto text-[12px] text-clay-500">
           {entries.length} medicine{entries.length !== 1 ? "s" : ""} · {members.length} household
           member{members.length !== 1 ? "s" : ""}
         </p>
@@ -236,39 +238,47 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
           onKeyDown={(e) => {
             if (e.key === "Enter") addMember();
           }}
-          placeholder="Add a person (e.g. Grandma)"
-          className="w-52 rounded-md border border-line bg-ink px-2.5 py-1.5 text-[12px] text-slate-200 outline-none placeholder:text-slate-500 focus:border-teal-500/60"
+          placeholder="Add a person, e.g. Grandma…"
+          className="w-52 rounded-md border border-line bg-canvas px-2.5 py-1.5 text-[12px] text-clay-200 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
         />
         <button
           type="button"
           onClick={addMember}
-          className="rounded-md border border-teal-400/30 bg-teal-400/10 px-2.5 py-1.5 text-[12px] font-medium text-teal-300 hover:bg-teal-400/20"
+          className="rounded-md border border-terra-400/30 bg-terra-400/10 px-2.5 py-1.5 text-[12px] font-medium text-terra-300 hover:bg-terra-400/20"
         >
           Add
         </button>
         <button
           type="button"
-          onClick={() => updateEntries([])}
-          className="text-[11px] text-slate-500 underline-offset-2 hover:text-rose-300 hover:underline"
+          onClick={() => {
+            if (confirmClear) {
+              updateEntries([]);
+              setConfirmClear(false);
+            } else {
+              setConfirmClear(true);
+            }
+          }}
+          onBlur={() => setConfirmClear(false)}
+          className="text-[11px] text-clay-500 underline-offset-2 hover:text-rose-300 hover:underline"
         >
-          Clear all
+          {confirmClear ? "Tap again to delete everything" : "Clear all"}
         </button>
       </div>
 
       {groups.map((group) => (
         <section key={group.member?.id ?? "unassigned"}>
           <div className="mb-2 flex items-center gap-2">
-            <h3 className="text-[12px] font-semibold text-slate-200">
+            <h3 className="text-[12px] font-semibold text-clay-200">
               {group.member ? group.member.name : "Unassigned"}
             </h3>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-clay-500">
               {group.entries.length} medicine{group.entries.length !== 1 ? "s" : ""}
             </span>
             {group.member && (
               <button
                 type="button"
                 onClick={() => removeMember(group.member!.id)}
-                className="text-[11px] text-slate-500 hover:text-rose-300"
+                className="text-[11px] text-clay-500 hover:text-rose-300"
               >
                 remove person
               </button>
@@ -298,9 +308,9 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
 }
 
 const verdictTone: Record<ScanResult["verdict"], string> = {
-  genuine: "text-emerald-300 border-emerald-400/30 bg-emerald-400/5",
+  genuine: "text-sage-300 border-sage-400/30 bg-sage-400/5",
   suspicious: "text-rose-300 border-rose-400/40 bg-rose-400/10",
-  unverifiable: "text-amber-200 border-amber-400/30 bg-amber-400/5",
+  unverifiable: "text-ochre-200 border-ochre-400/30 bg-ochre-400/5",
 };
 
 const TIME_DEFAULTS = ["08:00", "13:00", "20:00", "09:00", "18:00", "22:00"];
@@ -335,11 +345,11 @@ function EntryCard({
   };
 
   return (
-    <li className="rounded-xl border border-line bg-ink-soft/60 px-4 py-3">
+    <li className="rounded-xl border border-line bg-card/60 px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[13px] font-semibold text-slate-100">{entry.brandName}</span>
+            <span className="text-[13px] font-semibold text-clay-100">{entry.brandName}</span>
             <span
               className={`rounded-md border px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider ${verdictTone[entry.verdict]}`}
             >
@@ -350,7 +360,7 @@ function EntryCard({
                 className={`rounded-md border px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider ${
                   lowStock.worst === "critical"
                     ? "border-rose-400/40 bg-rose-400/10 text-rose-300"
-                    : "border-amber-400/30 bg-amber-400/5 text-amber-200"
+                    : "border-ochre-400/30 bg-ochre-400/5 text-ochre-200"
                 }`}
                 title={`${lowStock.atRisk.length} stocked shelf${lowStock.atRisk.length !== 1 ? "s" : ""} at ${lowStock.worst} band`}
               >
@@ -358,13 +368,13 @@ function EntryCard({
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-[11px] text-slate-500">{entry.genericName}</p>
-          <p className="mt-1.5 text-[12px] leading-relaxed text-slate-300">
-            <span className="font-medium text-slate-200">What it is for: </span>
+          <p className="mt-0.5 text-[11px] text-clay-500">{entry.genericName}</p>
+          <p className="mt-1.5 text-[12px] leading-relaxed text-clay-300">
+            <span className="font-medium text-clay-200">What it is for: </span>
             {entry.whatItsFor}
           </p>
-          <p className="mt-1 text-[12px] leading-relaxed text-slate-300">
-            <span className="font-medium text-slate-200">How to take: </span>
+          <p className="mt-1 text-[12px] leading-relaxed text-clay-300">
+            <span className="font-medium text-clay-200">How to take: </span>
             {entry.howToTake}
           </p>
 
@@ -384,7 +394,7 @@ function EntryCard({
             {entry.schedule ? (
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="mr-1 text-[11px] font-medium text-slate-400">
+                  <span className="mr-1 text-[11px] font-medium text-clay-400">
                     Doses ({entry.schedule.timesPerDay}/day):
                   </span>
                   {entry.schedule.times.map((t, i) => (
@@ -403,7 +413,7 @@ function EntryCard({
                       <button
                         type="button"
                         onClick={() => setTimes(entry.schedule!.times.filter((_, j) => j !== i))}
-                        className="rounded p-1 text-[11px] leading-none text-slate-500 hover:text-rose-300"
+                        className="rounded p-1 text-[11px] leading-none text-clay-500 hover:text-rose-300"
                         aria-label={`Remove dose ${t}`}
                       >
                         ✕
@@ -414,7 +424,7 @@ function EntryCard({
                     <button
                       type="button"
                       onClick={addTime}
-                      className="rounded-md border border-dashed border-line px-2 py-1 text-[11px] text-slate-400 hover:border-teal-500/50 hover:text-teal-300"
+                      className="rounded-md border border-dashed border-line px-2 py-1 text-[11px] text-clay-400 hover:border-terra-500/50 hover:text-terra-300"
                     >
                       + time
                     </button>
@@ -422,13 +432,13 @@ function EntryCard({
                   <button
                     type="button"
                     onClick={() => onChange({ ...entry, schedule: null })}
-                    className="ml-auto text-[11px] text-slate-500 hover:text-rose-300"
+                    className="ml-auto text-[11px] text-clay-500 hover:text-rose-300"
                   >
                     remove schedule
                   </button>
                 </div>
                 {upcoming && (
-                  <p className="text-[12px] font-medium text-teal-300">
+                  <p className="text-[12px] font-medium text-terra-300">
                     Next dose {upcoming.time} {upcoming.when === "today" ? "today" : "tomorrow"}
                   </p>
                 )}
@@ -437,7 +447,7 @@ function EntryCard({
               <button
                 type="button"
                 onClick={() => onChange({ ...entry, schedule: { timesPerDay: 1, times: ["08:00"] } })}
-                className="rounded-md border border-dashed border-line px-2 py-1 text-[11px] text-slate-400 hover:border-teal-500/50 hover:text-teal-300"
+                className="rounded-md border border-dashed border-line px-2 py-1 text-[11px] text-clay-400 hover:border-terra-500/50 hover:text-terra-300"
               >
                 + Set dose times
               </button>
@@ -447,14 +457,14 @@ function EntryCard({
         <button
           type="button"
           onClick={onRemove}
-          className="shrink-0 rounded p-1 text-[11px] leading-none text-slate-500 hover:text-rose-300"
+          className="shrink-0 rounded p-1 text-[11px] leading-none text-clay-500 hover:text-rose-300"
           aria-label={`Remove ${entry.brandName}`}
         >
           ✕
         </button>
       </div>
-      <p className="mt-2 text-[10.5px] text-slate-500">
-        Scanned {entry.scannedAt.replace("T", " ").slice(0, 16)}Z
+      <p className="mt-2 text-[10.5px] text-clay-500">
+        Scanned {formatStamp(entry.scannedAt)}
       </p>
     </li>
   );
