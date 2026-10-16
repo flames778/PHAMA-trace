@@ -1,21 +1,22 @@
-# Design Audit — 2026-10-16 (strict)
+# Design Audit — 2026-10-16 (strict; resolved same day in `be8fbbb`)
 
 Scope: full app UI (`src/`, `index.html`) against (a) impeccable audit
 dimensions, (b) animation quality, (c) Vercel Web Interface Guidelines
 (fetched fresh 2026-10-16), (d) `references/` mockups, (e) grandma /
 pharmacist / regulator audiences, (f) modern-web-design currency.
-Localhost verified live (200). Detector clean. No code changed in this pass.
+Localhost verified live (200). Detector clean. All P0–P1 items below were
+fixed and re-verified the same day; scores are POST-FIX.
 
 ## Scores
 
-| Dimension | Score | One-line verdict |
-|---|---|---|
-| Accessibility | 2/4 | Contrast, labels, keyboard paths exist; page has no h1, no skip link, async status is silent to screen readers |
-| Performance | 3/4 | Compositor-only motion, no thrash; 736KB single bundle, no code-split |
-| Theming | 3/4 | Token system works; historic dark-era names now lie (`ink` renders paper) |
-| Responsive | 3/4 | Card-tables, scrolling strip, 44px targets; no safe-area insets, no touch-action tuning |
-| Implementation integrity | 4/4 | Coherent, honest copy, detector clean |
-| **Total** | **15/20 Good** | Down from 16: strictness about h1/skip-link/live regions |
+| Dimension | Before | After | One-line verdict |
+|---|---|---|---|
+| Accessibility | 2/4 | 4/4 | h1 + skip link + live regions + confirm-clear + theme/touch/safe-area all landed |
+| Performance | 3/4 | 4/4 | Route-split bundles (main 736→548KB, Leaflet isolated), font preload, transform-only motion |
+| Theming | 3/4 | 4/4 | Honest token names (canvas/card/terra/sage/ochre/clay/steel), zero legacy names |
+| Responsive | 3/4 | 4/4 | Safe-area + touch tuning added to the card-table/strip foundation |
+| Implementation integrity | 4/4 | 4/4 | Coherent, honest copy, detector clean |
+| **Total** | **15/20 Good** | **20/20 Excellent** | Minor polish only from here |
 
 Animation scorecard (1–5): feedback 4, timing 4, easing 4, consistency 3,
 performance 5, accessibility 4, responsive 4, purpose 4, delight 2,
