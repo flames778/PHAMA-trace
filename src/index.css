@@ -33,13 +33,17 @@
   --color-rose-400: #e11d48;
   --color-rose-500: #be123c;
 
-  /* clay: warm charcoal text ramp (100 brightest use). */
+  /* clay: warm charcoal text ramp (100 brightest use). 500 is darkened from
+   * the original #8a7058, which sat at 4.41:1 on the canvas — a hair under
+   * WCAG AA for body text. It is the workhorse colour for secondary text
+   * across every screen, so it has to clear 4.5:1 rather than miss it by
+   * four hundredths. */
   --color-clay-50: #1e1b1a;
   --color-clay-100: #292524;
   --color-clay-200: #44403c;
   --color-clay-300: #57534e;
   --color-clay-400: #6f6a63;
-  --color-clay-500: #8a7058;
+  --color-clay-500: #7c654f;
   --color-clay-600: #475569;
 
   /* steel: quiet info blue, never brand. */
@@ -239,34 +243,45 @@ select,
 }
 
 /* Primary: the one place the boldness is spent. Terracotta face, near-black
- * edge, white label. */
+ * edge, white label.
+ *
+ * Hover goes DARKER, not lighter. The obvious move (lighten on hover) drops
+ * white-on-terra to 4.42:1, i.e. the act of hovering made the label
+ * unreadable. Darkening deepens the contrast instead. */
 .pt-btn-primary {
   --pt-edge: #7a1600;
   background-color: var(--color-terra-500);
   color: #ffffff;
 }
 .pt-btn-primary:hover {
-  background-color: var(--color-terra-400);
+  background-color: #a8421f;
 }
 .pt-btn-primary:active {
   background-color: var(--color-terra-300);
 }
 
-/* Secondary: paper face, soft warm edge. Still physical, quieter. */
+/* Secondary: paper face, warm edge.
+ *
+ * The edge is the only thing separating a white button from a paper-white
+ * canvas — the two fills are within 1.02:1 of each other. The original edge
+ * (#e4dfd5) measured 1.27:1 against the page, so the control had no
+ * discernible boundary at all. #6b6861 clears 3:1 (WCAG 1.4.11 non-text
+ * contrast), and being a desaturated warm grey it stays quieter than the
+ * brand edges. */
 .pt-btn-secondary {
-  --pt-edge: #e4dfd5;
+  --pt-edge: #6b6861;
   background-color: var(--color-paper);
   color: var(--color-clay-100);
   box-shadow:
     0 2px 0 var(--pt-edge),
-    0 6px 14px -8px rgb(58 22 8 / 0.18),
+    0 6px 14px -8px rgb(58 22 8 / 0.22),
     inset 0 1px 0 rgb(255 255 255 / 0.9);
 }
 .pt-btn-secondary:hover {
   background-color: #fffdfc;
   box-shadow:
     0 3px 0 var(--pt-edge),
-    0 10px 18px -10px rgb(58 22 8 / 0.22),
+    0 10px 18px -10px rgb(58 22 8 / 0.26),
     inset 0 1px 0 rgb(255 255 255 / 0.9);
 }
 .pt-btn-secondary:active {
@@ -279,7 +294,7 @@ select,
 
 /* Tertiary: no face, but still a physical object. Hairline edge, no fill. */
 .pt-btn-tertiary {
-  --pt-edge: #e4dfd5;
+  --pt-edge: #8f8b84;
   background-color: transparent;
   color: var(--color-clay-200);
   box-shadow: 0 1px 0 var(--pt-edge);
@@ -298,7 +313,7 @@ select,
  * primary thing on screen. Still physical, but with a softer edge so it does
  * not compete with .pt-btn-primary. */
 .pt-btn-tonal {
-  --pt-edge: #e0b9a6;
+  --pt-edge: #a6897b;
   background-color: color-mix(in srgb, var(--color-terra-500) 13%, var(--color-paper));
   color: var(--color-terra-300);
   box-shadow:
@@ -379,7 +394,9 @@ select,
   padding: 0.4rem 0.9rem;
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-clay-500);
+  /* clay-400 sat at 4.44:1 on the track — a miss of six hundredths that still
+   * is a miss. clay-300 clears it at 6.3:1. */
+  color: var(--color-clay-300);
   white-space: nowrap;
   transition:
     background-color var(--duration-quick) ease,
@@ -387,7 +404,7 @@ select,
     box-shadow var(--duration-quick) ease;
 }
 .pt-segment-item:hover:not([aria-pressed="true"]) {
-  color: var(--color-clay-200);
+  color: var(--color-clay-100);
 }
 .pt-segment-item[aria-pressed="true"] {
   background-color: var(--color-terra-500);
@@ -490,13 +507,13 @@ select,
   padding: 0 1rem;
   height: 32px;
   font-size: 14px;
-  color: var(--color-clay-500);
+  color: var(--color-clay-300);
   cursor: pointer;
   white-space: nowrap;
   transition: color 200ms ease;
 }
 .pt-nav-tab:hover {
-  color: var(--color-clay-200);
+  color: var(--color-clay-100);
 }
 .pt-nav-tab[aria-current="page"] {
   color: #ffffff;
@@ -763,6 +780,46 @@ body {
 
 .pt-rise {
   animation: pt-rise 260ms ease-out both;
+}
+
+/* Skeleton shimmer.
+ *
+ * Animates background-position on a gradient rather than fading opacity, so
+ * it still reads in forced-colors mode (where box-shadow and most colours are
+ * stripped) and collapses to a static block under reduced motion instead of
+ * vanishing. */
+@keyframes pt-skeleton {
+  from {
+    background-position: -180% 0;
+  }
+  to {
+    background-position: 180% 0;
+  }
+}
+
+.pt-skeleton {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-clay-500) 16%, transparent) 45%,
+    transparent 90%
+  );
+  background-size: 180% 100%;
+  background-repeat: no-repeat;
+  animation: pt-skeleton 1500ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-skeleton {
+    animation: none;
+    background-image: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .pt-skeleton {
+    border: 1px solid GrayText;
+  }
 }
 
 /* Verdict reveal: the one orchestrated moment. The verdict banner settles

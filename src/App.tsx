@@ -20,14 +20,10 @@ const AgentPanel = lazy(() => import("./components/AgentPanel").then((m) => ({ d
 const MyMedicines = lazy(() => import("./components/MyMedicines").then((m) => ({ default: m.MyMedicines })));
 
 function TabFallback({ label }: { label: string }) {
-  return (
-    <div aria-busy="true" aria-label={label} className="space-y-3">
-      <div className="pt-pulse h-8 w-48 rounded-md bg-clay-500/20" />
-      <div className="pt-pulse h-40 rounded-xl border border-line bg-card/60" />
-    </div>
-  );
+  return <PanelSkeleton label={label} />;
 }
 import { useCountUp } from "./lib/useCountUp";
+import { EmptyState, PanelSkeleton, Skeleton } from "./components/EmptyState";
 import { formatStamp } from "./lib/format";
 import { TODAY } from "./data/batches";
 import { verifyChain } from "./lib/ledger";
@@ -244,13 +240,7 @@ export default function App() {
             ) : state.busy ? (
               <section aria-busy="true" aria-label="Scan in progress" className="space-y-4 lg:col-span-7">
                 <div className="pt-card p-4">
-                  <div className="pt-pulse h-6 w-40 rounded-md bg-terra-500/20" />
-                  <div className="pt-pulse mt-3 h-4 w-3/4 rounded bg-clay-500/20" />
-                </div>
-                <div className="space-y-2" aria-hidden="true">
-                  {[90, 78, 64].map((w) => (
-                    <div key={w} className="pt-pulse h-3 rounded bg-clay-500/15" style={{ width: `${w}%` }} />
-                  ))}
+                  <Skeleton rows={4} />
                 </div>
               </section>
             ) : (
@@ -447,13 +437,10 @@ export default function App() {
 
 function EmptyVerdict() {
   return (
-    <div className="rounded-xl border border-dashed border-line bg-card/40 px-6 py-14 text-center">
-      <p className="font-display text-[17px] font-bold text-clay-200">No scan yet</p>
-      <p className="mx-auto mt-1 max-w-md text-[12.5px] leading-relaxed text-clay-500">
-        Pick a demo pack above, or press play. Each scan runs barcode decode,
-        registry lookup, packaging comparison, and custody verification.
-      </p>
-    </div>
+    <EmptyState
+      title="No scan yet"
+      body="Pick a demo pack above, or press play. Each scan runs barcode decode, registry lookup, packaging comparison, and custody verification."
+    />
   );
 }
 
@@ -776,9 +763,11 @@ function ScanFeed({
         Scan feed ({scans.length})
       </h3>
       {scans.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-line px-4 py-8 text-center text-[12.5px] text-clay-500">
-          No scans logged yet. Run one from the Verify tab and it will appear here and on the map.
-        </p>
+        <EmptyState
+          compact
+          title="No scans logged yet"
+          body="Run one from the Verify tab and it will appear here and on the map."
+        />
       ) : (
         <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line">
           {scans.slice(0, 40).map((s) => (

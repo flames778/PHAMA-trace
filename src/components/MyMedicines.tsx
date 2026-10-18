@@ -173,7 +173,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-line bg-card/40 px-6 py-10 text-center">
+      <div className="pt-card px-6 py-12 text-center">
         <p className="font-display text-[17px] font-bold text-clay-100">Your cabinet is empty</p>
         <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-clay-500">
           Scan a medicine pack and it lands here with a plain-language

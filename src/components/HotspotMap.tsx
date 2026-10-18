@@ -17,9 +17,9 @@ export interface HotspotMapProps {
 }
 
 const VERDICT_FILL: Record<ScanResult["verdict"], string> = {
-  genuine: "#34d399",
-  suspicious: "#fb7185",
-  unverifiable: "#fbbf24",
+  genuine: "#4f9e7d",
+  suspicious: "#e11d48",
+  unverifiable: "#b45309",
 };
 
 export function HotspotMap({
@@ -40,7 +40,7 @@ export function HotspotMap({
   const suspicious = scans.filter((s) => s.verdict === "suspicious");
 
   return (
-    <div className="overflow-hidden rounded-xl border border-line">
+    <div className="pt-card overflow-hidden">
       <MapContainer
         center={NIGERIA_CENTRE}
         zoom={6}
@@ -61,11 +61,15 @@ export function HotspotMap({
             key={loc.id}
             center={[loc.lat, loc.lng]}
             radius={loc.kind === "manufacturer" ? 6 : 5}
+            // Refined sites, not at-risk ones: sage and clay rather than the
+            // saturated ring colours, so a healthy location stays quiet and
+            // attention stays on anything critical.
             pathOptions={{
-              color: loc.kind === "manufacturer" ? "#c084fc" : "#60a5fa",
-              fillColor: loc.kind === "manufacturer" ? "#c084fc" : "#60a5fa",
-              fillOpacity: 0.35,
+              color: loc.kind === "manufacturer" ? "#405b4d" : "#7c654f",
+              fillColor: loc.kind === "manufacturer" ? "#567263" : "#a89a8c",
+              fillOpacity: 0.4,
               weight: 1.5,
+              opacity: 0.85,
             }}
           >
             <Popup className="pt-popup">
@@ -78,8 +82,11 @@ export function HotspotMap({
 
         {pharmacies.map((loc) => {
           const risk = riskByLocation.get(loc.id) ?? "ok";
+          // Deepened from the default tailwind-500 shades so the rings keep
+          // their 3:1 non-text contrast against the dark basemap tiles, which
+          // the original pastels did not.
           const ring =
-            risk === "critical" ? "#fb7185" : risk === "warning" ? "#fbbf24" : risk === "watch" ? "#7dd3fc" : "#34d399";
+            risk === "critical" ? "#be123c" : risk === "warning" ? "#b45309" : risk === "watch" ? "#3f6d8e" : "#2f4a3e";
           const count = scans.filter((s) => near(s, loc)).length;
           return (
             <CircleMarker
@@ -135,12 +142,12 @@ export function HotspotMap({
         })}
       </MapContainer>
 
-      <div className="flex flex-wrap items-center gap-4 border-t border-line bg-card px-4 py-2.5 text-[11px] text-clay-400">
-        <LegendItem colour="#34d399" label={`Genuine scans (${scans.length - suspicious.length})`} />
-        <LegendItem colour="#fb7185" label={`Suspicious (${suspicious.length})`} />
-        <LegendItem colour="#fbbf24" label="Unverifiable" />
-        <LegendItem colour="#c084fc" label="Manufacturer" />
-        <LegendItem colour="#60a5fa" label="Distributor" />
+      <div className="flex flex-wrap items-center gap-4 border-t border-line bg-card/60 px-4 py-2.5 text-[11px] text-clay-300">
+        <LegendItem colour="#4f9e7d" label={`Genuine scans (${scans.length - suspicious.length})`} />
+        <LegendItem colour="#e11d48" label={`Suspicious (${suspicious.length})`} />
+        <LegendItem colour="#b45309" label="Unverifiable" />
+        <LegendItem colour="#567263" label="Manufacturer" />
+        <LegendItem colour="#a89a8c" label="Distributor" />
         <span className="ml-auto text-clay-500">Marker size scales with scans at that site</span>
       </div>
     </div>

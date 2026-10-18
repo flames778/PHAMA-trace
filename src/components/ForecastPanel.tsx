@@ -288,7 +288,7 @@ export function ForecastPanel({
               </p>
             </>
           ) : (
-            <p className="rounded-xl border border-line bg-card/60 px-4 py-8 text-center text-[12.5px] text-clay-500">
+            <p className="pt-card px-4 py-8 text-center text-[12.5px] text-clay-500">
               No dispensing history loaded.
             </p>
           )}
