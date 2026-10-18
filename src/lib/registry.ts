@@ -13,6 +13,7 @@ import { LOCATIONS, locationById as seedLocationById } from "../data/locations";
 import { buildCustodyChain } from "../data/custody";
 import { generateSeries } from "../data/demand";
 import { supabase, usingSupabase } from "./supabase";
+import { normalizeStamp } from "./ledger";
 
 /**
  * Registry access.
@@ -49,6 +50,24 @@ export interface Registry {
   scans(): Promise<ScanResult[]>;
   saveScan(scan: ScanResult): Promise<void>;
   recordMovement(movement: StockMovement): Promise<void>;
+  /**
+   * BE-5. Server-side aggregation of scan verdicts into map cells, so the
+   * hotspot grid comes from the database in Postgres mode rather than being
+   * recomputed per client. Optional: a backend that cannot compute it returns
+   * null and the app derives the same numbers from `scans()` locally.
+   */
+  hotspotGrid?(): Promise<HotspotCell[] | null>;
+}
+
+/** One aggregated grid square, matching a row of the `hotspot_grid` view. */
+export interface HotspotCell {
+  latCell: number;
+  lngCell: number;
+  total: number;
+  suspicious: number;
+  genuine: number;
+  unverifiable: number;
+  lastSeen: string;
 }
 
 /**
@@ -129,6 +148,23 @@ export function withFallback(
     scans: () => run((r) => r.scans()),
     saveScan: (scan) => run((r) => r.saveScan(scan)),
     recordMovement: (movement) => run((r) => r.recordMovement(movement)),
+    // Optional capability, not a degradation candidate: if the primary
+    // backend cannot aggregate the grid we return null and the app derives
+    // the same numbers locally. Silently calling the fallback's (absent)
+    // implementation here would look like an empty map, not a missing one.
+    //
+    // NOTE: this wrapper lists every method by hand. A new method added to
+    // the Registry interface must be added here too, or withFallback will
+    // quietly drop it — which is exactly what happened to hotspotGrid.
+    hotspotGrid: primary.hotspotGrid
+      ? async () => {
+          try {
+            return await primary.hotspotGrid!();
+          } catch {
+            return null;
+          }
+        }
+      : undefined,
   };
 }
 
@@ -225,6 +261,7 @@ export function localRegistry(): Registry {
 
 function supabaseRegistry(): Registry {
   const db = supabase!;
+  const PAGE = 1000;
 
   /** Database rows are untyped: coerce defensively so one malformed row
    *  cannot poison a forecast with NaN or crash a render with undefined. */
@@ -282,12 +319,33 @@ function supabaseRegistry(): Registry {
     fromLocationId: optStr(r.from_location_id),
     toLocationId: optStr(r.to_location_id),
     quantity: num(r.quantity),
-    occurredAt: str(r.occurred_at),
+    // Normalize to the canonical form the hashes were signed over. See
+    // normalizeStamp in ledger.ts: PostgREST spells timestamps its own way.
+    occurredAt: normalizeStamp(str(r.occurred_at)),
     actor: str(r.actor, "unknown"),
     note: optStr(r.note),
     prevHash: str(r.prev_hash),
     eventHash: str(r.event_hash),
   });
+
+  /**
+   * PostgREST caps every response at 1000 rows by default and says nothing,
+   * so an unpaginated read of stock_movements (8.6k rows) silently returns a
+   * truncated slice and the forecast is then computed on ~11% of the real
+   * demand history. Page through until a short page comes back.
+   */
+  async function fetchAll<T>(
+    page: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
+  ): Promise<T[]> {
+    const rows: T[] = [];
+    for (let from = 0; ; from += PAGE) {
+      const res = await page(from, from + PAGE - 1);
+      if (res.error) throw new Error(res.error.message);
+      const batch = res.data ?? [];
+      rows.push(...batch);
+      if (batch.length < PAGE) return rows;
+    }
+  }
 
   const mapMovement = (r: Record<string, unknown>): StockMovement => ({
     batchId: str(r.batch_id),
@@ -335,22 +393,23 @@ function supabaseRegistry(): Registry {
       return data ? mapLocation(data) : null;
     },
     async custodyFor(batchId) {
+      // Chain order, not timestamp order: several legs share a day, so
+      // sorting by occurred_at scrambles the hash linkage (verified live
+      // against the Express backend). Event ids are sequential by
+      // construction (buildChain/appendEvent), so id order IS chain order.
       const { data, error } = await db
         .from("custody_events")
         .select("*")
         .eq("batch_id", batchId)
-        // Chain order, not timestamp order: several legs share a day, so
-        // sorting by occurred_at scrambles the hash linkage (verified live
-        // against the Express backend). Event ids are sequential by
-        // construction (buildChain/appendEvent), so id order IS chain order.
         .order("id", { ascending: true });
       if (error) throw error;
       return (data ?? []).map(mapCustody);
     },
     async positions() {
-      const { data, error } = await db.from("stock_positions").select("*");
-      if (error) throw error;
-      return (data ?? []).map((r) => ({
+      const rows = await fetchAll<Record<string, unknown>>((from, to) =>
+        db.from("stock_positions").select("*").range(from, to),
+      );
+      return rows.map((r) => ({
         batchId: str(r.batch_id),
         locationId: str(r.location_id),
         onHand: num(r.on_hand),
@@ -358,12 +417,10 @@ function supabaseRegistry(): Registry {
       }));
     },
     async movements() {
-      const { data, error } = await db
-        .from("stock_movements")
-        .select("*")
-        .order("day", { ascending: true });
-      if (error) throw error;
-      return (data ?? []).map(mapMovement);
+      const rows = await fetchAll<Record<string, unknown>>((from, to) =>
+        db.from("stock_movements").select("*").order("day", { ascending: true }).range(from, to),
+      );
+      return rows.map(mapMovement);
     },
     async scans() {
       const { data, error } = await db.from("scans").select("*").order("created_at", { ascending: false }).limit(500);
@@ -411,6 +468,20 @@ function supabaseRegistry(): Registry {
         received: movement.received,
       });
       if (error) throw error;
+    },
+    async hotspotGrid() {
+      const rows = await fetchAll<Record<string, unknown>>((from, to) =>
+        db.from("hotspot_grid").select("*").range(from, to),
+      );
+      return rows.map((r) => ({
+        latCell: num(r.lat_cell),
+        lngCell: num(r.lng_cell),
+        total: num(r.total),
+        suspicious: num(r.suspicious),
+        genuine: num(r.genuine),
+        unverifiable: num(r.unverifiable),
+        lastSeen: str(r.last_seen),
+      }));
     },
   };
 }

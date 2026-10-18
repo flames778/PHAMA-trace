@@ -1,10 +1,12 @@
 -- ============================================================================
--- PharmaTrace — Supabase schema
+-- PharmaTrace — Supabase schema (initial migration)
 -- ============================================================================
--- PASTE THIS FILE ONCE into the Supabase SQL editor (Database -> SQL editor).
--- It creates the structure only; the demo seed loader is tracked as BE-2
--- (scripts/seed-demo.mjs) and must connect with the service_role key,
--- because the anon policies below deliberately cannot write registry rows.
+-- APPLY WITH: `npm run db:push` (wraps `supabase db push`; run
+-- `npx supabase link --project-ref <ref>` once first). The SQL editor on the
+-- dashboard works just as well: paste this whole file and run it.
+-- This migration creates the STRUCTURE only. Loading the demo rows is
+-- `npm run seed`, which must connect with the service_role key, because the
+-- anon policies below deliberately cannot write registry rows.
 --
 -- IMPORTANT — this is a demo schema.
 --   * Every table allows anonymous INSERT into `scans` and `stock_movements`
@@ -14,6 +16,8 @@
 --     INSERT on `scans` to signed-in users, make `custody_events` append-only
 --     via a trigger (see the bottom of this file), and move the registry
 --     writes behind a service-role key held by the regulator.
+--     The full pre-real-use list is tracked as BE-6 in
+--     docs/PROGRESS_TRACKER.md.
 --   * Nothing here is connected to NAFDAC or to any manufacturer's systems.
 --   * TABLE MODEL (see report.md): products/batches mirror the NAFDAC
 --     Greenbook row (name, actives, NRN, applicant, form, strengths, status);

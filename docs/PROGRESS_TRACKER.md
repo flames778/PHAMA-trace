@@ -47,35 +47,56 @@ Verified 2026-10-14 on a clean install (`npm install` from `package-lock.json`):
 
 - **Phase 0 — Done.** Mock app runs end to end (verify, custody, forecast, hotspots,
   medicine guide, My medicines).
-- **Phase 1 — Now.** Backend spine: provision Supabase, seed it, wire env, pass gates
-  in Supabase mode. Frontend: fix pipeline script, polish MyMedicines.
-- **Phase 2 — Next.** Integration: hotspot view reads `hotspot_grid`, recall drill,
-  source toggle UX, forecast × MyMedicines pairing.
-- **Phase 3 — Demo.** Two-scan stage flow (genuine vs counterfeit), hotspot lights up,
-  pitch narrative, hardening notes.
+- **Phase 1 — Done.** Backend spine: Supabase provisioned, seeded, env wired, gates
+  passing in Supabase mode. Frontend pipeline script fixed, MyMedicines polished.
+- **Phase 2 — Done.** Integration: the map reads live `hotspot_grid`, the recall drill
+  resolves every custody row, source toggle UX shipped, forecast × MyMedicines paired.
+- **Phase 3 — Next.** Demo hardening: run the two-scan stage flow end to end against
+  Supabase, rehearse the pitch narrative, and work `docs/HARDENING_ROADMAP.md` (BE-6)
+  down the list that matters before any real pilot.
 
 ## 5. Evans' side (backend)
 
 | ID | Task | Acceptance | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| BE-1 | Provision Supabase project, apply `supabase/schema.sql` | All 7 tables + indexes + 2 triggers + `hotspot_grid` view exist in the hosted DB | Pending | — |
-| BE-2 | Write missing `scripts/seed-demo.mjs`, run `npm run seed` | Products, batches, locations, custody chains and movements load from `src/data`; every custody chain passes `verifyChain`; positions derive via the movement trigger | Pending | — |
-| BE-3 | Add `db:push` script, `.env.local` wiring, README note | Fresh clone can do: create project → `db:push` → `seed` → run in Supabase mode, documented in <10 steps | Pending | — |
-| BE-4 | End-to-end pass in Supabase mode | App boots with Supabase badge; a scan inserts a `scans` row; custody verifies from real rows; typecheck + selfcheck + pipeline all green | Pending | — |
-| BE-5 | Hotspot + recall drill | HotspotMap reads live `hotspot_grid`; a test recall locates 100% of a batch's rows | Pending | Phase 2 |
-| BE-6 | Hardening roadmap | Short doc: what changes before real use (auth, RLS roles, append-only custody, service-role writes) — `schema.sql` header already drafts it | Pending | Phase 2/3 |
+| BE-1 | Provision Supabase project, apply `supabase/schema.sql` | All 7 tables + indexes + 2 triggers + `hotspot_grid` view exist in the hosted DB | Done | Verified live 2026-10-18: 7 tables RLS-enabled, 2 custody triggers + movement trigger, `hotspot_grid` view present |
+| BE-2 | Write missing `scripts/seed-demo.mjs`, run `npm run seed` | Products, batches, locations, custody chains and movements load from `src/data`; every custody chain passes `verifyChain`; positions derive via the movement trigger | Done | Project already seeded (5/25/11, 1698 custody, 8686 movements, 76 positions). All 10 chains verify against live rows; seed script verified idempotent-refusal |
+| BE-3 | Add `db:push` script, `.env.local` wiring, README note | Fresh clone can do: create project → `db:push` → `seed` → run in Supabase mode, documented in <10 steps | Done | `scripts/db-push.mts` + `supabase/migrations/` + README 7-step path |
+| BE-4 | End-to-end pass in Supabase mode | App boots with Supabase badge; a scan inserts a `scans` row; custody verifies from real rows; typecheck + selfcheck + pipeline all green | Done | `npm run verify:supabase` green; browser confirmed live Supabase traffic incl. paginated movements |
+| BE-5 | Hotspot + recall drill | HotspotMap reads live `hotspot_grid`; a test recall locates 100% of a batch's rows | Done | `registry.hotspotGrid()` wired into the map; recall drill covers 69 events / 7 locations |
+| BE-6 | Hardening roadmap | Short doc: what changes before real use (auth, RLS roles, append-only custody, service-role writes) — `schema.sql` header already drafts it | Done | `docs/HARDENING_ROADMAP.md` |
 
-Notes for Evans: `src/lib/registry.ts` already implements the Supabase backend, so BE-2
-is mostly the seed script — **now written**: `scripts/seed-supabase.mts` behind `npm run seed`
-(inserts products → locations → batches → custody, then movements so the trigger derives
-positions, then reconciles positions with `positionsFrom(movements)` so rows match local
-mode; needs service_role env per the schema header). Still Pending because it has not been
-run against a live DB — that waits on BE-1.
-`BE-1 → BE-2 → BE-3 → BE-4` is the required order.
-**Standalone backend landed this pass** (not Supabase-dependent): `npm run server` boots an
-Express API on `:3001` with JSON-file persistence, the Registry gained a third `server`
-mode behind `VITE_USE_SERVER=true`, and it reuses ME-2's `withFallback` so a dead server
-degrades to bundled data instead of crashing the app. Vite dev proxies `/api` to `:3001`.
+Notes for Evans: `src/lib/registry.ts` implements the Supabase backend, and
+`scripts/seed-supabase.mts` (behind `npm run seed`) inserts products →
+locations → batches → custody, then movements so the trigger derives positions,
+then reconciles positions so rows match local mode. It needs the service_role
+env key per the schema header.
+`BE-1 → BE-2 → BE-3 → BE-4` was the required order; all six are now verified
+against the live project `bfmbpwkxsspjsoifnhpb`.
+
+**Three live bugs found by the first Supabase-mode run** (all fixed, all now
+guarded by `npm run verify:supabase`):
+
+1. **Every custody chain failed verification at event 1.** The same instant
+   reaches the app spelled three ways: `2026-03-20T08:12:00Z` (bundled data),
+   the same string echoed (Express), `2026-03-20 08:12:00+00` (PostgREST),
+   and the hosted seed signed `2026-03-20T08:12:00.000Z`. Hashing the raw
+   string produced a different digest per backend. Fixed by normalizing
+   timestamps in `canonicalize` (`normalizeStamp` in `src/lib/ledger.ts`), so
+   all three backends agree on one digest and no stored row had to be re-signed.
+2. **87% of the stock data was silently missing.** PostgREST caps responses at
+   1000 rows and says nothing, so `movements()` returned 1000 of 8686 rows and
+   the forecast was computed on a fragment that still looked plausible. Fixed
+   with explicit pagination; the gate now asserts read count == table count.
+3. **`withFallback` dropped the new registry method.** It lists every method by
+   hand, so `hotspotGrid()` silently became undefined and the map fell back to
+   deriving cells locally. Forwarded now, with a comment warning the next
+   person who adds a method.
+
+`Standalone backend` (not Supabase-dependent): `npm run server` boots an
+Express API on `:3001` with JSON-file persistence, the Registry has a third
+`server` mode behind `VITE_USE_SERVER=true`, and it reuses ME-2's
+`withFallback` so a dead server degrades to bundled data. Vite proxies `/api`.
 
 ## 6. Ayonife's side (full stack)
 
@@ -88,15 +109,17 @@ degrades to bundled data instead of crashing the app. Vite dev proxies `/api` to
 | ME-4 | Demo script hardening | Genuine-vs-counterfeit two-scan flow lights the hotspot map reliably | Done | `01db8c4`, 2026-10-15 |
 | ME-5 | Registry content pass | Code comments cite the real sources (Greenbook fields, GS1, WHO list) per `report.md` | Done | `7d764e2`, 2026-10-15 |
 
-## 7. Doing now (week of 2026-10-14)
+## 7. Doing now (week of 2026-10-18)
 
-- Ayonife's track is complete through ME-5 plus the audit and review passes.
-  Next optional polish (not tracked as MEs): code-split the bundle, keyboard
-  access for map markers, live-Supabase e2e once Evans provisions (BE-4).
-- Evans: **BE-1 → BE-2**. Nothing else until the DB has real rows.
-  Note: schema.sql now has working anon policies + `.env.example` exists, and
-  the seed must use service_role (documented in the schema header).
-- Merge rule: each BE task merges only after joint review; the tracker row flips in the
+- **Every tracked task is Done.** ME-0..ME-5 and BE-1..BE-6 are closed and
+  verified; the design audit is at 20/20.
+- Backend is no longer a blocker: the live project
+  `bfmbpwkxsspjsoifnhpb` is reachable, seeded and passing
+  `npm run verify:supabase` on every run.
+- Remaining optional polish (deliberately untracked): keyboard access for map
+  markers, URL-synced tabs (needs a router), light map tiles (P4),
+  MedicineGuide symbol-font pass, translations, PWA.
+- Merge rule: each task merges only after joint review; the tracker row flips in the
   same sitting, with the commit hash recorded above.
 
 ## 8. Update log
@@ -117,6 +140,7 @@ degrades to bundled data instead of crashing the app. Vite dev proxies `/api` to
 | 2026-10-15 | Ayonife | **Mobile artifact pack** (`docs/mobile/`, `f9a9b03`): 4 planning docs for the later mobile build — 00 overview (grandma-first users, goals/non-goals, demo criteria), 01 product design (4 tabs, result/cabinet/alerts/map screens, 7 grandma-first UX rules, empty states), 02 technical plan (Expo recommendation with PWA alternative recorded; reuse table for the pure-TS engine, port table for vision/barcode/camera/storage/maps/notifications, offline-first sync design, budgets, security carry-over), 03 roadmap (gated phases 0–3, backend dependencies on Evans, 4 open decisions). No code; sync verified clean and full gate suite green before pushing. |
 | 2026-10-15 | Ayonife | **Design pass** (`677ed46`, skills: impeccable + frontend-design + modern-web-design + micro-interactions + animate + humanizer; trends researched: follow-pill tabs 200ms, senior-first 16px+/redundant cues, card-table patterns): minimal Landing page (wordmark links to it), line tabs with measured follow-pill indicator (transform-only) + scrollable mobile strip, custom Select replacing all 4 native dropdowns, custom scrollbars incl. the forecast table, responsive card-tables, collapsible explainers, Verify bento grid, band donut + senior-readable sparkline, simplified AI panel (no provider settings, env-only), scan CTA in empty cabinet, upgraded footer + helpline steps, real brand icon/logo assets (false trust badge stripped from lockup, favicon set), Bricolage-only type, press/focus motion system, emdash-free UI copy, EmptyVerdict code-chip cut. Full suite green + detector clean. Known interims: dark map tiles (P4), guide emoji (symbol pass), translations. |
 | 2026-10-16 | Ayonife | **Stock + registry depth** (`c2cbaea`, from six in-browser comments): interactive demand chart (hover/touch/keyboard inspection with tooltip, observed/projected toggles, projected stockout marker), full-width shelf detail card with band chip and days-of-cover, colorized tap-to-explain stat cards, sortable shelf table (shelf/product/on-hand/days/band, nulls sink, aria-sort), animated donut (mount fill-in, hover/focus pills spotlight segments, live center readout), registry overhaul (summary stats, search, status filters, result count, empty state). Full suite green + detector clean. |
+| 2026-10-18 | Ayonife | **BE-1..BE-6 closed** (`Supabase end-to-end`): the `supabase-pharmatrace` MCP connected, so the live project `bfmbpwkxsspjsoifnhpb` became reviewable for the first time. Verified BE-1 against the hosted DB (7 tables RLS-enabled, append-only + movement triggers, `hotspot_grid`). Found and fixed **three live bugs** the mock-mode suites could never surface: (1) all 1698 custody events failed verification at event 1 because the same instant is spelled differently by each backend, fixed with `normalizeStamp` in `canonicalize`; (2) `movements()` silently returned 1000 of 8686 rows because PostgREST caps at 1000, fixed with pagination plus a gate that asserts read count == table count; (3) `withFallback` enumerates methods by hand and silently dropped the new `hotspotGrid()`, now forwarded with a warning comment. Shipped BE-3 (`scripts/db-push.mts`, `supabase/migrations/`, 7-step README), BE-4 (`scripts/verify-supabase.mts`, a real end-to-end gate that skips cleanly without credentials; browser confirmed live Supabase traffic and 9 paged movement requests), BE-5 (`registry.hotspotGrid()` feeding the map, recall drill covering 69 events across 7 locations) and BE-6 (`docs/HARDENING_ROADMAP.md`). Also made `supabase.ts` read `process.env` so headless checks can reach Supabase mode at all, and corrected the header banner to "mock registry" (it said "bundled" even when hosted). Full suite green, build clean, detector clean. |
 | 2026-10-16 | Ayonife | **20/20 design push** (`be8fbbb`): closed every P0–P1 audit item. Accessibility foundations (sr-only h1, skip link, aria-live status regions, two-tap clear-all, light theme-color/color-scheme, touch-action, tap-highlight, safe-area insets). Honest token rename across 12 files (canvas/card/terra/sage/ochre/clay/steel; zero legacy names, verified by grep). Code-split bundles by tab (main 736→548KB, Leaflet isolated in its own chunk, skeleton fallbacks). Verdict choreography (scale-settle banner, staggered reasons/checks). Count-ups (band cards, donut center, landing + registry stats). Scan skeleton. Intl UTC dates. Placeholder rule. Row press states. Bricolage ≥15px rule (Inter body). Fluid clamp headlines. Full suite green, build emits 8 chunks, detector clean. Remaining: URL-synced tabs (needs router, roadmap), bare-`transition` accepted as Tailwind's bounded subset. |
 | 2026-10-15 | Ayonife | **P0 warm theme live** (`217a9ac`): token inversion in `@theme` (paper canvas, terracotta-replaces-teal, sage/umber/deepened amber+rose, warm slate ramp — all existing classes follow, opacities intact), Bricolage Grotesque as display voice via Google Fonts CDN (Newsreader dropped) + Jakarta UI, rebuilt header (honesty utility strip, guilloche seal, Bricolage wordmark, site chip, 4-state mode badge, terracotta pill nav, mobile scroll strip) plus rich 4-column footer with helpline box and legal strip. Decisions recorded: Bricolage-display/J card, rich footer, CDN fonts. Full suite green (typecheck, pipeline 43/43, cabinet 20/20, source 13/13, selfcheck, build) + detector clean. Known interim: map tiles stay dark until P4; sparkline strokes restroke in P3. |
 | 2026-10-15 | Session | **Standalone backend** (rebase onto `c842493` included): Express server (`server/index.ts`, `server/store.ts`) with full REST surface - products, locations, batches (incl. code lookup), custody chain, positions, movements, scans, forecast payload, hotspot rollup, health, reset - persisting to gitignored `server/data/db.json`, auto-seeded from `src/data`. Registry gained `server` mode (`VITE_USE_SERVER`) wrapped in ME-2's `withFallback`; Shell badge shows "Server"; Vite dev proxies `/api`. Seed script for Supabase (`scripts/seed-supabase.mts`, `npm run seed`) replaces the never-written `seed-demo.mjs` and orders inserts so the movement trigger derives positions before reconciliation. Fixes while landing: defensive `import.meta.env` read in `registry.ts` (same guard as `supabase.ts` - `source-check.mts` imports registry under plain node), new `tsconfig.server.json` so `server/` is typechecked, `process.env` added to the scripts ambient. Suite: typecheck clean (4 projects), selfcheck, pipeline, cabinet, source-check, build all PASS; server E2E verified (write → restart → read). |

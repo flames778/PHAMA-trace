@@ -7,3 +7,6 @@ server/data/
 *.log
 .DS_Store
 .opencode/
+
+# Supabase CLI link state (project ref + temp credentials)
+supabase/.temp/

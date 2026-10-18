@@ -8,7 +8,7 @@ import type {
   StockMovement,
   StockPosition,
 } from "../types";
-import { registry, isDegraded, onDegradedChange } from "./registry";
+import { registry, isDegraded, onDegradedChange, type HotspotCell } from "./registry";
 import { verify, normaliseCode, type VerifyInput } from "./verify";
 import { analysePack, loadImageData } from "./vision";
 import { detectBarcodeInImage, type BarcodeHit } from "./barcode";
@@ -46,6 +46,8 @@ export interface PharmaTraceState {
   positions: StockPosition[];
   movements: StockMovement[];
   scans: ScanResult[];
+  /** Server-aggregated verdict grid (BE-5); null when the backend has no view. */
+  hotspotGrid: HotspotCell[] | null;
   /** Custody events for the batch currently on screen, loaded on demand. */
   custody: CustodyEvent[];
   custodyFor: (batchId: string) => Promise<CustodyEvent[]>;
@@ -87,6 +89,7 @@ export function usePharmaTrace(): PharmaTraceState {
   const [positions, setPositions] = useState<StockPosition[]>([]);
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [scans, setScans] = useState<ScanResult[]>([]);
+  const [hotspotGrid, setHotspotGrid] = useState<HotspotCell[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [scanLocationId, setScanLocationId] = useState(DEFAULT_LOCATION);
   const [custody, setCustody] = useState<CustodyEvent[]>([]);
@@ -123,6 +126,12 @@ export function usePharmaTrace(): PharmaTraceState {
         setPositions(pos);
         setMovements(mov);
         setScans(sc);
+        // Optional and additive: a backend that can aggregate scans into grid
+        // cells does it in the database; otherwise the app derives the same
+        // numbers from `scans` and the map looks identical.
+        if (registry.hotspotGrid) {
+          setHotspotGrid(await registry.hotspotGrid().catch(() => null));
+        }
         setReady(true);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
@@ -258,6 +267,7 @@ export function usePharmaTrace(): PharmaTraceState {
     positions,
     movements,
     scans,
+    hotspotGrid,
     custody,
     custodyFor,
     scanLocation,

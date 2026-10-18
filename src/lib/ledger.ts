@@ -6,6 +6,28 @@ export const GENESIS_HASH = "0".repeat(64);
 export type RawCustodyEvent = Omit<CustodyEvent, "id" | "prevHash" | "eventHash">;
 
 /**
+ * Canonical timestamp form for everything that gets hashed: full ISO 8601
+ * UTC with milliseconds, e.g. 2026-03-20T08:12:00.000Z.
+ *
+ * This is load-bearing. The same instant reaches us in different spellings
+ * depending on the backend: the bundled data carries "2026-03-20T08:12:00Z",
+ * the Express store echoes it back verbatim, and PostgREST returns
+ * timestamptz as "2026-03-20 08:12:00+00". Hashing the raw string produced
+ * three different digests for one custody fact, so every Supabase chain
+ * "failed verification" at its first event despite being intact.
+ *
+ * `toISOString()` is the agreed canonical spelling (it is what the hosted
+ * seed signed). Because both buildChain and verifyChain route through
+ * canonicalize, normalizing here keeps local, Express and Supabase agreeing
+ * on one digest without re-signing any stored row.
+ */
+export function normalizeStamp(value: string): string {
+  const t = Date.parse(value);
+  if (!value || Number.isNaN(t)) return value;
+  return new Date(t).toISOString();
+}
+
+/**
  * Deterministic serialization of the signed payload. Field order is fixed so
  * two processes that see the same custody fact always hash to the same value.
  */
@@ -16,7 +38,7 @@ export function canonicalize(raw: RawCustodyEvent): string {
     raw.fromLocationId ?? "",
     raw.toLocationId ?? "",
     raw.quantity,
-    raw.occurredAt,
+    normalizeStamp(raw.occurredAt),
     raw.actor,
     raw.note ?? "",
   ]);

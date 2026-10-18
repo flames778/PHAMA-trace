@@ -101,12 +101,27 @@ export default function App() {
 
   const riskByLocation = useMemo(() => {
     const map = new Map<string, "critical" | "warning" | "watch" | "ok">();
-    for (const s of state.scans) {
-      if (s.verdict !== "suspicious") continue;
-      const loc = state.locations.find(
-        (l) => Math.abs(l.lat - s.lat) < 0.035 && Math.abs(l.lng - s.lng) < 0.035,
-      );
-      if (loc) map.set(loc.id, "critical");
+
+    // When the backend can aggregate verdicts for us (Postgres mode, BE-5)
+    // trust those cells: they cover every scan row, not just the 500 the
+    // client fetched. Otherwise derive the same thing from the scans we hold.
+    const gridCells = state.hotspotGrid;
+    if (gridCells && gridCells.length > 0) {
+      for (const cell of gridCells) {
+        if (cell.suspicious === 0) continue;
+        const loc = state.locations.find(
+          (l) => Math.abs(l.lat - cell.latCell) < 0.035 && Math.abs(l.lng - cell.lngCell) < 0.035,
+        );
+        if (loc) map.set(loc.id, "critical");
+      }
+    } else {
+      for (const s of state.scans) {
+        if (s.verdict !== "suspicious") continue;
+        const loc = state.locations.find(
+          (l) => Math.abs(l.lat - s.lat) < 0.035 && Math.abs(l.lng - s.lng) < 0.035,
+        );
+        if (loc) map.set(loc.id, "critical");
+      }
     }
     // Forecast bands reach the map too, as the prop contract promises:
     // a shelf reading critical/warning paints its pharmacy even with no
@@ -120,7 +135,7 @@ export default function App() {
       }
     }
     return map;
-  }, [state.scans, state.locations, stockByProduct]);
+  }, [state.scans, state.hotspotGrid, state.locations, stockByProduct]);
 
   const content = (() => {
     if (state.error) {
@@ -509,7 +524,7 @@ function Shell({
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-0.5 px-5 py-1.5 text-[11px] text-clay-500">
           <span className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-ochre-400" aria-hidden="true" />
-            Demo environment: bundled registry, no regulator connection
+            Demo environment: mock registry, no regulator connection
           </span>
           <span className="ml-auto hidden sm:inline">FMOH · PCN protocol</span>
         </div>
