@@ -418,8 +418,18 @@ function supabaseRegistry(): Registry {
       }));
     },
     async movements() {
+      // `day` alone is NOT a unique sort: thousands of movements share a day.
+      // Offset pagination over a non-unique key can repeat or skip rows
+      // between pages whenever a movement is logged mid-read — which the
+      // stock logger does — quietly corrupting the forecast. `id` is unique,
+      // so it makes the ordering total and the page boundaries stable.
       const rows = await fetchAll<Record<string, unknown>>((from, to) =>
-        db.from("stock_movements").select("*").order("day", { ascending: true }).range(from, to),
+        db
+          .from("stock_movements")
+          .select("*")
+          .order("day", { ascending: true })
+          .order("id", { ascending: true })
+          .range(from, to),
       );
       return rows.map(mapMovement);
     },

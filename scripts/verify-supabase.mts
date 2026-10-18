@@ -110,6 +110,22 @@ async function main() {
     `read ${movements.length}, table holds ${movementCount}`,
   );
 
+  // Offset pagination over a NON-unique sort key repeats or skips rows
+  // whenever anything is written mid-read, which the stock logger does.
+  // Movements are ordered by `day`, and every single day holds more than one
+  // row, so this is the exact condition that corrupts a forecast. Assert the
+  // page boundaries are lossless.
+  const tuple = (m: { batchId: string; locationId: string; day: string }) =>
+    `${m.batchId}|${m.locationId}|${m.day}`;
+  const seen = new Set<string>();
+  let dupes = 0;
+  for (const m of movements) {
+    const k = tuple(m);
+    if (seen.has(k)) dupes++;
+    seen.add(k);
+  }
+  check("paged read returns every movement exactly once", dupes === 0, `${dupes} duplicate rows`);
+
   const byProduct = new Set(products.map((p) => p.id));
   const positionByKey = new Map(positions.map((p) => [`${p.batchId}|${p.locationId}`, p]));
   const inputs = positions.map((p) => {
