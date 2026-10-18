@@ -137,46 +137,51 @@ async function main() {
   check("every forecast maps to a known product", inputs.every((i) => byProduct.has(i.productId) || i.productId === ""));
 
   console.log("\nWrites (RLS policies + triggers)");
-  // Stable id on purpose: if cleanup is impossible (see below) at most ONE
-  // probe row can ever exist, instead of one per run.
-  const probeId = "e2e-probe";
-  const probe: ScanResult = {
-    id: probeId,
-    batchCode: hero.batchCode,
-    productId: hero.productId,
-    batchId: hero.id,
-    verdict: "genuine",
-    confidence: 0.99,
-    headline: "e2e probe row, deleted immediately after insert",
-    reasons: ["written by scripts/verify-supabase.mts"],
-    evidence: {
-      codeSource: "demo",
-      codeRead: hero.batchCode,
-      vision: null,
-      custody: { hops: 0, lastKnownCustodian: null, lastMovement: null, chainIntact: true, brokenAtEventId: null },
-      flags: [],
-    },
-    lat: 6.5244,
-    lng: 3.3792,
-    createdAt: new Date().toISOString(),
-  };
-  await registry.saveScan(probe);
-  const readBack = (await registry.scans()).find((s) => s.id === probeId);
-  check("anon may insert a scan and read it back", readBack?.verdict === "genuine");
-
-  // The anon key has no DELETE policy on `scans` (deliberate: the demo grants
-  // anonymous inserts so the app works without auth, but nothing more). So
-  // cleanup usually fails, and that is correct behaviour, not a regression.
-  const { error: delError } = await supabase.from("scans").delete().eq("id", probeId);
-  const survived = (await registry.scans()).some((s) => s.id === probeId);
-  if (survived) {
+  // Only exercise the insert path when we also hold a key that can undo it.
+  // The anon key can insert a scan but deliberately cannot delete one, so
+  // running this without a service key left a junk row visible in the demo
+  // scan feed on every run. It did exactly that. This guard is the fix.
+  const serviceKey = process.env.VITE_SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
     console.log(
-      `  NOTE  probe row "${probeId}" remains: no anon DELETE policy on scans (by design).\n` +
-        "        Remove it once with the service_role key:\n" +
-        `          delete from scans where id = '${probeId}';`,
+      "  SKIP  anon insert round-trip: no service key, and anon cannot DELETE,\n" +
+        "        so a probe row could not be cleaned up. Set VITE_SUPABASE_SERVICE_KEY\n" +
+        "        in .env.local to enable this check.",
     );
   } else {
-    check("probe row cleaned up", true, delError?.message ?? "");
+    const { createClient } = await import("@supabase/supabase-js");
+    const admin = createClient(process.env.VITE_SUPABASE_URL!, serviceKey, {
+      auth: { persistSession: false },
+    });
+    const probeId = "e2e-probe";
+    const probe: ScanResult = {
+      id: probeId,
+      batchCode: hero.batchCode,
+      productId: hero.productId,
+      batchId: hero.id,
+      verdict: "genuine",
+      confidence: 0.99,
+      headline: "e2e probe row, removed immediately after insert",
+      reasons: ["written by scripts/verify-supabase.mts"],
+      evidence: {
+        codeSource: "demo",
+        codeRead: hero.batchCode,
+        vision: null,
+        custody: { hops: 0, lastKnownCustodian: null, lastMovement: null, chainIntact: true, brokenAtEventId: null },
+        flags: [],
+      },
+      lat: 6.5244,
+      lng: 3.3792,
+      createdAt: new Date().toISOString(),
+    };
+    await registry.saveScan(probe);
+    const readBack = (await registry.scans()).find((s) => s.id === probeId);
+    check("anon may insert a scan and read it back", readBack?.verdict === "genuine");
+    await admin.from("scans").delete().eq("id", probeId);
+    check(
+      "probe row cleaned up, demo feed unpolluted",
+      !(await registry.scans()).some((s) => s.id === probeId),
+    );
   }
 
   console.log("\nHotspot view");

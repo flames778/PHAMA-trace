@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { Batch, Location, Product, StockMovement, StockPosition } from "../types";
 import { forecastAll, type ForecastPoint, type ForecastResult } from "../lib/forecast";
-import { useCountUp } from "../lib/useCountUp";
+import { useCountUp, useProgress } from "../lib/useCountUp";
 
 const BAND_STYLE: Record<ForecastResult["band"], { label: string; classes: string }> = {
   critical: { label: "CRITICAL", classes: "border-rose-400/50 bg-rose-400/10 text-rose-300" },
@@ -364,25 +364,8 @@ function BandDonut({ results }: { results: ForecastResult[] }) {
   for (const r of results) counts[r.band]++;
   const total = results.length;
 
-  const [t, setT] = useState(0);
   const [active, setActive] = useState<ForecastResult["band"] | null>(null);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setT(1);
-      return;
-    }
-    let raf = 0;
-    const t0 = performance.now();
-    const DUR = 900;
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - t0) / DUR);
-      setT(p === 1 ? 1 : 1 - Math.pow(2, -10 * p));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [total]);
+  const t = useProgress(900);
 
   if (total === 0) return null;
 

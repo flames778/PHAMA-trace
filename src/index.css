@@ -126,6 +126,36 @@ select,
   background: transparent;
 }
 
+/* Touch targets on phones.
+ *
+ * Measured at 390px: chips 32px, chart toggles 26px, shelf rows 37px, stock
+ * movement buttons 36px, footer links 19px. All of those are above the 24px
+ * WCAG 2.5.8 floor but well short of the 44px this project targets, and the
+ * people using this are elderly pharmacists tapping with a thumb.
+ *
+ * Enforced in one place rather than by padding out dozens of components, so a
+ * new control cannot regress it. Scoped to real controls and to the footer's
+ * standalone links: links inside a sentence keep their natural line height,
+ * because a 44px-tall inline link would wreck the paragraph rhythm. */
+@media (max-width: 639px) {
+  button:not(.leaflet-control *),
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    min-height: 44px;
+    /* Height alone is not enough: it turned the 17px dose-remove buttons into
+     * 17x44 slivers. A tap target needs both axes. */
+    min-width: 44px;
+  }
+
+  footer nav a,
+  footer nav button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 /* Responsive tables that become cards: under 640px the head row hides and
  * each body row becomes a labelled card (labels from data-label attrs).
  * Keeps real table semantics for screen readers and desktop. */
