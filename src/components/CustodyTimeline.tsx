@@ -80,7 +80,7 @@ export function CustodyTimeline({
               <p className="mt-1 text-[10.5px] text-clay-500">
                 {String(e.actor ?? "unknown")} · {formatStamp(String(e.occurredAt ?? ""))}
               </p>
-              <p className="mt-0.5 font-mono text-[10px] text-clay-600" title={e.eventHash ?? e.id}>
+              <p className="mt-0.5 font-mono text-[10px] text-clay-400" title={e.eventHash ?? e.id}>
                 hash {(e.eventHash ?? "").slice(0, 16)}…
               </p>
             </li>

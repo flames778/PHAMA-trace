@@ -313,6 +313,6 @@ function registryBadge(supported: boolean): ReactNode {
   return supported ? (
     <span className="ml-1 text-clay-500"> · barcode reader available</span>
   ) : (
-    <span className="ml-1 text-ochre-500/70"> · no barcode reader in this browser</span>
+    <span className="ml-1 text-clay-500"> · no barcode reader in this browser</span>
   );
 }

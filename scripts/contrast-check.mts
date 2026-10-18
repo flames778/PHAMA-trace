@@ -1,4 +1,10 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
+
+function scanDir(dir: string): string[] {
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".tsx"))
+    .map((f) => `${dir}/${f}`);
+}
 
 /**
  * Contrast gate (WCAG 2.2).
@@ -41,6 +47,11 @@ export function contrast(a: string, b: string): number {
   const l2 = luminance(b);
   const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
   return (hi + 0.05) / (lo + 0.05);
+}
+
+function checkBool(label: string, ok: boolean, detail = "") {
+  if (!ok) failures++;
+  console.log(`  ${ok ? "PASS" : "FAIL"}  ${label}${detail ? ` — ${detail}` : ""}`);
 }
 
 /** Flat blend of two hex colours, matching what color-mix() produces. */
@@ -89,6 +100,47 @@ check("link on card: terra-300 on card", token("terra-300"), card, 4.5);
 check("sage text: sage-200 on canvas", token("sage-200"), canvas, 4.5);
 check("ochre text: ochre-200 on canvas", token("ochre-200"), canvas, 4.5);
 check("rose text: rose-200 on canvas", token("rose-200"), canvas, 4.5);
+
+// Alert banners: a pale tint fill, so the text has to be the DEEP end of the
+// ramp. A rose alert once rendered 1.02:1 — identical to its own background —
+// because `rose-100` was undefined, so the class fell through to Tailwind's
+// default light pink while 200-500 in this theme are deep. The two-tier ramp
+// (200/300 text, 400/500 fills) is easy to get backwards; these pin it.
+const roseTint = mix(token("rose-400"), paper, 0.1);
+const ochreTint = mix(token("ochre-400"), paper, 0.05);
+check("critical banner body: rose-200 on rose tint", token("rose-200"), roseTint, 4.5);
+check("critical banner link: rose-200 on rose tint", token("rose-200"), roseTint, 4.5);
+check("warning banner body: ochre-100 on ochre tint", token("ochre-100"), ochreTint, 4.5);
+check("warning banner link: ochre-100 on ochre tint", token("ochre-100"), ochreTint, 4.5);
+
+/**
+ * Every colour referenced in src must exist in @theme.
+ *
+ * An undefined name is not a build error: Tailwind emits nothing for it and
+ * the element silently inherits whatever colour it would otherwise have had,
+ * which on a tinted panel means invisible text. This is the check that would
+ * have caught the rose alert before it shipped.
+ */
+const pal = ["clay", "terra", "sage", "ochre", "rose", "steel"];
+const declared = new Set(
+  [...css.matchAll(/--color-([a-z]+)-(\d+):/g)].map((m) => `${m[1]}-${m[2]}`),
+);
+const referenced = new Set<string>();
+for (const file of ["src/App.tsx", ...scanDir("src/components")]) {
+  const body = readFileSync(file, "utf8");
+  for (const m of body.matchAll(
+    /(?:text|bg|border|ring|from|to|via|placeholder:text|shadow|fill|stroke)-((?:clay|terra|sage|ochre|rose|steel)-\d+)/g,
+  )) {
+    referenced.add(m[1]);
+  }
+}
+const missing = [...referenced].filter((r) => !declared.has(r));
+checkBool(
+  "no palette reference is missing from @theme",
+  missing.length === 0,
+  missing.length ? `undefined: ${missing.join(", ")}` : `${referenced.size} distinct references, all defined`,
+);
+void pal;
 
 console.log("\nContrast — control boundaries (3:1)");
 

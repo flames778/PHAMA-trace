@@ -204,7 +204,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
               : "border-ochre-400/25 bg-ochre-400/5"
           }`}
         >
-          <p className={`text-[12.5px] ${anyCritical ? "text-rose-100/90" : "text-ochre-100/90"}`}>
+          <p className={`text-[12.5px] ${anyCritical ? "text-rose-200" : "text-ochre-100"}`}>
             <span className="font-semibold">Running low:</span>{" "}
             {alerts
               .map(
@@ -218,8 +218,8 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
             <button
               type="button"
               onClick={onViewStock}
-              className={`mt-1.5 text-[12px] font-medium underline-offset-2 hover:underline ${
-                anyCritical ? "text-rose-300" : "text-ochre-200"
+              className={`mt-1.5 text-[12px] font-semibold underline underline-offset-2 hover:no-underline ${
+                anyCritical ? "text-rose-200" : "text-ochre-100"
               }`}
             >
               Check stock &amp; forecast →

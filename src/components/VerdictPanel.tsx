@@ -72,7 +72,7 @@ export function VerdictPanel({ result, product, visionError }: VerdictPanelProps
               className="pt-rise flex gap-2 text-[12.5px] leading-relaxed text-clay-300"
               style={{ animationDelay: `${120 + i * 40}ms` }}
             >
-              <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-clay-600" />
+              <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-clay-400" />
               <span>{reason}</span>
             </li>
           ))}

@@ -27,7 +27,18 @@
   --color-ochre-300: #b07c0a;
   --color-ochre-400: #d97706;
 
-  /* rose stays rose: danger red, deepened for paper. */
+  /* These ramps are TWO TIERS, not a single scale:
+   *   200/300 = deep, for TEXT on a light surface
+   *   400/500 = mid, for FILLS, borders and edges
+   * with the 100 slot as a pale tint used only for backgrounds. That means
+   * 200 is legitimately darker than 400, which is not an accident — but it
+   * also means an undefined number silently falls through to Tailwind's
+   * default ramp and lands on a light colour, which is how a rose alert box
+   * ended up with 1.02:1 body text. `npm run contrast-check` and the token
+   * audit both exist because of that.
+   *
+   * rose: used for danger and "do not dispense". */
+  --color-rose-100: #fbe4e9;
   --color-rose-200: #9f1239;
   --color-rose-300: #be123c;
   --color-rose-400: #e11d48;
@@ -44,7 +55,6 @@
   --color-clay-300: #57534e;
   --color-clay-400: #6f6a63;
   --color-clay-500: #7c654f;
-  --color-clay-600: #475569;
 
   /* steel: quiet info blue, never brand. */
   --color-steel-300: #3f6d8e;
