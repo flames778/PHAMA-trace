@@ -185,7 +185,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
           <button
             type="button"
             onClick={onScanPack}
-            className="pt-press mt-4 rounded-lg bg-terra-500 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-terra-400"
+            className="pt-btn pt-btn-primary mt-4 px-4 py-2 text-[13px]"
           >
             Scan your first pack
           </button>
@@ -239,7 +239,7 @@ export function MyMedicines({ scans, products, stockByProduct, onViewStock, onSc
             if (e.key === "Enter") addMember();
           }}
           placeholder="Add a person, e.g. Grandma…"
-          className="w-52 rounded-md border border-line bg-canvas px-2.5 py-1.5 text-[12px] text-clay-200 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
+          className="pt-input w-52 px-2.5 py-1.5 text-[12px]"
         />
         <button
           type="button"

@@ -74,7 +74,7 @@ export function StockLogger({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-line bg-card/60 p-4">
+      <div className="pt-card p-4">
         <div className="grid gap-3 sm:grid-cols-2">
           <Select
             label="Pharmacy"
@@ -100,7 +100,7 @@ export function StockLogger({
           />
 
           <Field label="Movement">
-            <div className="flex gap-2">
+            <div className="pt-segment flex w-full">
               {(
                 [
                   ["received", "Stock received"],
@@ -110,12 +110,9 @@ export function StockLogger({
                 <button
                   key={k}
                   type="button"
+                  aria-pressed={kind === k}
                   onClick={() => setKind(k)}
-                  className={`flex-1 rounded-lg px-3 py-2 text-[13px] font-medium transition ${
-                    kind === k
-                      ? "bg-terra-500/15 text-terra-300 ring-1 ring-terra-400/40"
-                      : "bg-black/25 text-clay-400 hover:text-clay-200"
-                  }`}
+                  className="pt-segment-item"
                 >
                   {label}
                 </button>
@@ -137,7 +134,7 @@ export function StockLogger({
           </Field>
 
           <Field label="On hand now">
-            <div className="rounded-lg bg-black/25 px-3 py-2 font-mono text-[14px] text-clay-200">
+            <div className="rounded-lg bg-terra-500/[0.07] px-3 py-2 font-mono text-[14px] text-clay-200">
               {(current?.onHand ?? 0).toLocaleString()}
               {product && <span className="ml-2 text-[11px] text-clay-500">{product.brandName}</span>}
             </div>
@@ -155,7 +152,7 @@ export function StockLogger({
           type="button"
           onClick={() => void submit()}
           disabled={saving || invalid}
-          className="pt-press mt-4 w-full rounded-lg bg-terra-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-terra-400 disabled:opacity-40"
+          className="pt-btn pt-btn-primary mt-4 w-full px-4 py-2.5 text-sm"
         >
           {saving ? "Recording…" : `Record ${kind === "received" ? "receipt" : "dispensing"}`}
         </button>
@@ -181,7 +178,7 @@ export function StockLogger({
 }
 
 const selectCls =
-  "w-full rounded-lg border border-line bg-black/25 px-3 py-2 text-[13px] text-clay-100 outline-none focus:border-terra-500/60";
+  "pt-input w-full px-3 py-2 text-[13px]";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

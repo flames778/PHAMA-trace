@@ -153,7 +153,7 @@ export default function App() {
       case "verify":
         return (
           <div className="grid gap-5 lg:grid-cols-12">
-            <section className="rounded-xl border border-line bg-card/60 p-4 sm:p-5 lg:col-span-7">
+            <section className="pt-card p-4 sm:p-5 lg:col-span-7">
               <h2 className="font-display mb-1 text-[19px] font-bold text-clay-100">Scan a pack</h2>
               <p className="mb-4 text-[12.5px] leading-relaxed text-clay-500">
                 Read the batch code from the barcode, then compare the print against the
@@ -182,7 +182,7 @@ export default function App() {
                         setDemoStep("Demo failed before the second scan. Check the connection and retry."),
                       );
                     }}
-                    className="pt-press shrink-0 rounded-lg bg-terra-500 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-terra-400 disabled:opacity-40"
+                    className="pt-btn pt-btn-primary shrink-0 px-4 py-2 text-[13px]"
                   >
                     {demoRunning ? "Running…" : "▶ Play demo"}
                   </button>
@@ -192,7 +192,7 @@ export default function App() {
                 )}
               </div>
 
-              <div className="rounded-xl border border-line bg-card/60 p-4">
+              <div className="pt-card p-4">
                 <Select
                   label="Scan location"
                   value={state.scanLocation.id}
@@ -221,7 +221,7 @@ export default function App() {
                   />
                 </section>
                 {outcome.batch && (
-                  <section className="rounded-xl border border-line bg-card/60 p-4 lg:col-span-5">
+                  <section className="pt-card p-4 lg:col-span-5">
                     <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-clay-500">
                       Chain of custody: {outcome.batch.batchCode}
                     </h3>
@@ -243,7 +243,7 @@ export default function App() {
               </>
             ) : state.busy ? (
               <section aria-busy="true" aria-label="Scan in progress" className="space-y-4 lg:col-span-7">
-                <div className="rounded-xl border border-line bg-card/60 p-4">
+                <div className="pt-card p-4">
                   <div className="pt-pulse h-6 w-40 rounded-md bg-terra-500/20" />
                   <div className="pt-pulse mt-3 h-4 w-3/4 rounded bg-clay-500/20" />
                 </div>
@@ -871,7 +871,7 @@ function BatchTable({
             placeholder="Search code, product, manufacturer…"
             aria-label="Search the batch registry"
             spellCheck={false}
-            className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[13px] text-clay-100 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
+            className="pt-input w-full px-3 py-2 text-[13px]"
           />
           {query && (
             <button
@@ -884,6 +884,8 @@ function BatchTable({
             </button>
           )}
         </div>
+        </div>
+        <div className="pt-segment flex flex-wrap">
         {(
           [
             ["all", `All (${batches.length})`],
@@ -897,11 +899,7 @@ function BatchTable({
             type="button"
             aria-pressed={statusFilter === key}
             onClick={() => setStatusFilter(key)}
-            className={`rounded-full border px-3 py-1.5 text-[12px] font-medium transition ${
-              statusFilter === key
-                ? "border-terra-500/50 bg-terra-500/10 text-terra-300"
-                : "border-line text-clay-500 hover:text-clay-200"
-            }`}
+            className="pt-segment-item"
           >
             {label}
           </button>

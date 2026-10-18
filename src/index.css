@@ -277,11 +277,150 @@ select,
     inset 0 2px 5px rgb(58 22 8 / 0.08);
 }
 
+/* Tertiary: no face, but still a physical object. Hairline edge, no fill. */
+.pt-btn-tertiary {
+  --pt-edge: #e4dfd5;
+  background-color: transparent;
+  color: var(--color-clay-200);
+  box-shadow: 0 1px 0 var(--pt-edge);
+}
+.pt-btn-tertiary:hover {
+  background-color: color-mix(in srgb, var(--color-terra-500) 8%, transparent);
+  color: var(--color-terra-300);
+  box-shadow: 0 2px 0 var(--pt-edge);
+}
+.pt-btn-tertiary:active {
+  background-color: color-mix(in srgb, var(--color-terra-500) 14%, transparent);
+  box-shadow: 0 0 0 var(--pt-edge);
+}
+
+/* Tonal: a tinted terracotta face for a real action that is not the one
+ * primary thing on screen. Still physical, but with a softer edge so it does
+ * not compete with .pt-btn-primary. */
+.pt-btn-tonal {
+  --pt-edge: #e0b9a6;
+  background-color: color-mix(in srgb, var(--color-terra-500) 13%, var(--color-paper));
+  color: var(--color-terra-300);
+  box-shadow:
+    0 2px 0 var(--pt-edge),
+    0 5px 12px -7px rgb(58 22 8 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+.pt-btn-tonal:hover {
+  background-color: color-mix(in srgb, var(--color-terra-500) 20%, var(--color-paper));
+  box-shadow:
+    0 3px 0 var(--pt-edge),
+    0 9px 16px -9px rgb(58 22 8 / 0.24),
+    inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+.pt-btn-tonal:active {
+  background-color: color-mix(in srgb, var(--color-terra-500) 24%, var(--color-paper));
+  box-shadow:
+    0 0 0 var(--pt-edge),
+    0 2px 5px -3px rgb(58 22 8 / 0.2),
+    inset 0 2px 5px rgb(58 22 8 / 0.08);
+}
+
+/* Danger: "do not dispense" and other stop-signalling actions. */
+.pt-btn-danger {
+  --pt-edge: #7f1027;
+  background-color: var(--color-rose-400);
+  color: #ffffff;
+}
+.pt-btn-danger:hover {
+  background-color: #e63256;
+}
+.pt-btn-danger:active {
+  background-color: var(--color-rose-300);
+}
+
+/* Inputs read as recessed rather than flat, which is what tells you they are
+ * editable at a glance. One inner shadow, no border colour change. */
+.pt-input {
+  border-radius: 9px;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-paper);
+  color: var(--color-clay-100);
+  box-shadow: inset 0 1px 2px rgb(58 22 8 / 0.06);
+  transition:
+    border-color var(--duration-quick) ease,
+    box-shadow var(--duration-quick) ease;
+}
+.pt-input::placeholder {
+  color: var(--color-clay-500);
+}
+.pt-input:focus {
+  outline: none;
+  border-color: var(--color-terra-400);
+  box-shadow:
+    inset 0 1px 2px rgb(58 22 8 / 0.05),
+    0 0 0 3px color-mix(in srgb, var(--color-terra-500) 18%, transparent);
+}
+
+/* Segmented control: a visible track with one solid active pill.
+ *
+ * These were a 15%-opacity tint plus a faint ring, which at a glance read as
+ * "barely on" rather than selected. A filled pill on a recessed track is the
+ * pattern that actually communicates mutual exclusivity, and it matches the
+ * desktop nav so the two do not look like different products.
+ *
+ * State lives on `aria-pressed`, not a conditional class string, so the
+ * visible state and the announced state cannot drift apart. */
+.pt-segment {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-clay-500) 12%, transparent);
+}
+.pt-segment-item {
+  flex: 1 1 auto;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-clay-500);
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-quick) ease,
+    color var(--duration-quick) ease,
+    box-shadow var(--duration-quick) ease;
+}
+.pt-segment-item:hover:not([aria-pressed="true"]) {
+  color: var(--color-clay-200);
+}
+.pt-segment-item[aria-pressed="true"] {
+  background-color: var(--color-terra-500);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow:
+    0 1px 0 #7a1600,
+    0 3px 8px -4px rgb(58 22 8 / 0.4);
+}
+
+/* Cards sit one step off the page instead of as a flat outline on it. The
+ * border stays the structural edge; the shadow only lifts it a little, so the
+ * surfaces still read as one family rather than as floating tiles. */
+.pt-card {
+  border-radius: 12px;
+  border: 1px solid var(--color-line);
+  background-color: color-mix(in srgb, var(--color-card) 62%, var(--color-paper));
+  box-shadow:
+    0 1px 2px rgb(58 22 8 / 0.04),
+    0 4px 12px -8px rgb(58 22 8 / 0.1);
+}
+
 @media (forced-colors: active) {
   /* box-shadow is forced to none here, so the edge has to become a border or
    * these controls stop reading as controls at all. */
   .pt-btn {
     border: 2px solid ButtonBorder;
+  }
+  .pt-input {
+    border: 2px solid FieldBorder;
+  }
+  .pt-card {
+    border: 1px solid CanvasText;
   }
 }
 

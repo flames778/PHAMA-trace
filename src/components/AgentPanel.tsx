@@ -85,7 +85,7 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
           type="button"
           disabled={busy || !result}
           onClick={handleExplain}
-          className="pt-press rounded-lg bg-terra-500 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-terra-400 disabled:opacity-40"
+          className="pt-btn pt-btn-primary px-4 py-2 text-[13px]"
         >
           {busy ? "Thinking…" : "Explain current scan"}
         </button>
@@ -98,13 +98,13 @@ export function AgentPanel({ result, product, batch }: AgentPanelProps) {
           onKeyDown={(e) => e.key === "Enter" && handleAsk()}
           placeholder="Ask about stock, recalls, next steps…"
           aria-label="Ask the AI assistant"
-          className="flex-1 rounded-lg border border-line bg-card px-3 py-2 text-[13px] text-clay-100 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
+          className="pt-input flex-1 px-3 py-2 text-[13px]"
         />
         <button
           type="button"
           disabled={busy || !question.trim()}
           onClick={handleAsk}
-          className="pt-press rounded-lg bg-terra-500/15 px-4 py-2 text-[13px] font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25 disabled:opacity-40"
+          className="pt-btn pt-btn-tonal px-4 py-2 text-[13px]"
         >
           Ask
         </button>

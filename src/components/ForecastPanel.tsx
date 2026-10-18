@@ -235,7 +235,7 @@ export function ForecastPanel({
         <div className="space-y-4">
           {selected ? (
             <>
-              <div className="rounded-xl border border-line bg-card/60 p-4 sm:p-5">
+              <div className="pt-card p-4 sm:p-5">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <div className="text-[11px] uppercase tracking-[0.16em] text-clay-500">
                     {locationById.get(selected.locationId)?.name}
@@ -301,7 +301,7 @@ export function ForecastPanel({
 type StatTone = "neutral" | "good" | "warn" | "bad";
 
 const STAT_TONE: Record<StatTone, string> = {
-  neutral: "bg-black/25",
+  neutral: "bg-terra-500/[0.07]",
   good: "bg-sage-400/10 ring-1 ring-inset ring-sage-400/30",
   warn: "bg-ochre-400/10 ring-1 ring-inset ring-ochre-400/30",
   bad: "bg-rose-400/10 ring-1 ring-inset ring-rose-400/40",
@@ -391,7 +391,7 @@ function BandDonut({ results }: { results: ForecastResult[] }) {
   const centerSub = active ? BAND_STYLE[active].label.toLowerCase() : "shelves";
 
   return (
-    <div className="flex flex-wrap items-center gap-5 rounded-xl border border-line bg-card/60 px-5 py-4">
+    <div className="pt-card flex flex-wrap items-center gap-5 px-5 py-4">
       <svg viewBox="0 0 140 140" className="h-32 w-32 shrink-0" role="img" aria-label={`Shelf bands: ${counts.critical} critical, ${counts.warning} warning, ${counts.watch} watch, ${counts.ok} ok`}>
         <circle cx="70" cy="70" r={R} fill="none" strokeWidth="17" stroke="currentColor" opacity="0.12" />
         {arcs.map((s) => {
@@ -509,7 +509,7 @@ function Sparkline({ series, band, onHand }: { series: ForecastPoint[]; band: Fo
   const hoverPct = hover !== null ? (x(hover) / W) * 100 : 0;
 
   return (
-    <div className="rounded-xl border border-line bg-card/60 p-3 sm:p-4">
+    <div className="pt-card p-3 sm:p-4">
       <div className="mb-2 flex flex-wrap items-center gap-1.5">
         <span className="mr-auto text-[11px] font-semibold uppercase tracking-[0.14em] text-clay-500">
           Demand history and projection

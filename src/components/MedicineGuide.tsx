@@ -68,7 +68,7 @@ export function MedicineGuide({ product }: MedicineGuideProps) {
   };
 
   return (
-    <section className="rounded-xl border border-line bg-card/60">
+    <section className="pt-card">
       <div className="border-b border-line px-4 py-3">
         <h3 className="text-[13px] font-semibold text-clay-100">
           What is this medicine for?
@@ -85,7 +85,7 @@ export function MedicineGuide({ product }: MedicineGuideProps) {
               <button
                 type="button"
                 onClick={() => setExpanded(isOpen ? null : section.id)}
-                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left transition hover:bg-terra-500/[0.06]"
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left transition hover:bg-terra-500/[0.07]"
               >
                 <span className="text-[14px]">{section.icon}</span>
                 <span className="flex-1 text-[12.5px] font-medium text-clay-200">

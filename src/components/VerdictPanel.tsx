@@ -100,7 +100,7 @@ export function VerdictPanel({ result, product, visionError }: VerdictPanelProps
               aggregate {Number.isFinite(vision.score) ? `${(vision.score * 100).toFixed(0)}%` : "—"}
             </span>
           </h3>
-          <div className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-card/60">
+          <div className="pt-card divide-y divide-line overflow-hidden">
             {vision.checks.map((check, i) => (
               <div
                 key={check.id}
@@ -121,7 +121,7 @@ export function VerdictPanel({ result, product, visionError }: VerdictPanelProps
                   </div>
                   <p className="mt-0.5 text-[11.5px] leading-snug text-clay-400">{check.detail}</p>
                   {check.measured !== null && check.weight > 0 && (
-                    <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/5">
+                    <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-clay-500/15">
                       <div
                         className={`h-full rounded-full ${
                           check.status === "pass"

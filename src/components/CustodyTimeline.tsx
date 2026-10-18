@@ -27,7 +27,7 @@ export function CustodyTimeline({
 }: CustodyTimelineProps) {
   if (events.length === 0) {
     return (
-      <p className="rounded-xl border border-line bg-card/60 px-4 py-6 text-center text-[12.5px] text-clay-500">
+      <p className="pt-card px-4 py-6 text-center text-[12.5px] text-clay-500">
         No custody events recorded for this batch.
       </p>
     );

@@ -91,7 +91,7 @@ export function Select({ label, value, options, onChange, className }: SelectPro
             setOpen(false);
           }
         }}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-paper px-3 py-2 text-left text-[13px] text-clay-100 outline-none transition focus:border-terra-500/60"
+        className="pt-input flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px]"
       >
         <span className="truncate">{selected?.label ?? "Select…"}</span>
         <svg

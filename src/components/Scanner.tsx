@@ -128,7 +128,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="pt-segment flex flex-wrap">
         {(
           [
             ["demo", "Demo packs"],
@@ -140,15 +140,12 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
           <button
             key={m}
             type="button"
+            aria-pressed={mode === m}
             onClick={() => {
               setMode(m);
               if (m !== "camera") stopCamera();
             }}
-            className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${
-              mode === m
-                ? "bg-terra-500/15 text-terra-300 ring-1 ring-terra-400/40"
-                : "text-clay-400 hover:bg-white/5 hover:text-clay-200"
-            }`}
+            className="pt-segment-item"
           >
             {label}
           </button>
@@ -168,7 +165,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               type="button"
               disabled={busy}
               onClick={() => runDemo(pack)}
-              className="pt-press group overflow-hidden rounded-xl border border-line bg-card text-left transition hover:border-terra-500/50 disabled:opacity-50"
+              className="pt-card group overflow-hidden text-left transition hover:border-terra-500/50 disabled:opacity-50"
             >
               <img
                 src={pack.src}
@@ -199,7 +196,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
             type="button"
             disabled={busy}
             onClick={() => fileRef.current?.click()}
-            className="mt-3 rounded-lg bg-terra-500/15 px-4 py-2 text-sm font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25 disabled:opacity-50"
+            className="pt-btn pt-btn-tonal mt-3 px-4 py-2 text-sm"
           >
             Choose a photo
           </button>
@@ -237,7 +234,7 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               <button
                 type="button"
                 onClick={() => void startCamera()}
-                className="rounded-lg bg-terra-500/15 px-4 py-2 text-sm font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25"
+                className="pt-btn pt-btn-tonal px-4 py-2 text-sm"
               >
                 Start camera
               </button>
@@ -246,14 +243,14 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
                 <button
                   type="button"
                   onClick={() => void shoot()}
-                  className="pt-press rounded-lg bg-terra-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-terra-400"
+                  className="pt-btn pt-btn-primary px-4 py-2 text-sm"
                 >
                   Capture &amp; verify
                 </button>
                 <button
                   type="button"
                   onClick={stopCamera}
-                  className="rounded-lg border border-line px-4 py-2 text-sm text-clay-300 transition hover:bg-white/5"
+                  className="pt-btn pt-btn-secondary px-4 py-2 text-sm"
                 >
                   Stop
                 </button>
@@ -272,13 +269,13 @@ export function Scanner({ busy, locationName, onScan }: ScannerProps) {
               onKeyDown={(e) => e.key === "Enter" && void runManual()}
               placeholder="NG-MF-26-0917"
               spellCheck={false}
-              className="flex-1 rounded-lg border border-line bg-card px-3 py-2 font-mono text-sm text-clay-100 outline-none placeholder:text-clay-500 focus:border-terra-500/60"
+              className="pt-input flex-1 px-3 py-2 font-mono text-sm"
             />
             <button
               type="button"
               disabled={busy || !manualCode.trim()}
               onClick={() => void runManual()}
-              className="rounded-lg bg-terra-500/15 px-4 py-2 text-sm font-medium text-terra-300 ring-1 ring-terra-400/40 transition hover:bg-terra-500/25 disabled:opacity-40"
+              className="pt-btn pt-btn-tonal px-4 py-2 text-sm"
             >
               Check
             </button>

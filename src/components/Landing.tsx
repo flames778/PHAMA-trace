@@ -56,21 +56,21 @@ export function Landing({
           <button
             type="button"
             onClick={onCheckPack}
-            className="pt-press rounded-lg bg-terra-500 px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-terra-400"
+            className="pt-btn pt-btn-primary px-5 py-2.5 text-[14px]"
           >
             Check a pack
           </button>
           <button
             type="button"
             onClick={onPlayDemo}
-            className="pt-press rounded-lg border border-line bg-paper px-5 py-2.5 text-[14px] font-semibold text-clay-200 transition hover:border-terra-500/50"
+            className="pt-btn pt-btn-secondary px-5 py-2.5 text-[14px]"
           >
             ▶ Play the 30-second demo
           </button>
           <button
             type="button"
             onClick={onMyMedicines}
-            className="pt-press rounded-lg px-5 py-2.5 text-[14px] font-semibold text-terra-300 transition hover:bg-terra-500/10"
+            className="pt-btn pt-btn-tertiary px-5 py-2.5 text-[14px]"
           >
             My medicines →
           </button>
@@ -81,7 +81,7 @@ export function Landing({
         {PILLARS.map((p) => (
           <div
             key={p.title}
-            className="rounded-xl border border-line bg-card/60 px-5 py-5 transition hover:border-terra-500/40"
+            className="pt-card px-5 py-5 transition hover:border-terra-500/40"
           >
             <h3 className="font-display text-[19px] font-bold text-clay-100">{p.title}</h3>
             <p className="mt-2 text-[13px] leading-relaxed text-clay-400">{p.body}</p>
@@ -89,7 +89,7 @@ export function Landing({
         ))}
       </section>
 
-      <section className="rounded-xl border border-line bg-card/60 px-5 py-5">
+      <section className="pt-card px-5 py-5">
         <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
           <Stat value={String(productCount)} label="medicines in the demo registry" />
           <Stat value={String(batchCount)} label="tracked batches" />
