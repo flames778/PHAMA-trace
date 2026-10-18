@@ -13,6 +13,7 @@ import { LOCATIONS, locationById as seedLocationById } from "../data/locations";
 import { buildCustodyChain } from "../data/custody";
 import { generateSeries } from "../data/demand";
 import { supabase, usingSupabase } from "./supabase";
+import { env } from "./env";
 import { normalizeStamp } from "./ledger";
 
 /**
@@ -488,14 +489,8 @@ function supabaseRegistry(): Registry {
 
 // -------------------------------------------------------------------- server
 
-/**
- * `import.meta.env` only exists inside Vite. Under plain node (headless check
- * scripts that import this module) it is undefined, so read defensively the
- * same way src/lib/supabase.ts does.
- */
-const viteEnv =
-  (import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {};
-const API_BASE = viteEnv.VITE_API_URL ?? "http://localhost:3001/api";
+/** Env resolution lives in ./env, shared with supabase.ts. */
+const API_BASE = env.VITE_API_URL ?? "http://localhost:3001/api";
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -535,6 +530,6 @@ function serverRegistry(): Registry {
 
 export const registry: Registry = usingSupabase
   ? withFallback(supabaseRegistry(), localRegistry())
-  : viteEnv.VITE_USE_SERVER === "true"
+  : env.VITE_USE_SERVER === "true"
     ? withFallback(serverRegistry(), localRegistry())
     : localRegistry();

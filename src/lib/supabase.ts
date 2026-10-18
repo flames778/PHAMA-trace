@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { env } from "./env";
 
 /**
  * Supabase is optional.
@@ -9,16 +10,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  * variables in a `.env.local` at the project root to switch it on.
  */
 /**
- * `import.meta.env` only exists inside Vite. Under plain node (seed scripts,
- * headless checks) it is undefined, so also look at process.env. Accessed
- * through globalThis because the browser tsconfig deliberately has no Node
- * types, and `typeof process` would still fail to compile.
+ * Env resolution lives in ./env so this module and registry.ts cannot drift
+ * apart again.
  */
-const nodeEnv = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-const env = {
-  ...nodeEnv,
-  ...((import.meta as unknown as { env?: Record<string, string | undefined> }).env ?? {}),
-};
 const url = env.VITE_SUPABASE_URL;
 const anonKey = env.VITE_SUPABASE_ANON_KEY;
 

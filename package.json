@@ -13,6 +13,7 @@
     "source-check": "tsx scripts/source-check.mts",
     "verify:pipeline": "tsx scripts/verify-pipeline.mts",
     "verify:supabase": "tsx scripts/verify-supabase.mts",
+    "verify:server": "tsx scripts/verify-server.mts",
     "db:push": "tsx scripts/db-push.mts",
     "packs": "node scripts/make-packs.mjs",
     "seed": "tsx scripts/seed-supabase.mts",
