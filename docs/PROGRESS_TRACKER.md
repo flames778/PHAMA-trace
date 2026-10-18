@@ -59,12 +59,12 @@ Verified 2026-10-14 on a clean install (`npm install` from `package-lock.json`):
 
 | ID | Task | Acceptance | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| BE-1 | Provision Supabase project, apply `supabase/schema.sql` | All 7 tables + indexes + 2 triggers + `hotspot_grid` view exist in the hosted DB | Done | Verified live 2026-10-18: 7 tables RLS-enabled, 2 custody triggers + movement trigger, `hotspot_grid` view present |
-| BE-2 | Write missing `scripts/seed-demo.mjs`, run `npm run seed` | Products, batches, locations, custody chains and movements load from `src/data`; every custody chain passes `verifyChain`; positions derive via the movement trigger | Done | Project already seeded (5/25/11, 1698 custody, 8686 movements, 76 positions). All 10 chains verify against live rows; seed script verified idempotent-refusal |
-| BE-3 | Add `db:push` script, `.env.local` wiring, README note | Fresh clone can do: create project → `db:push` → `seed` → run in Supabase mode, documented in <10 steps | Done | `scripts/db-push.mts` + `supabase/migrations/` + README 7-step path |
-| BE-4 | End-to-end pass in Supabase mode | App boots with Supabase badge; a scan inserts a `scans` row; custody verifies from real rows; typecheck + selfcheck + pipeline all green | Done | `npm run verify:supabase` green; browser confirmed live Supabase traffic incl. paginated movements |
-| BE-5 | Hotspot + recall drill | HotspotMap reads live `hotspot_grid`; a test recall locates 100% of a batch's rows | Done | `registry.hotspotGrid()` wired into the map; recall drill covers 69 events / 7 locations |
-| BE-6 | Hardening roadmap | Short doc: what changes before real use (auth, RLS roles, append-only custody, service-role writes) — `schema.sql` header already drafts it | Done | `docs/HARDENING_ROADMAP.md` |
+| BE-1 | Provision Supabase project, apply `supabase/schema.sql` | All 7 tables + indexes + 2 triggers + `hotspot_grid` view exist in the hosted DB | Done | `8c1d568`, verified live 2026-10-18: 7 tables RLS-enabled, 2 custody triggers + movement trigger, `hotspot_grid` view present |
+| BE-2 | Write missing `scripts/seed-demo.mjs`, run `npm run seed` | Products, batches, locations, custody chains and movements load from `src/data`; every custody chain passes `verifyChain`; positions derive via the movement trigger | Done | `8c1d568`: project seeded (5/25/11, 1698 custody, 8686 movements, 76 positions). All 10 chains verify against live rows; seed script verified idempotent-refusal |
+| BE-3 | Add `db:push` script, `.env.local` wiring, README note | Fresh clone can do: create project → `db:push` → `seed` → run in Supabase mode, documented in <10 steps | Done | `8c1d568`: `scripts/db-push.mts` + `supabase/migrations/` + README 7-step path |
+| BE-4 | End-to-end pass in Supabase mode | App boots with Supabase badge; a scan inserts a `scans` row; custody verifies from real rows; typecheck + selfcheck + pipeline all green | Done | `8c1d568`: `npm run verify:supabase` green; browser confirmed live Supabase traffic incl. paginated movements |
+| BE-5 | Hotspot + recall drill | HotspotMap reads live `hotspot_grid`; a test recall locates 100% of a batch's rows | Done | `8c1d568`: `registry.hotspotGrid()` wired into the map; recall drill covers 69 events / 7 locations |
+| BE-6 | Hardening roadmap | Short doc: what changes before real use (auth, RLS roles, append-only custody, service-role writes) — `schema.sql` header already drafts it | Done | `8c1d568`: `docs/HARDENING_ROADMAP.md` |
 
 Notes for Evans: `src/lib/registry.ts` implements the Supabase backend, and
 `scripts/seed-supabase.mts` (behind `npm run seed`) inserts products →
