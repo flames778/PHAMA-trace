@@ -494,18 +494,26 @@ function Shell({
 }) {
   const badge = MODE_BADGE[mode];
   const tabRefs = useRef(new Map<Tab, HTMLButtonElement>());
-  const [pill, setPill] = useState({ left: 0, width: 0, ready: false });
+  const [pill, setPill] = useState({ left: 0, width: 0, top: 0, height: 0, ready: false });
   const reduceMotion =
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Follow-pill: the indicator slides to the active tab (transform only).
-  // Re-measured on every tab change so font loading or resize cannot strand
-  // it, and the strip scrolls the active tab into view on mobile.
+  // Follow-indicator: on the desktop a segmented pill slides behind the active
+  // tab; on the phone the same measurements drive a 3px underline. Both are
+  // transform-only, so neither animates layout. Re-measured on every tab
+  // change so font loading or resize cannot strand it, and the strip scrolls
+  // the active tab into view on mobile.
   useLayoutEffect(() => {
     const el = tabRefs.current.get(activeTab);
     if (!el) return;
-    setPill({ left: el.offsetLeft, width: el.offsetWidth, ready: true });
+    setPill({
+      left: el.offsetLeft,
+      width: el.offsetWidth,
+      top: el.offsetTop,
+      height: el.offsetHeight,
+      ready: true,
+    });
     el.scrollIntoView({
       block: "nearest",
       inline: "nearest",
@@ -568,9 +576,9 @@ function Shell({
             </span>
           </div>
         </div>
-        <div className="mx-auto max-w-6xl px-5 pb-1">
+        <div className="mx-auto max-w-6xl px-5 pb-2">
           <div className="pt-scroll overflow-x-auto">
-            <nav aria-label="Primary" className="relative flex min-w-max gap-7 px-1">
+            <nav aria-label="Primary" className="pt-nav-track">
               {tabs.map(([id, label]) => (
                 <button
                   key={id}
@@ -581,18 +589,26 @@ function Shell({
                   type="button"
                   onClick={() => onNavigate(id)}
                   aria-current={activeTab === id ? "page" : undefined}
-                  className={`whitespace-nowrap px-1 py-3 text-[14px] transition ${
-                    activeTab === id
-                      ? "font-semibold text-terra-300"
-                      : "font-medium text-clay-500 hover:text-clay-200"
-                  }`}
+                  className="pt-nav-tab"
                 >
                   {label}
                 </button>
               ))}
+              {/* Desktop segmented pill. Hidden below 640px by CSS, where the
+                  underline below takes over. */}
               <span
                 aria-hidden="true"
-                className="pt-tab-indicator absolute bottom-[5px] left-0 h-[3px] w-[100px] rounded-full bg-terra-500"
+                className="pt-nav-pill"
+                style={{
+                  transform: `translateX(${pill.left}px)`,
+                  width: pill.width,
+                  opacity: pill.ready ? 1 : 0,
+                }}
+              />
+              {/* Phone underline. Hidden above 640px by CSS. */}
+              <span
+                aria-hidden="true"
+                className="pt-tab-indicator absolute bottom-[5px] left-0 h-[3px] w-[100px] rounded-full bg-terra-500 max-[639px]:block hidden"
                 style={{
                   transform: `translateX(${pill.left}px) scaleX(${pill.width / 100})`,
                   opacity: pill.ready ? 1 : 0,
@@ -605,35 +621,65 @@ function Shell({
 
       <div className="mx-auto max-w-6xl px-5 pb-16">{children}</div>
 
-      <footer className="bg-card/60">
-        <div aria-hidden="true" className="h-[3px] bg-terra-500" />
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <button type="button" onClick={onHome} aria-label="PharmaTrace home" className="block text-left">
-              <span className="flex items-center gap-3">
-                <img src="/brand/icon.svg" alt="" className="h-11 w-11 shrink-0" />
-                <span>
-                  <span className="font-display block text-[24px] font-bold leading-none tracking-tight">
-                    <span className="text-clay-100">Pharma</span><span className="text-terra-500">Trace</span>
-                  </span>
-                  <span className="mt-1.5 block text-[9.5px] font-bold uppercase tracking-[0.22em] text-terra-300">
-                    Community Care &amp; Medicine Verification
-                  </span>
-                </span>
-              </span>
+      <footer className="mt-8 border-t border-line bg-card/50">
+        {/* Row 1 — the close. The name returns at full width rather than
+            sitting in a column beside three lists of links, which is what
+            made this read as a sitemap instead of an ending. */}
+        <div className="mx-auto max-w-6xl px-5 pb-10 pt-12">
+          <div className="flex flex-col gap-6 border-b border-line pb-10 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-md">
+              <p className="font-display text-[clamp(2rem,1.4rem+2.6vw,3.25rem)] font-bold leading-[1.02] tracking-tight">
+                <span className="text-clay-100">Pharma</span>
+                <span className="text-terra-500">Trace</span>
+              </p>
+              <p className="mt-3 max-w-sm text-[13.5px] leading-relaxed text-clay-500">
+                Scan a pack, know whether to trust it, and see where shortages
+                are forming. This demo runs on a fictional registry. Nothing
+                here connects to NAFDAC or to any manufacturer.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate("verify")}
+              className="pt-btn pt-btn-primary shrink-0 self-start md:self-auto"
+            >
+              Check a pack
             </button>
-            <p className="mt-4 max-w-xs text-[12px] leading-relaxed text-clay-500">
-              Scan a pack, know if it is real, and see where shortages are.
-              This demo runs on a fictional registry. Nothing here connects
-              to NAFDAC or any manufacturer.
-            </p>
           </div>
-          <nav aria-label="Regulatory portals">
-            <h2 className="font-display text-[15px] font-bold text-clay-100">Regulatory portals</h2>
-            <ul className="mt-3 space-y-2 text-[12.5px]">
+        </div>
+
+        {/* Row 2 — what the app does, and the one thing to do about a fake.
+            Reporting a suspected pack is the most useful thing in this footer
+            and it used to be the smallest column on the page. */}
+        <div className="mx-auto grid max-w-6xl gap-10 px-5 pb-12 md:grid-cols-2">
+          <div>
+            <h2 className="font-display text-[15px] font-bold text-clay-100">What you can do</h2>
+            <ul className="mt-4 space-y-1 text-[13px]">
+              {(
+                [
+                  ["verify", "Check a pack"],
+                  ["medicines", "My medicines"],
+                  ["stock", "Stock and forecast"],
+                  ["hotspots", "Falsification hotspots"],
+                  ["registry", "Batch registry"],
+                ] as [Tab, string][]
+              ).map(([id, label]) => (
+                <li key={id}>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(id)}
+                    className="py-1 text-left text-clay-300 underline-offset-4 transition hover:text-terra-300 hover:underline"
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <h2 className="font-display mt-8 text-[15px] font-bold text-clay-100">Official registries</h2>
+            <ul className="mt-4 space-y-1 text-[13px]">
               <li>
                 <a
-                  className="text-terra-300 underline-offset-2 hover:underline"
+                  className="py-1 text-terra-300 underline-offset-4 transition hover:underline"
                   href="https://greenbook.nafdac.gov.ng"
                   target="_blank"
                   rel="noreferrer"
@@ -643,7 +689,7 @@ function Shell({
               </li>
               <li>
                 <a
-                  className="text-terra-300 underline-offset-2 hover:underline"
+                  className="py-1 text-terra-300 underline-offset-4 transition hover:underline"
                   href="https://nafdac.gov.ng"
                   target="_blank"
                   rel="noreferrer"
@@ -651,79 +697,57 @@ function Shell({
                   NAFDAC
                 </a>
               </li>
-              <li className="text-clay-500">Pharmacists Council of Nigeria (reference)</li>
-              <li className="text-clay-500">Federal Ministry of Health (reference)</li>
+              <li className="py-1 text-clay-500">Pharmacists Council of Nigeria (reference)</li>
+              <li className="py-1 text-clay-500">Federal Ministry of Health (reference)</li>
             </ul>
-          </nav>
-          <nav aria-label="Product">
-            <h2 className="font-display text-[15px] font-bold text-clay-100">Product</h2>
-            <ul className="mt-3 space-y-2 text-[12.5px]">
+          </div>
+
+          <div className="rounded-2xl border border-rose-400/25 bg-rose-400/[0.07] p-6">
+            <h2 className="font-display text-[17px] font-bold text-clay-100">Suspect a fake?</h2>
+            <ol className="mt-4 space-y-3 text-[13px] leading-relaxed text-clay-300">
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate("verify")}
-                  className="text-terra-300 underline-offset-2 hover:underline"
-                >
-                  Check a pack
-                </button>
+                <span className="font-semibold text-clay-100">Quarantine it.</span> Take the pack
+                off the shelf and do not dispense it.
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate("medicines")}
-                  className="text-terra-300 underline-offset-2 hover:underline"
-                >
-                  My medicines
-                </button>
+                <span className="font-semibold text-clay-100">Note the code.</span> Batch code,
+                expiry, and where you bought it.
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate("stock")}
-                  className="text-terra-300 underline-offset-2 hover:underline"
+                <span className="font-semibold text-clay-100">Report it.</span> Scan it here so
+                it lands on the hotspot map, then escalate to{" "}
+                <a
+                  className="text-terra-300 underline underline-offset-4"
+                  href="mailto:sf.alert@nafdac.gov.ng"
                 >
-                  Stock &amp; forecast
-                </button>
-              </li>
-            </ul>
-          </nav>
-          <div>
-            <h2 className="font-display text-[15px] font-bold text-clay-100">Suspect a fake?</h2>
-            <div className="mt-3 space-y-2.5 rounded-xl border border-rose-400/30 bg-rose-400/10 px-3.5 py-3.5">
-              <ol className="space-y-1.5 text-[12px] leading-snug text-rose-200">
-                <li>
-                  <span className="font-semibold">1. Quarantine it.</span> Take the pack off
-                  the shelf and do not dispense it.
-                </li>
-                <li>
-                  <span className="font-semibold">2. Note the code.</span> Batch code,
-                  expiry, and where you bought it.
-                </li>
-                <li>
-                  <span className="font-semibold">3. Report it.</span> Scan it here so it
-                  lands on the hotspot map, then escalate:
-                </li>
-              </ol>
-              <p className="font-mono text-[11px] text-rose-200">
-                <a className="underline-offset-2 hover:underline" href="mailto:sf.alert@nafdac.gov.ng">
                   sf.alert@nafdac.gov.ng
                 </a>
-              </p>
+              </li>
+            </ol>
+            <div className="mt-5 flex flex-wrap gap-2.5">
+              <button
+                type="button"
+                onClick={() => onNavigate("verify")}
+                className="pt-btn pt-btn-secondary"
+              >
+                Scan a suspect pack
+              </button>
               <button
                 type="button"
                 onClick={() => onNavigate("hotspots")}
-                className="pt-press mt-1 w-full rounded-lg bg-rose-400/15 px-3 py-2 text-[12px] font-semibold text-rose-200 transition hover:bg-rose-400/25"
+                className="pt-btn pt-btn-secondary"
               >
-                Open the hotspot map →
+                Open the hotspot map
               </button>
             </div>
           </div>
         </div>
+
         <div className="border-t border-line">
-          <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-5 py-4 text-[11px] text-clay-500">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1 px-5 py-5 text-[12px] text-clay-500">
             <span>© 2026 PharmaTrace demo</span>
             <span>Mock registry: all products fictional</span>
-            <span className="ml-auto">Decision support, not medical advice</span>
+            <span className="sm:ml-auto">Decision support, not medical advice</span>
           </div>
         </div>
       </footer>
@@ -763,7 +787,7 @@ function ScanFeed({
                 type="button"
                 onClick={() => onSelect(s.id)}
                 className={`flex w-full items-center gap-3 px-3.5 py-2.5 text-left transition active:bg-terra-500/10 ${
-                  selectedId === s.id ? "bg-terra-500/10" : "hover:bg-white/[0.03]"
+                  selectedId === s.id ? "bg-terra-500/10" : "hover:bg-terra-500/[0.06]"
                 }`}
               >
                 <span

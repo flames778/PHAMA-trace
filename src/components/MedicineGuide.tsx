@@ -85,7 +85,7 @@ export function MedicineGuide({ product }: MedicineGuideProps) {
               <button
                 type="button"
                 onClick={() => setExpanded(isOpen ? null : section.id)}
-                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left transition hover:bg-white/[0.03]"
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left transition hover:bg-terra-500/[0.06]"
               >
                 <span className="text-[14px]">{section.icon}</span>
                 <span className="flex-1 text-[12.5px] font-medium text-clay-200">

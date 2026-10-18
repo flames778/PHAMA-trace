@@ -188,7 +188,7 @@ export function ForecastPanel({
                         }
                       }}
                       className={`cursor-pointer transition active:bg-terra-500/15 ${
-                        active ? "bg-terra-500/10" : "hover:bg-white/[0.03]"
+                        active ? "bg-terra-500/10" : "hover:bg-terra-500/[0.06]"
                       }`}
                     >
                       <td data-label="Shelf" className="px-3 py-2.5">

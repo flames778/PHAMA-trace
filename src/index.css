@@ -77,6 +77,17 @@ html {
   color-scheme: light;
 }
 
+/* Hidden tabs get no frames, so transitions park mid-flight and a component
+ * can be left showing a stale value (a nav label stuck in its old colour, a
+ * pill at zero width, numerals at 0). Removing the transition snaps each
+ * property to its target. Set by main.tsx on visibilitychange. */
+html.pt-frozen *,
+html.pt-frozen *::before,
+html.pt-frozen *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* Touch tuning: no double-tap zoom delay on controls, no grey flash,
  * page keeps its native pull-to-refresh (coarse pointers untouched). */
 button,
@@ -102,28 +113,291 @@ select,
   }
 }
 
-/* Custom scrollbars for scrollable regions (never browser-native grey).
- * Apply .pt-scroll to any overflow container. Firefox pairing included. */
+/* Scrollbars — never the browser default.
+ *
+ * The subtlety that makes these rules work at all: when `scrollbar-color`
+ * computes to anything other than `auto`, browsers IGNORE the entire
+ * `::-webkit-scrollbar` family (MDN). Writing both together — the obvious
+ * thing — silently kills the WebKit rules in Chrome and leaves you with the
+ * OS scrollbar in its dullest form, which is precisely what happened here:
+ * a carefully specified terracotta thumb that Chrome never painted.
+ *
+ * So the two are kept in mutually exclusive branches. Browsers that expose
+ * the pseudo-elements get `scrollbar-color: auto` handed back to them and
+ * therefore full control of shape; Firefox, which has no pseudo-elements,
+ * gets the standard colour properties.
+ *
+ * Never hide a scrollbar outright: people use its presence to judge page
+ * length. Width is 12px rather than 8px because a thumb has to stay grabbable. */
 .pt-scroll {
+  --pt-thumb: #d8b6a2;
+  --pt-thumb-hover: #b44b2a;
   scrollbar-width: thin;
-  scrollbar-color: #c9a48f transparent;
+  scrollbar-color: var(--pt-thumb) transparent;
 }
-.pt-scroll::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+
+@supports selector(::-webkit-scrollbar) {
+  .pt-scroll {
+    /* Hand the scrollbar back to the pseudo-elements. */
+    scrollbar-color: auto;
+  }
+  .pt-scroll::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  .pt-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .pt-scroll::-webkit-scrollbar-thumb {
+    background: var(--pt-thumb);
+    /* Transparent border + content-box clips to a 6px thumb floating in a
+       12px gutter, so the track is breathing room rather than a grey band. */
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+  .pt-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--pt-thumb-hover);
+    border-color: var(--pt-thumb-hover);
+  }
+  .pt-scroll::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }
-.pt-scroll::-webkit-scrollbar-track {
-  background: transparent;
+
+/* Tactile buttons.
+ *
+ * Depth is three layers, not one. A hard zero-blur EDGE under the face reads
+ * as the object's own thickness; a soft GROUND shadow lifts it off the page;
+ * a 1px top-light inset says the face curves over rather than lying flat.
+ * One shadow alone looks like a blur filter, not a button.
+ *
+ * The press is the part that sells it: the face sinks AND the edge shrinks by
+ * exactly the distance it sank, so the bottom of the edge stays on the same
+ * pixel row while the face drops into it. A press that only translates looks
+ * like the button slipped.
+ *
+ * Accessibility notes, both learned the hard way:
+ *   - The border is `transparent`, not absent. Windows High Contrast forces
+ *     box-shadow to none, so a button defined by shadow alone loses its
+ *     boundary and becomes a rectangle of floating text. A transparent border
+ *     is invisible normally and survives forced colors.
+ *   - Neumorphism (soft paired shadows, no hard edge) was rejected: it drops
+ *     the boundary that carries WCAG 1.4.11's 3:1 non-text contrast. The hard
+ *     edge is load-bearing, not decoration.
+ *
+ * Transitions stay at 120ms. Longer feels sluggish on a tap target, and
+ * box-shadow is a paint-heavy property to animate.
+ */
+.pt-btn {
+  --pt-edge: #7a1600;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  padding: 0.55rem 1.05rem;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow:
+    0 2px 0 var(--pt-edge),
+    0 6px 14px -7px rgb(58 22 8 / 0.3),
+    inset 0 1px 0 rgb(255 255 255 / 0.22);
+  transition:
+    transform 120ms var(--ease-out-expo),
+    box-shadow 120ms var(--ease-out-expo),
+    background-color 120ms ease;
 }
-.pt-scroll::-webkit-scrollbar-thumb {
-  background: #ddbda8;
+
+.pt-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 3px 0 var(--pt-edge),
+    0 10px 18px -9px rgb(58 22 8 / 0.34),
+    inset 0 1px 0 rgb(255 255 255 / 0.28);
+}
+
+.pt-btn:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 0 0 var(--pt-edge),
+    0 2px 5px -3px rgb(58 22 8 / 0.3),
+    inset 0 2px 5px rgb(58 22 8 / 0.18);
+}
+
+.pt-btn:disabled,
+.pt-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 0 var(--pt-edge);
+}
+
+/* Primary: the one place the boldness is spent. Terracotta face, near-black
+ * edge, white label. */
+.pt-btn-primary {
+  --pt-edge: #7a1600;
+  background-color: var(--color-terra-500);
+  color: #ffffff;
+}
+.pt-btn-primary:hover {
+  background-color: var(--color-terra-400);
+}
+.pt-btn-primary:active {
+  background-color: var(--color-terra-300);
+}
+
+/* Secondary: paper face, soft warm edge. Still physical, quieter. */
+.pt-btn-secondary {
+  --pt-edge: #e4dfd5;
+  background-color: var(--color-paper);
+  color: var(--color-clay-100);
+  box-shadow:
+    0 2px 0 var(--pt-edge),
+    0 6px 14px -8px rgb(58 22 8 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.9);
+}
+.pt-btn-secondary:hover {
+  background-color: #fffdfc;
+  box-shadow:
+    0 3px 0 var(--pt-edge),
+    0 10px 18px -10px rgb(58 22 8 / 0.22),
+    inset 0 1px 0 rgb(255 255 255 / 0.9);
+}
+.pt-btn-secondary:active {
+  background-color: var(--color-card);
+  box-shadow:
+    0 0 0 var(--pt-edge),
+    0 2px 5px -3px rgb(58 22 8 / 0.18),
+    inset 0 2px 5px rgb(58 22 8 / 0.08);
+}
+
+@media (forced-colors: active) {
+  /* box-shadow is forced to none here, so the edge has to become a border or
+   * these controls stop reading as controls at all. */
+  .pt-btn {
+    border: 2px solid ButtonBorder;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-btn,
+  .pt-btn:hover,
+  .pt-btn:active {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Navigation: a segmented pill on the desktop, a measured underline on the
+ * phone.
+ *
+ * These are deliberately two different treatments rather than one responsive
+ * shape. A pill needs ~40px of height and a visible track to read as a
+ * control; on a 390px phone the six labels overflow the strip, and a sliding
+ * pill inside a scrolling track fights the scroll (it slides out of view and
+ * the scroll snaps back under it). Underline is the right answer there: it
+ * costs no height, survives a horizontal scroll, and is what Material's own
+ * guidance recommends once tabs overflow.
+ *
+ * On the desktop there is room, so the pill carries more weight than colour
+ * alone and the whole thing reads as a segmented control. */
+.pt-nav-track {
+  position: relative;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
   border-radius: 999px;
+  background: color-mix(in srgb, var(--color-clay-500) 12%, transparent);
 }
-.pt-scroll::-webkit-scrollbar-thumb:hover {
-  background: #b44b2a;
+
+.pt-nav-pill {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--color-terra-500);
+  /* The one place in the nav where the fill carries meaning rather than
+   * decoration, so the active tab also switches to a white label. */
+  box-shadow:
+    0 1px 0 rgb(122 22 0 / 0.9),
+    0 3px 8px -4px rgb(58 22 8 / 0.4);
+  transform: translateX(0);
+  /* `transform` only. Width and opacity are deliberately NOT transitioned:
+   * they are the resting state that has to be correct at every moment, and a
+   * browser with no frames running (a background tab) never advances a
+   * transition — so a transitioning width pins the pill at 0 and the active
+   * tab loses its indicator entirely. The slide is the enhancement; being
+   * findable is the requirement. */
+  transition: transform 260ms var(--ease-out-expo);
+  will-change: transform;
+  pointer-events: none;
+  z-index: 0;
 }
-.pt-scroll::-webkit-scrollbar-corner {
+
+.pt-nav-tab {
+  position: relative;
+  z-index: 1;
+  appearance: none;
+  border: 0;
   background: transparent;
+  border-radius: 999px;
+  padding: 0 1rem;
+  height: 32px;
+  font-size: 14px;
+  color: var(--color-clay-500);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 200ms ease;
+}
+.pt-nav-tab:hover {
+  color: var(--color-clay-200);
+}
+.pt-nav-tab[aria-current="page"] {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+@media (max-width: 639px) {
+  /* Phone: underline, as before. No track, no pill. */
+  .pt-nav-track {
+    gap: 1.75rem;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+  }
+  .pt-nav-pill {
+    display: none;
+  }
+  .pt-nav-tab {
+    height: auto;
+    border-radius: 0;
+    padding: 0.75rem 0.25rem;
+  }
+  .pt-nav-tab[aria-current="page"] {
+    color: var(--color-terra-300);
+  }
+}
+
+@media (forced-colors: active) {
+  /* The pill is a background, which forced colors flattens. Restore the
+   * active state with a border so it is not carried by colour alone. */
+  .pt-nav-tab[aria-current="page"] {
+    border: 2px solid Highlight;
+    color: Highlight;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-nav-pill {
+    transition: none;
+  }
 }
 
 /* Touch targets on phones.
